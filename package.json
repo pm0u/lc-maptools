@@ -8,7 +8,6 @@
     "dev:start": "yarn generate:all && yarn dev",
     "deploy": "yarn generate:all && yarn build && firebase:deploy",
     "deploy:current": "firebase deploy",
-    "deploy:ci": "yarn generate:all && yarn build",
     "build": "next build",
     "build:deploy": "yarn generate:all && yarn deploy",
     "generate:data": "tsx ./prebuild/get-data.ts",
