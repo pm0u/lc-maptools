@@ -13,24 +13,41 @@ jobs:
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
     steps:
+      - name: Set day
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Check for cache of tippecanoe
-        id: cache
+        id: tippecanoe-cache
         uses: actions/cache@v4
         with:
           path: tippecanoe
-          key: ${{ secrets.TIPPECANOE_VERSION }}
+          key: 2.35.0
+
       - name: "Installing tippecanoe"
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: "ci-install-tippecanoe.sh"
-        env:
-          TIPPECANOE_VERSION: "${{ secrets.TIPPECANOE_VERSION }}"
+        if: steps.tippecanoe-cache.outputs.cache-hit != 'true'
+        run: ci-install-tippecanoe.sh
+
       - name: Install node dependencies
         uses: ./.github/actions/setup
-      - run: yarn deploy:ci
+
+      - name: Check for tile cache
+        id: tile-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            public/tiles
+            generated
+          key: $DATE
+      - name: Generate tile data
+        if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
+        run: yarn generate:all
+      - run: yarn build
         env:
           NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
+    steps:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
