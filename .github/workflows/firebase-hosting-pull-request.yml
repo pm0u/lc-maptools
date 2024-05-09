@@ -16,13 +16,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Check for cache of tippecanoe
-        uses: "./.github/actions/tippecanoe-cache"
-      - if: ${{ steps.step2.outputs.cache-hit != 'true' }}
-        name: "Installing tippecanoe"
-        uses: "./.github/actions/install-tippecanoe"
-      - name: Setup Environment
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: tippecanoe
+          key: 2.35.0
+      - name: "Installing tippecanoe"
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: "ci-install-tippecanoe.sh"
+      - name: Install node dependencies
         uses: ./.github/actions/setup
       - run: yarn deploy:ci
+        env:
+          NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
