@@ -35,7 +35,6 @@ export const useMapboxMap = () => {
           type: "fill",
           // @ts-expect-error
           paint: layerStyles,
-          maxzoom: 16,
         });
         _map.addLayer({
           id: "public_land",
@@ -44,7 +43,6 @@ export const useMapboxMap = () => {
           type: "fill",
           // @ts-expect-error
           paint: publicLandStyles,
-          maxzoom: 16,
         });
         _map.on("click", (e) => {
           const bbox = [
