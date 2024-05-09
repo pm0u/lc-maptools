@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set day
-        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        run: echo "::set-env name=DATE::$(date +'%Y-%m-%d')"
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
           path: |
             public/tiles
             generated
-          key: $DATE
+          key: ${{ env.DATE }}
 
       - name: Generate tile data
         if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
