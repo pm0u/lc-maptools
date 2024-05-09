@@ -37,7 +37,7 @@ jobs:
           path: |
             public/tiles
             generated
-          key: ${{ env.DATE }}
+          key: tiles-${{ env.DATE }}
 
       - name: Generate tiles & data
         if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
