@@ -49,7 +49,7 @@ jobs:
         run: yarn generate:all
 
       - name: Tiles data
-        run: "apt install tree && tree public"
+        run: "du -sh public/tiles && ls generated"
 
       - run: yarn build
         env:
