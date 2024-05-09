@@ -9,9 +9,13 @@ runs:
        repository: 'felt/tippecanoe'
        ref: '2.35.0'
        path: 'tippecanoe'
-   - uses: 'cd tippecanoe'
+   - run: cd tippecanoe
+     shell: bash
    - name: 'Make'
-     uses: 'make -j && make install'
-   - uses: 'cp tippecanoe .. && cd ..'
+     shell: bash
+     run: make -j && make install
+   - run: cp tippecanoe .. && cd ..
+     shell: bash
    - name: 'Success'
-     uses: 'tippecanoe -v'
+     shell: bash
+     run: tippecanoe -v
