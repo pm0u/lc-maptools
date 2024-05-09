@@ -20,7 +20,7 @@ jobs:
           key: 2.35.0
       - name: "Installing tippecanoe"
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: "./.github/actions/install-tippecanoe"
+        run: "ci-install-tippecanoe.sh"
       - name: Install node dependencies
         uses: ./.github/actions/setup
       - run: yarn deploy:ci
