@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Check for cache of tippecanoe
-        id: "cache"
+        id: cache
         uses: "./.github/actions/tippecanoe-cache"
       - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         name: "Installing tippecanoe"
