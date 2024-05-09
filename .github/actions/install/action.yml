@@ -1,0 +1,19 @@
+name: "Install tippecanoe"
+description: "Install tippecanoe into workflow env"
+runs:
+  using: "composite"
+  steps:
+    - name: "Clone repo"
+      uses: "actions/checkout@v4"
+      with:
+        repository: "felt/tippecanoe"
+        ref: "2.35.0"
+        path: "tippecanoe-repo"
+    - name: "Make"
+      shell: bash
+      run: cd tippecanoe-repo && make -j
+    - run: cp tippecanoe-repo/tippecanoe .
+      shell: bash
+    - name: "Success"
+      shell: bash
+      run: tippecanoe -v
