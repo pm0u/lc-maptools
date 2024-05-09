@@ -13,8 +13,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Check for cache of tippecanoe
-        uses: "./.github/actions/install-tippecanoe-from-cache"
-      - if: ${{ jobs.cache-tippecanoe-binary.outputs.cache-hit !== 'true' }}
+        uses: "./.github/actions/tippecanoe-cache"
+      - if: ${{ steps.step2.outputs.cache-hit != 'true' }}
         name: "Installing tippecanoe"
         uses: "./.github/actions/install-tippecanoe"
       - name: Setup Environment
@@ -24,5 +24,4 @@ jobs:
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LC_TILES }}"
-          channelId: live
           projectId: lc-tiles
