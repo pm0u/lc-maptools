@@ -11,6 +11,8 @@ runs:
        path: 'tippecanoe'
    - run: cd tippecanoe
      shell: bash
+   - run: ls
+     shell: bash
    - name: 'Make'
      shell: bash
      run: make -j && make install
