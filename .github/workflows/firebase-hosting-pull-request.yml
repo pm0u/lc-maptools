@@ -41,13 +41,15 @@ jobs:
             public/tiles
             generated
           key: $DATE
+
       - name: Generate tile data
         if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
         run: yarn generate:all
+
       - run: yarn build
         env:
           NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
-    steps:
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
