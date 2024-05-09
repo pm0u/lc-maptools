@@ -3,30 +3,11 @@ name: Setup
 description: Set node environment version and install dependencies
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-    - name: Setup Node
+    - name: Install Node deps
       uses: actions/setup-node@v4
       with:
-        node-version-file: '.nvmrc'
-        cache: 'yarn'
+        node-version-file: ".nvmrc"
+        cache: "yarn"
         cache-dependency-path: ./yarn.lock
-
-    - name: Cache Node Modules
-      id: cache-node-modules
-      uses: actions/cache@v4
-      env:
-        cache-name: cache-node-modules
-      with:
-        path: |
-          **/node_modules
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-
-    - if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-      shell: bash
-      name: Install Deps
-      run: yarn --frozen-lockfile
