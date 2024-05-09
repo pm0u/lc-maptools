@@ -11,7 +11,7 @@ runs:
        path: 'tippecanoe'
    - name: 'Make'
      shell: bash
-     run: cd tippecanoe && make -j && make install
+     run: cd tippecanoe && make -j
    - run: cp tippecanoe/tippecanoe .
      shell: bash
    - name: 'Success'
