@@ -4,5 +4,5 @@ import { useMapboxMapContext } from "./context";
 export const MapboxMap = () => {
   const { mapContainerRef } = useMapboxMapContext();
 
-  return <div ref={mapContainerRef} className="h-full w-full" />;
+  return <div ref={mapContainerRef} className="h-full w-full z-0" />;
 };
