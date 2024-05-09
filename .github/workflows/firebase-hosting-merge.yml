@@ -15,8 +15,8 @@ jobs:
       - name: Check for cache of tippecanoe
         id: cache
         uses: "./.github/actions/tippecanoe-cache"
-      - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-        name: "Installing tippecanoe"
+      - name: "Installing tippecanoe"
+        if: steps.cache.outputs.cache-hit != 'true'
         uses: "./.github/actions/install-tippecanoe"
       - name: Install node dependencies
         uses: ./.github/actions/setup
