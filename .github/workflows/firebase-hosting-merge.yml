@@ -27,6 +27,9 @@ jobs:
         if: steps.tippecanoe-cache.outputs.cache-hit != 'true'
         run: ci-install-tippecanoe.sh
 
+      - name: Install node dependencies
+        uses: ./.github/actions/setup
+
       - name: Tiles & data from cache
         id: tile-cache
         uses: actions/cache@v4
@@ -39,9 +42,6 @@ jobs:
       - name: Generate tiles & data
         if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
         run: yarn generate:all
-
-      - name: Install node dependencies
-        uses: ./.github/actions/setup
 
       - run: yarn build
         env:
