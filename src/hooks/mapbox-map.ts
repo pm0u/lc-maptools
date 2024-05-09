@@ -26,7 +26,7 @@ export const useMapboxMap = () => {
           tiles: [
             `${window.location.protocol}${window.location.host}/tiles/{z}/{x}/{y}.pbf`,
           ],
-          maxzoom: 22,
+          maxzoom: 16,
         });
         _map.addLayer({
           id: "tax_parcels",
@@ -35,7 +35,7 @@ export const useMapboxMap = () => {
           type: "fill",
           // @ts-expect-error
           paint: layerStyles,
-          maxzoom: 22,
+          maxzoom: 16,
         });
         _map.addLayer({
           id: "public_land",
@@ -44,7 +44,7 @@ export const useMapboxMap = () => {
           type: "fill",
           // @ts-expect-error
           paint: publicLandStyles,
-          maxzoom: 22,
+          maxzoom: 16,
         });
         _map.on("click", (e) => {
           const bbox = [
