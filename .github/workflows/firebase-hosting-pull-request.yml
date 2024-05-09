@@ -24,11 +24,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: tippecanoe
-          key: tippecanoe-2.35.0
+          key: tippecanoe-${{ secrets.TIPPECANOE_VERSION }}
 
       - name: Install tippecanoe
         if: steps.tippecanoe-cache.outputs.cache-hit != 'true'
         run: yarn ci:install-tippecanoe
+        env:
+          TIPPECANOE_VERSION: ${{ secrets.TIPPECANOE_VERSION }}
 
       - name: Install node dependencies
         uses: ./.github/actions/setup
