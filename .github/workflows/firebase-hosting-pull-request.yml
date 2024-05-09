@@ -46,6 +46,9 @@ jobs:
         if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
         run: yarn generate:all
 
+      - name: Tiles data
+        run: "du -sh public/tiles && ls generated"
+
       - run: yarn build
         env:
           NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
