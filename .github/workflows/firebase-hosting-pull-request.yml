@@ -28,7 +28,7 @@ jobs:
 
       - name: Install tippecanoe
         if: steps.tippecanoe-cache.outputs.cache-hit != 'true'
-        run: ci-install-tippecanoe.sh
+        run: yarn ci:install-tippecanoe
 
       - name: Install node dependencies
         uses: ./.github/actions/setup

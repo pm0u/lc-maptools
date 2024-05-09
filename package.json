@@ -5,6 +5,7 @@
   "scripts": {
     "stuff": "tsx ./prebuild/layers.ts",
     "dev": "next dev",
+    "ci:install-tippecanoe": "./ci-install-tippecanoe.sh",
     "dev:start": "yarn generate:all && yarn dev",
     "deploy": "yarn generate:all && yarn build && firebase:deploy",
     "deploy:current": "firebase deploy",
