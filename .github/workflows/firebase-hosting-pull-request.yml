@@ -13,7 +13,7 @@ jobs:
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
     steps:
-      - name: Set day
+      - name: Set Day
         run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Checkout
@@ -24,19 +24,21 @@ jobs:
         env:
           TIPPECANOE_VERSION: ${{ secrets.TIPPECANOE_VERSION }}
 
-      - name: Install node dependencies
-        uses: ./.github/actions/setup
+      - name: Install Node Dependencies
+        uses: ./.github/actions/node
 
-      - name: Tiles and data
+      - name: Tiles and Data
         uses: ./.github/actions/tiles
         env:
           DATE: ${{ env.DATE }}
 
-      - run: yarn build
+      - name: Build
+        run: yarn build
         env:
           NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Firebase Deploy (Preview)
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LC_TILES }}"
