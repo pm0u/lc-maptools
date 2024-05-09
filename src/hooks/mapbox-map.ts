@@ -3,11 +3,6 @@ import { Map } from "mapbox-gl";
 import layerStyles from "~/generated/tax_parcel-layer-styles.json";
 import publicLandStyles from "~/generated/public_land-layer-styles.json";
 
-const url =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : "https://lc-tiles.web.app";
-
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
   const [mapContainer, mapContainerRef] = useState<HTMLDivElement | null>(null);
@@ -28,7 +23,9 @@ export const useMapboxMap = () => {
       _map.on("load", () => {
         _map.addSource("LCMDParcels", {
           type: "vector",
-          tiles: [`${url}/tiles/{z}/{x}/{y}.pbf`],
+          tiles: [
+            `${window.location.protocol}${window.location.host}/tiles/{z}/{x}/{y}.pbf`,
+          ],
         });
         _map.addLayer({
           id: "tax_parcels",
