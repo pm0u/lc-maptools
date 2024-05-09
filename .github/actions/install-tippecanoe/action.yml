@@ -4,7 +4,11 @@ runs:
   using: 'composite'
   steps:
    - name: 'Clone repo'
-     uses: 'git clone --depth 1 --branch 2.35.0 git@github.com:felt/tippecanoe.git'
+     uses: 'actions/checkout@v4'
+     with:
+       repository: 'felt/tippecanoe'
+       ref: '2.35.0'
+       path: 'tippecanoe'
    - uses: 'cd tippecanoe'
    - name: 'Make'
      uses: 'make -j && make install'
