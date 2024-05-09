@@ -1,0 +1,13 @@
+name: "Install tippecanoe"
+description: "Install tippecanoe into workflow env"
+runs:
+  using: 'composite'
+  steps:
+   - name: 'Clone repo'
+     uses: 'git clone tags/2.35.0 https://github.com/felt/tippecanoe.git'
+   - uses: 'cd tippecanoe'
+   - name: 'Make'
+     uses: 'make -j && make install'
+   - uses: 'cp tippecanoe .. && cd ..'
+   - name: 'Success'
+     uses: 'tippecanoe -v'
