@@ -2,7 +2,7 @@
 # Run from project root!
 
 rm -rf public/tiles
-mkdir public/tiles
+mkdir -p public/tiles
 
 if [ -f "./tippecanoe" ]; then
   echo "Using local tippecanoe executable"
