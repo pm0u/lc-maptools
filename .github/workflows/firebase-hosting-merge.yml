@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set day
-        run: echo "::set-env name=DATE::$(date +'%Y-%m-%d')"
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
