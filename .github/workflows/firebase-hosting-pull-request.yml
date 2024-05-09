@@ -39,8 +39,10 @@ jobs:
         id: tile-cache
         uses: actions/cache@v4
         with:
-          path: public/tiles
-          key: tiles-${{ env.DATE }}-${{ github.head_ref }}
+          path: |
+            public/tiles/*
+            generated/*
+          key: tiles-${{ env.DATE }}-${{ hashFiles('prebuild/**') }}
 
       - name: Generate tiles & data
         if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
