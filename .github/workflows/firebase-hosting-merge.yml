@@ -17,9 +17,11 @@ jobs:
       - if: ${{ steps.step2.outputs.cache-hit != 'true' }}
         name: "Installing tippecanoe"
         uses: "./.github/actions/install-tippecanoe"
-      - name: Setup Environment
+      - name: Install node dependencies
         uses: ./.github/actions/setup
       - run: yarn deploy:ci
+        env:
+          NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
