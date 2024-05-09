@@ -11,4 +11,4 @@ runs:
         node-version-file: ".nvmrc"
         cache: "yarn"
         cache-dependency-path: ./yarn.lock
-      run: yarn --frozen-lockfile
+    - run: yarn --frozen-lockfile
