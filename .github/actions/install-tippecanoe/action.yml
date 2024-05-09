@@ -16,4 +16,4 @@ runs:
       shell: bash
     - name: "Success"
       shell: bash
-      run: tippecanoe -v
+      run: ./tippecanoe -v
