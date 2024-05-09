@@ -5,10 +5,14 @@ name: Deploy to Firebase Hosting on merge
       - main
 jobs:
   build_and_deploy:
+    name: Production deploy
     runs-on: ubuntu-latest
     steps:
       - name: Set day
         run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Install Tippecanoe
         uses: ./.github/actions/tippecanoe
