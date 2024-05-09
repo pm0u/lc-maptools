@@ -19,18 +19,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check for cache of tippecanoe
+      - name: Tippecanoe from cache
         id: tippecanoe-cache
         uses: actions/cache@v4
         with:
           path: tippecanoe
           key: 2.35.0
 
-      - name: "Installing tippecanoe"
+      - name: Install tippecanoe
         if: steps.tippecanoe-cache.outputs.cache-hit != 'true'
         run: ci-install-tippecanoe.sh
 
-      - name: Check for tile cache
+      - name: Tiles & data from cache
         id: tile-cache
         uses: actions/cache@v4
         with:
@@ -39,7 +39,7 @@ jobs:
             generated
           key: ${{ env.DATE }}
 
-      - name: Generate tile data
+      - name: Generate tiles & data
         if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
         run: yarn generate:all
 
