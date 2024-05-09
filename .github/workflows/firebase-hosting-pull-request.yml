@@ -19,37 +19,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Tippecanoe from cache
-        id: tippecanoe-cache
-        uses: actions/cache@v4
-        with:
-          path: tippecanoe
-          key: tippecanoe-${{ secrets.TIPPECANOE_VERSION }}
-
-      - name: Install tippecanoe
-        if: steps.tippecanoe-cache.outputs.cache-hit != 'true'
-        run: yarn ci:install-tippecanoe
+      - name: Install Tippecanoe
+        uses: ./.github/actions/tippecanoe
         env:
           TIPPECANOE_VERSION: ${{ secrets.TIPPECANOE_VERSION }}
 
       - name: Install node dependencies
         uses: ./.github/actions/setup
 
-      - name: Tiles & data from cache
-        id: tile-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            public/tiles/*
-            generated/*
-          key: tiles-${{ env.DATE }}-${{ hashFiles('prebuild/**') }}
-
-      - name: Generate tiles & data
-        if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
-        run: yarn generate:all
-
-      - name: Tiles data
-        run: "du -sh public/tiles && ls generated"
+      - name: Tiles and data
+        uses: ./.github/actions/tiles
+        env:
+          DATE: ${{ env.DATE }}
 
       - run: yarn build
         env:
