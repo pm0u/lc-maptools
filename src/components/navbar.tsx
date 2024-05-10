@@ -7,8 +7,8 @@ export const NavBar = () => {
   const pathname = usePathname();
   const hash = useHash();
   return (
-    <div className="pt-2 z-10 w-full px-2 absolute top-0 inset-x-0">
-      <nav className="navbar bg-base-100 rounded-md px-4 py-1 leading-none shadow-lg">
+    <div className="pt-2 w-full px-4 z-10">
+      <nav className="navbar bg-base-100 rounded-md px-4 py-1 leading-none drop-shadow-hover">
         <Link
           className={`${
             pathname === "/"

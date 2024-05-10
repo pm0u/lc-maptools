@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { MapboxMap } from "@/components/mapbox/map";
 import { MapboxMapProvider } from "@/components/mapbox/context";
 import { NavBar } from "@/components/navbar";
+import { SideBar } from "@/components/sidebar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,9 +26,12 @@ export default function RootLayout({
       </head>
       <body className="h-screen w-screen relative bg-base-200 flex flex-col gap-2">
         <MapboxMapProvider>
-          <MapboxMap />
           <NavBar />
-          {children}
+          <div className="z-10 relative flex-1 m-8">
+            <SideBar />
+            {children}
+          </div>
+          <MapboxMap />
         </MapboxMapProvider>
       </body>
     </html>

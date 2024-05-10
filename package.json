@@ -22,11 +22,13 @@
     "@turf/turf": "7.0.0-alpha.115",
     "@types/mapbox-gl": "^3.1.0",
     "@types/tinycolor2": "^1.4.6",
+    "class-variance-authority": "^0.7.0",
     "daisyui": "^4.10.3",
     "mapbox-gl": "^3.3.0",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
+    "react-icons": "^5.2.1",
     "tinycolor2": "^1.6.0",
     "tsx": "^4.8.0"
   },
