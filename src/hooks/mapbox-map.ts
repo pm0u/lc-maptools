@@ -8,7 +8,7 @@ export const useMapboxMap = () => {
   const [mapContainer, mapContainerRef] = useState<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (mapContainer) {
+    if (mapContainer && mapContainer !== map?.getContainer()) {
       if (map) {
         map.remove();
       }
@@ -55,7 +55,7 @@ export const useMapboxMap = () => {
         });
       });
     }
-  }, [mapContainer]);
+  }, [mapContainer, map]);
 
   return {
     map,

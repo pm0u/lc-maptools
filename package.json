@@ -19,6 +19,7 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@mapbox/togeojson": "mapbox/togeojson",
     "@turf/turf": "7.0.0-alpha.115",
     "@types/mapbox-gl": "^3.1.0",
     "@types/tinycolor2": "^1.4.6",

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { MapboxMap } from "@/components/mapbox/map";
 import { MapboxMapProvider } from "@/components/mapbox/context";
 import { NavBar } from "@/components/navbar";
-import { SideBar } from "@/components/sidebar";
+import { LeftSideBar } from "@/components/left-sidebar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,21 +18,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="winter">
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://js.arcgis.com/4.29/esri/themes/light/main.css"
-        ></link>
-      </head>
+      <head></head>
       <body className="h-screen w-screen relative bg-base-200 flex flex-col gap-2">
         <MapboxMapProvider>
           <NavBar />
-          <div className="z-10 relative flex-1 m-8">
-            <SideBar />
+          <div className="z-10 relative flex-1 m-8 pointer-events-none">
+            <LeftSideBar />
             {children}
           </div>
           <MapboxMap />
         </MapboxMapProvider>
+
+        <link
+          href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
+          rel="stylesheet"
+        />
       </body>
     </html>
   );
