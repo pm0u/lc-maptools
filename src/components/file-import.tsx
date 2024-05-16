@@ -1,13 +1,16 @@
 "use client";
-import { useDataLayers } from "@/hooks/data-layers";
+
+import { useDataLayers } from "@/contexts/data-layers";
 import { useCallback, useEffect, useRef, useState } from "react";
 // @ts-expect-error
 import toGeoJson from "@mapbox/togeojson";
+import { useRouter } from "next/navigation";
 
 export const FileImport = () => {
-  const { addLayer, zoomToFeature } = useDataLayers();
+  const { addLayer, layers } = useDataLayers();
   const fileInput = useRef<HTMLInputElement>(null);
   const [importedId, setImportedId] = useState<string | null>(null);
+  const router = useRouter();
 
   const onFileChange = useCallback(() => {
     if (fileInput.current) {
@@ -37,9 +40,9 @@ export const FileImport = () => {
 
   useEffect(() => {
     if (importedId) {
-      zoomToFeature(importedId);
+      router.push(`/property-crossings/${importedId}`);
     }
-  }, [importedId, zoomToFeature]);
+  }, [importedId, router, layers]);
 
   useEffect(() => {
     const input = fileInput.current;

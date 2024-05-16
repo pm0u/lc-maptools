@@ -1,6 +1,8 @@
+"use client";
+
 import { useMapboxMapContext } from "@/components/mapbox/context";
 import { randomColor } from "@/lib/color";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState, createContext } from "react";
 import tinycolor from "tinycolor2";
 import { bbox } from "@turf/turf";
 import type { BBox } from "geojson";
@@ -17,7 +19,26 @@ type DataLayers = {
   };
 };
 
-export const useDataLayers = () => {
+type DataLayersContextType = {
+  layers: DataLayers;
+  addLayer: (args: {
+    name: string;
+    layer: GeoJSON.FeatureCollection;
+    color?: string;
+  }) => { id: string };
+  zoomToFeature: (id: string) => void;
+  removeLayer: (id: string) => void;
+  setLayerColor: (args: { id: string; color: string }) => void;
+};
+
+// @ts-expect-error
+const DataLayersContext = createContext<DataLayersContextType>({});
+
+export const DataLayersProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const { map } = useMapboxMapContext();
   const [dataLayers, setDataLayers] = useState<DataLayers>({});
 
@@ -35,7 +56,7 @@ export const useDataLayers = () => {
         throw Error("Map not initialized");
       }
       const layerColor = color ?? randomColor();
-      const id = slugify(name);
+      const id = slugify(name.toLowerCase());
       setDataLayers((l) => ({
         ...l,
         [id]: {
@@ -84,7 +105,7 @@ export const useDataLayers = () => {
         throw Error("Map not initialized");
       }
       if (!(id in dataLayers)) {
-        throw Error("Layer not in data layers");
+        throw Error(`Layer ${id} not in data layers`);
       }
       map.fitBounds(
         dataLayers[id].featureBounds.slice(0, 4) as [
@@ -131,11 +152,23 @@ export const useDataLayers = () => {
     []
   );
 
-  return {
-    addLayer,
-    removeLayer,
-    setLayerColor,
-    layers: dataLayers,
-    zoomToFeature,
-  };
+  return (
+    <DataLayersContext.Provider
+      value={{
+        addLayer,
+        removeLayer,
+        setLayerColor,
+        layers: dataLayers,
+        zoomToFeature,
+      }}
+    >
+      {children}
+    </DataLayersContext.Provider>
+  );
+};
+
+export const useDataLayers = () => {
+  const ctx = useContext(DataLayersContext);
+  if (!ctx) throw Error("Not inside provider");
+  return ctx;
 };
