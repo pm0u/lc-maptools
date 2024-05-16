@@ -1,12 +1,13 @@
 "use client";
 import { useDataLayers } from "@/hooks/data-layers";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // @ts-expect-error
 import toGeoJson from "@mapbox/togeojson";
 
 export const FileImport = () => {
-  const { addLayer } = useDataLayers();
+  const { addLayer, zoomToFeature } = useDataLayers();
   const fileInput = useRef<HTMLInputElement>(null);
+  const [importedId, setImportedId] = useState<string | null>(null);
 
   const onFileChange = useCallback(() => {
     if (fileInput.current) {
@@ -23,8 +24,9 @@ export const FileImport = () => {
                 "application/xml"
               );
               const geoJSON: GeoJSON.FeatureCollection = parser(xml);
-              const id = geoJSON.features[0].properties?.name;
-              addLayer({ id, layer: geoJSON });
+              const name = geoJSON.features[0].properties?.name;
+              const { id: assignedId } = addLayer({ name, layer: geoJSON });
+              setImportedId(assignedId);
             });
             reader.readAsText(file, "utf8");
           }
@@ -34,12 +36,19 @@ export const FileImport = () => {
   }, [addLayer]);
 
   useEffect(() => {
+    if (importedId) {
+      zoomToFeature(importedId);
+    }
+  }, [importedId, zoomToFeature]);
+
+  useEffect(() => {
     const input = fileInput.current;
     input?.addEventListener("change", onFileChange);
     return () => {
       input?.removeEventListener("change", onFileChange);
     };
   }, [onFileChange]);
+
   return (
     <dialog className="card absolute left-20 top-0 py-8 px-4 w-1/4 m-0 drop-shadow-hover gap-4 pointer-events-auto">
       <h2 className="card-title">Import Path</h2>

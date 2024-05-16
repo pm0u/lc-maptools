@@ -2,12 +2,18 @@ import { useMapboxMapContext } from "@/components/mapbox/context";
 import { randomColor } from "@/lib/color";
 import { useCallback, useState } from "react";
 import tinycolor from "tinycolor2";
+import { bbox } from "@turf/turf";
+import type { BBox } from "geojson";
+import slugify from "slugify";
 
 type DataLayers = {
   [key: string]: {
+    id: string;
+    name: string;
     layer: GeoJSON.FeatureCollection;
     color: string;
     visible: boolean;
+    featureBounds: BBox;
   };
 };
 
@@ -17,52 +23,78 @@ export const useDataLayers = () => {
 
   const addLayer = useCallback(
     ({
-      id,
+      name,
       layer,
       color,
     }: {
-      id?: string;
+      name: string;
       layer: GeoJSON.FeatureCollection;
       color?: string;
     }) => {
-      if (map) {
-        const layerColor = color ?? randomColor();
-        const layerId = id ?? `Layer ${Object.keys(dataLayers).length}`;
-        setDataLayers((l) => ({
-          ...l,
-          [layerId]: {
-            layer,
-            color: layerColor,
-            visible: true,
-          },
-        }));
-        map.addSource(layerId, {
-          type: "geojson",
-          data: layer,
-        });
-        map.addLayer({
-          id: `${layerId}-lines`,
-          source: id,
-          type: "line",
-          paint: {
-            "line-color": layerColor,
-            "line-width": 4,
-          },
-          filter: ["==", "$type", "LineString"],
-        });
-        map.addLayer({
-          id: `${id}-polygons`,
-          source: id,
-          type: "fill",
-          paint: {
-            "fill-color": layerColor,
-            "fill-outline-color": tinycolor(layerColor).darken().toHexString(),
-          },
-          filter: ["==", "$type", "Polygon"],
-        });
-      } else {
-        console.error("Map is not initialized");
+      if (!map) {
+        throw Error("Map not initialized");
       }
+      const layerColor = color ?? randomColor();
+      const id = slugify(name);
+      setDataLayers((l) => ({
+        ...l,
+        [id]: {
+          id,
+          name,
+          layer,
+          color: layerColor,
+          visible: true,
+          featureBounds: bbox(layer),
+        },
+      }));
+      map.addSource(id, {
+        type: "geojson",
+        data: layer,
+      });
+      map.addLayer({
+        id: `${id}-lines`,
+        source: id,
+        type: "line",
+        paint: {
+          "line-color": layerColor,
+          "line-width": 4,
+        },
+        filter: ["==", "$type", "LineString"],
+      });
+      map.addLayer({
+        id: `${id}-polygons`,
+        source: id,
+        type: "fill",
+        paint: {
+          "fill-color": layerColor,
+          "fill-outline-color": tinycolor(layerColor).darken().toHexString(),
+        },
+        filter: ["==", "$type", "Polygon"],
+      });
+      return {
+        id,
+      };
+    },
+    [map]
+  );
+
+  const zoomToFeature = useCallback(
+    (id: string) => {
+      if (!map) {
+        throw Error("Map not initialized");
+      }
+      if (!(id in dataLayers)) {
+        throw Error("Layer not in data layers");
+      }
+      map.fitBounds(
+        dataLayers[id].featureBounds.slice(0, 4) as [
+          number,
+          number,
+          number,
+          number
+        ],
+        { duration: 1000, padding: 20 }
+      );
     },
     [map, dataLayers]
   );
@@ -99,5 +131,11 @@ export const useDataLayers = () => {
     []
   );
 
-  return { addLayer, removeLayer, setLayerColor, layers: dataLayers };
+  return {
+    addLayer,
+    removeLayer,
+    setLayerColor,
+    layers: dataLayers,
+    zoomToFeature,
+  };
 };
