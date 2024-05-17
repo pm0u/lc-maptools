@@ -1,12 +1,13 @@
 "use client";
 import { useMapboxMap } from "@/hooks/mapbox-map";
 import { Map } from "mapbox-gl";
-import { useContext, createContext } from "react";
+import { useContext, createContext, useEffect, useState } from "react";
 
 type MapboxMapCtx = {
   map?: Map | undefined;
   mapContainer: HTMLDivElement | null;
   mapContainerRef: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
+  mapActionState: "dragging" | "idle";
 };
 
 // @ts-expect-error filled in in the context provider
@@ -18,9 +19,32 @@ export const MapboxMapProvider = ({
   children: React.ReactNode;
 }) => {
   const { map, mapContainer, mapContainerRef } = useMapboxMap();
+  const [mapActionState, setMapActionState] = useState<"idle" | "dragging">(
+    "idle"
+  );
+
+  useEffect(() => {
+    const onDragStart = () => {
+      setMapActionState("dragging");
+    };
+
+    const onDragEnd = () => {
+      setMapActionState("idle");
+    };
+
+    map?.on("dragstart", onDragStart);
+    map?.on("dragend", onDragEnd);
+
+    return () => {
+      map?.off("dragstart", onDragStart);
+      map?.off("dragend", onDragEnd);
+    };
+  }, [map]);
 
   return (
-    <MapboxMapContext.Provider value={{ map, mapContainer, mapContainerRef }}>
+    <MapboxMapContext.Provider
+      value={{ map, mapContainer, mapContainerRef, mapActionState }}
+    >
       {children}
     </MapboxMapContext.Provider>
   );

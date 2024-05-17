@@ -44,7 +44,7 @@ export const toColorFilter = (colors: {
       ...Object.entries(colors.fillOutlineColor).flat(),
       "#d2d2d2",
     ] satisfies Expression,
-    "fill-opacity": 0.6,
+    "fill-opacity": 0.4,
   };
 };
 
