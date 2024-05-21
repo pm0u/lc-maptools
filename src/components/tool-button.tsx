@@ -1,4 +1,5 @@
 "use client";
+import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 import { cva } from "class-variance-authority";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -28,9 +29,18 @@ export const ToolButton = ({
 }) => {
   const pathname = usePathname();
   const linkHref = pathname === href ? "/" : href;
+  const router = useRouterWithHash();
   const Icon = icon;
   return (
-    <Link className={button({ active: pathname === href })} href={linkHref}>
+    <Link
+      className={button({ active: pathname === href })}
+      href={linkHref}
+      // Preserve hash
+      onClick={(e) => {
+        e.preventDefault();
+        router.push(linkHref);
+      }}
+    >
       <Icon.type {...Icon.props} className={iconClasses()} />
     </Link>
   );
