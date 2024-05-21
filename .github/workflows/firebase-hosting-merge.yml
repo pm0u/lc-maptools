@@ -37,5 +37,6 @@ jobs:
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LC_TILES }}"
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
           channelId: live
           projectId: lc-tiles
