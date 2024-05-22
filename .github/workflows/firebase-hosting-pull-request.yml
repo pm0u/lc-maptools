@@ -4,6 +4,7 @@ permissions:
   checks: write
   contents: read
   pull-requests: write
+  deployments: write
 jobs:
   build_and_preview:
     name: "Build preview"
