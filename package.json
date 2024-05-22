@@ -8,7 +8,7 @@
   "scripts": {
     "ci:install-tippecanoe": "./ci-install-tippecanoe.sh",
     "generate:data": "yarn workspace @lc-maptools/data generate",
-    "generate:tiles": "yarn workspace @lc-maptools/tile-server generate:all",
+    "generate:tiles": "yarn workspace @lc-maptools/tile-server generate",
     "app:prebuild": "yarn workspace @lc-maptools/app prebuild",
     "app:build": "yarn workspace @lc-maptools/app build"
   }

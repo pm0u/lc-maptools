@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "generate:data": "tsx generate-data.ts",
-    "generate:tiles": "./generate-tiles.sh",
-    "generate:all": "yarn generate:data && yarn generate:tiles"
+    "generate": "./generate-tiles.sh"
   },
   "dependencies": {
     "tsx": "^4.10.5"
