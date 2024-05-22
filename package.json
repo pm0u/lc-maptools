@@ -5,6 +5,7 @@
     "tile-server"
   ],
   "scripts": {
+    "ci:install-tippecanoe": "./ci-install-tippecanoe.sh",
     "generate:tiles": "yarn workspace @lc-maptools/tile-server generate:all"
   }
 }
