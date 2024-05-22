@@ -3,8 +3,9 @@ import { Map } from "mapbox-gl";
 import layerStyles from "~/generated/tax_parcel-layer-styles.json";
 import publicLandStyles from "~/generated/public_land-layer-styles.json";
 import SterlingsRamblings from "@/static/Eastside_Reroutes.json";
-//import { useRouter } from "next/navigation";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
+
+const tileDomain = process.env.NEXT_PUBLIC_TILE_SERVER_DOMAIN;
 
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
@@ -41,9 +42,7 @@ export const useMapboxMap = () => {
         });
         _map.addSource("LCMDParcels", {
           type: "vector",
-          tiles: [
-            `${window.location.protocol}${window.location.host}/tiles/{z}/{x}/{y}.pbf`,
-          ],
+          tiles: [`${tileDomain}/{z}/{x}/{y}.pbf`],
           maxzoom: 16,
         });
         _map.addLayer({

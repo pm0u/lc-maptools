@@ -1,4 +1,4 @@
-import { ArcGISResponse } from "~/types/geo-json";
+import { ArcGISResponse } from "../types/geo-json";
 import { Expression } from "mapbox-gl";
 import tinycolor from "tinycolor2";
 import { selectColor } from "./internal";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMapboxMapContext } from "@/components/mapbox/context";
-import { randomColor } from "@/lib/color";
+import { randomColor } from "~data";
 import { useCallback, useContext, useState, createContext } from "react";
 import tinycolor from "tinycolor2";
 import { bbox } from "@turf/turf";
