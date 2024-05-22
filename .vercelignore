@@ -6,4 +6,5 @@ node_modules
 .env*
 tsconfig.buildinfo
 next-env.d.ts
+tippecanoe-repo
 ci-install-tippecanoe.sh
