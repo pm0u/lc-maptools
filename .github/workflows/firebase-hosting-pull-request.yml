@@ -39,7 +39,7 @@ jobs:
           projectId: lc-tiles
 
       - name: Build
-        run: yarn build
+        run: yarn app:prebuild && yarn app:build
         env:
           NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
           NEXT_PUBLIC_TILE_SERVER_DOMAIN: "${{ steps.firebase-tiles.outputs.details_url }}"
@@ -51,3 +51,4 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          WORKING_DIRECTORY: app
