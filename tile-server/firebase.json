@@ -4,11 +4,15 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "headers": [
       {
-        "source": "*",
+        "source": "**/*.pbf",
         "headers": [
           {
             "key": "Access-Control-Allow-Origin",
             "value": "*"
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "GET"
           }
         ]
       }
