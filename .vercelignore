@@ -2,4 +2,8 @@ tile-server
 node_modules
 .github
 .vscode
+.next
+.env*
+tsconfig.buildinfo
+next-env.d.ts
 ci-install-tippecanoe.sh
