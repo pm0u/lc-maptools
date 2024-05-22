@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Map } from "mapbox-gl";
-import layerStyles from "~/generated/tax_parcel-layer-styles.json";
-import publicLandStyles from "~/generated/public_land-layer-styles.json";
+import layerStyles from "~data/generated/tax_parcel-layer-styles.json";
+import publicLandStyles from "~data/generated/public_land-layer-styles.json";
 import SterlingsRamblings from "@/static/Eastside_Reroutes.json";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 

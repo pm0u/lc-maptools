@@ -24,7 +24,12 @@ jobs:
       - name: Install Node Dependencies
         uses: ./.github/actions/node
 
-      - name: Tiles and Data
+      - name: Data
+        uses: ./.github/actions/data
+        env:
+          DATE: ${{ env.DATE }}
+
+      - name: Tiles
         uses: ./.github/actions/tiles
         env:
           DATE: ${{ env.DATE }}

@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "paths": {
-      "~data": ["./data/index.ts"]
+      "~data": ["./data/index.ts"],
+      "~data/generated/*": ["./data/generated/*"]
     }
   },
   "include": ["./data/**/*.ts"]

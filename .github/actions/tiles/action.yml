@@ -1,5 +1,5 @@
-name: Tiles and data
-description: Generate tiles and data
+name: Tiles
+description: Generate tiles
 
 runs:
   using: "composite"
@@ -10,7 +10,7 @@ runs:
       with:
         path: |
           tile-server/tiles/*
-          tile-server/generated/*
+          data/generated/*
         key: tiles-${{ env.DATE }}-${{ hashFiles('data/**') }}
 
     - name: Generate tiles & data

@@ -1,0 +1,17 @@
+name: Data
+description: Generate data
+
+runs:
+  using: "composite"
+  steps:
+    - name: Data from cache
+      id: data-cache
+      uses: actions/cache@v4
+      with:
+        path: data/generated/*
+        key: data-${{ env.DATE }}-${{ hashFiles('data/**') }}
+
+    - name: Generate tiles & data
+      if: ${{ steps.data-cache.outputs.cache-hit != 'true' }}
+      shell: "bash"
+      run: yarn generate:data

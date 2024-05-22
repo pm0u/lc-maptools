@@ -21,7 +21,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./*"],
-      "~data": ["../data/index.ts"]
+      "~data": ["../data/index.ts"],
+      "~data/generated/*": ["../data/generated/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
