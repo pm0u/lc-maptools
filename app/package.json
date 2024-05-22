@@ -5,10 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "dev:start": "yarn generate:data && yarn dev",
-    "prebuild": "yarn generate:data",
     "build": "next build",
     "build:deploy": "yarn generate:all && yarn deploy",
-    "generate:data": "tsx ./prebuild/generate-data.ts",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc"
