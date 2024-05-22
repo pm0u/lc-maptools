@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "tile-server/tiles",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

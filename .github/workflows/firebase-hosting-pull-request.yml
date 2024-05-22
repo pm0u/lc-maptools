@@ -1,0 +1,53 @@
+name: Deploy to Firebase Hosting on PR
+"on": pull_request
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+jobs:
+  build_and_preview:
+    name: "Build preview"
+    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Day
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Tippecanoe
+        uses: ./.github/actions/tippecanoe
+        env:
+          TIPPECANOE_VERSION: ${{ secrets.TIPPECANOE_VERSION }}
+
+      - name: Install Node Dependencies
+        uses: ./.github/actions/node
+
+      - name: Tiles and Data
+        uses: ./.github/actions/tiles
+        env:
+          DATE: ${{ env.DATE }}
+
+      - name: Firebase Deploy Tiles (Preview)
+        id: firebase-tiles
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LC_TILES }}"
+          entryPoint: ./tile-server
+          projectId: lc-tiles
+
+      - name: Build
+        run: yarn build
+        env:
+          NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
+          NEXT_PUBLIC_TILE_SERVER_DOMAIN: "${{ steps.firebase-tiles.outputs.details_url }}"
+
+      - name: Deploy to Vercel Action
+        uses: BetaHuhn/deploy-to-vercel-action@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
