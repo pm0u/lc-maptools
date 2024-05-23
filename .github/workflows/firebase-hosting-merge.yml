@@ -3,6 +3,11 @@ name: Deploy to Firebase Hosting on merge
   push:
     branches:
       - main
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+  deployments: write
 jobs:
   build_and_deploy:
     name: Production deploy
