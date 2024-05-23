@@ -11,8 +11,26 @@ jobs:
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
     steps:
-      - name: Set Day
-        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+      - name: Set Env Vars
+        run: |
+          echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+          echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Set Subdomain (Constant)
+        id: subdomain
+        uses: rlespinasse/slugify-value@v1.x
+        with:
+          publish_env: false
+          key: SUBDOMAIN
+          value: ${{ github.ref_name }}-pr-${{ github.events.number }}
+
+      - name: Set Subdomain (Unique)
+        id: subdomain-unique
+        uses: rlespinasse/slugify-value@v1.x
+        with:
+          publish_env: false
+          key: SUBDOMAIN_UNIQUE
+          value: ${{ github.ref_name }}-pr-${{ github.events.number }}-${{ env.SHORT_SHA }}
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,6 +70,9 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           PRODUCTION: false
+          ALIAS_DOMAINS: |
+            ${{ steps.subdomain.outputs.SUBDOMAIN_SLUG_URL }}.vercel.app
+            ${{ steps.subdomain-unique.outputs.SUBDOMAIN_UNIQUE_SLUG_URL }}.vercel.app
           BUILD_ENV: |
             NEXT_PUBLIC_MAPBOX_TOKEN=${{ secrets.MAPBOX_API_KEY }}
             NEXT_PUBLIC_TILE_SERVER_DOMAIN=${{ steps.firebase-tiles.outputs.details_url }}
