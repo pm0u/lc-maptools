@@ -25,7 +25,7 @@ jobs:
         with:
           publish-env: false
           key: SUBDOMAIN
-          value: ${{ github.ref_name }}-pr-${{ github.events.number }}
+          value: ${{ github.head_ref || github.ref_name }} -pr-${{ github.event.pull_request.number }}
 
       - name: Set Subdomain (Unique)
         id: subdomain-unique
@@ -33,7 +33,7 @@ jobs:
         with:
           publish-env: false
           key: SUBDOMAIN_UNIQUE
-          value: ${{ github.ref_name }}-pr-${{ github.events.number }}-${{ env.SHORT_SHA }}
+          value: ${{ github.head_ref || github.ref_name }}-pr-${{ github.event.pull_request.number }}-${{ env.SHORT_SHA }}
 
       - name: Checkout
         uses: actions/checkout@v4
