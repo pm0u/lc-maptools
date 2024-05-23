@@ -37,7 +37,7 @@ jobs:
         env:
           DATE: ${{ env.DATE }}
 
-      - name: Firebase Deploy Tiles (Preview)
+      - name: Firebase Deploy Tiles (Production)
         id: firebase-tiles
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -47,7 +47,7 @@ jobs:
           entryPoint: ./tile-server
           projectId: lc-tiles
 
-      - name: Deploy to Vercel Action
+      - name: Deploy to Vercel (Production)
         uses: BetaHuhn/deploy-to-vercel-action@v1
         id: vercel-deploy
         with:
@@ -58,4 +58,4 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           BUILD_ENV: |
             NEXT_PUBLIC_MAPBOX_TOKEN=${{ secrets.MAPBOX_API_KEY }}
-            NEXT_PUBLIC_TILE_SERVER_DOMAIN=${{ steps.firebase-tiles.outputs.details_url }}
+            NEXT_PUBLIC_TILE_SERVER_DOMAIN=${{ fromJSON(steps.firebase-tiles.outputs.urls)[0] }}
