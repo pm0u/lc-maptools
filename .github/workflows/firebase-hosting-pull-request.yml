@@ -86,6 +86,6 @@ jobs:
               </tr>
             </table>
 
-            [View Workflow Logs](${{ LOG_URL }})
+            [View Workflow Logs](${{ steps.vercel-deploy.outputs.LOG_URL }})
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMENT_IDENTIFIER: "vercel-deploy"
