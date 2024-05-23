@@ -1,0 +1,10 @@
+tile-server
+node_modules
+.github
+.vscode
+.next
+.env*
+tsconfig.buildinfo
+next-env.d.ts
+tippecanoe-repo
+ci-install-tippecanoe.sh

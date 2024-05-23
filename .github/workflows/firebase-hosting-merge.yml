@@ -8,7 +8,7 @@ jobs:
     name: Production deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Set day
+      - name: Set Env Vars
         run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Checkout
@@ -22,20 +22,35 @@ jobs:
       - name: Install Node Dependencies
         uses: ./.github/actions/node
 
-      - name: Tiles and Data
+      - name: Data
+        uses: ./.github/actions/data
+        env:
+          DATE: ${{ env.DATE }}
+
+      - name: Tiles
         uses: ./.github/actions/tiles
         env:
           DATE: ${{ env.DATE }}
 
-      - name: Build
-        run: yarn build
-        env:
-          NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
-
-      - name: Firebase Deploy (Production)
+      - name: Firebase Deploy Tiles (Preview)
+        id: firebase-tiles
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
+          channelId: live
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LC_TILES }}"
-          channelId: live
+          entryPoint: ./tile-server
           projectId: lc-tiles
+
+      - name: Deploy to Vercel Action
+        uses: BetaHuhn/deploy-to-vercel-action@v1
+        id: vercel-deploy
+        with:
+          CREATE_COMMENT: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          BUILD_ENV: |
+            NEXT_PUBLIC_MAPBOX_TOKEN=${{ secrets.MAPBOX_API_KEY }}
+            NEXT_PUBLIC_TILE_SERVER_DOMAIN=${{ steps.firebase-tiles.outputs.details_url }}

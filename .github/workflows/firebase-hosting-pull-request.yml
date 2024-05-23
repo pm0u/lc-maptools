@@ -1,20 +1,30 @@
-name: Deploy to Firebase Hosting on PR
+name: Build & Deploy on PR
 "on": pull_request
 permissions:
   checks: write
   contents: read
   pull-requests: write
+  deployments: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   build_and_preview:
-    name: "Build preview"
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
     steps:
-      - name: Set Day
-        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Log URL
+        id: logs
+        uses: pl-strflt/job-summary-url-action@v1
+
+      - name: Set Env Vars
+        run: |
+          echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+          SHA=${{ github.event.pull_request.head.sha }}
+          echo "SHORT_SHA=${SHA::7}" >> $GITHUB_ENV
 
       - name: Install Tippecanoe
         uses: ./.github/actions/tippecanoe
@@ -24,19 +34,67 @@ jobs:
       - name: Install Node Dependencies
         uses: ./.github/actions/node
 
-      - name: Tiles and Data
+      - name: Data
+        uses: ./.github/actions/data
+        env:
+          DATE: ${{ env.DATE }}
+
+      - name: Tiles
         uses: ./.github/actions/tiles
         env:
           DATE: ${{ env.DATE }}
 
-      - name: Build
-        run: yarn build
-        env:
-          NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
-
-      - name: Firebase Deploy (Preview)
+      - name: Firebase Deploy Tiles (Preview)
+        id: firebase-tiles
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LC_TILES }}"
+          entryPoint: ./tile-server
           projectId: lc-tiles
+
+      - name: Deploy to Vercel Action
+        uses: BetaHuhn/deploy-to-vercel-action@v1
+        id: vercel-deploy
+        with:
+          CREATE_COMMENT: false
+          GITHUB_DEPLOYMENT: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          PRODUCTION: false
+          PR_PREVIEW_DOMAIN: "{REPO}-{PR}-{BRANCH}.vercel.app"
+          BUILD_ENV: |
+            NEXT_PUBLIC_MAPBOX_TOKEN=${{ secrets.MAPBOX_API_KEY }}
+            NEXT_PUBLIC_TILE_SERVER_DOMAIN=${{ steps.firebase-tiles.outputs.details_url }}
+
+      - name: Comment
+        uses: phulsechinmay/rewritable-pr-comment@v0.3.0
+        if: ${{ steps.vercel-deploy.outputs.DEPLOYMENT_CREATED }}
+        with:
+          message: |
+            The latest commit (`${{ env.SHORT_SHA }}`) has been deployed. 
+
+            <table>
+              <tr>
+                <td><strong>✅ PR Preview:</strong></td>
+                <td><a href='${{ fromJSON(steps.vercel-deploy.outputs.DEPLOYMENT_URLS)[0] }}'>${{ fromJSON(steps.vercel-deploy.outputs.DEPLOYMENT_URLS)[0] }}</a></td>
+              </tr>
+              <tr>
+                <td><strong>🔦 Current Commit:</strong></td>
+                <td><a href='${{ steps.vercel-deploy.outputs.DEPLOYMENT_UNIQUE_URL }}'>${{ steps.vercel-deploy.outputs.DEPLOYMENT_UNIQUE_URL }}</a></td>
+              </tr>
+              <tr>
+                <td><strong>🔍 Inspect:</strong></td>
+                <td><a href='${{ steps.vercel-deploy.outputs.DEPLOYMENT_INSPECTOR_URL }}'>${{ steps.vercel-deploy.outputs.DEPLOYMENT_INSPECTOR_URL }}</a></td>
+              </tr>
+              <tr>
+                <td><strong>🀄️ Tile Server:</strong></td>
+                <td><a href='${{ steps.firebase-tiles.outputs.details_url }}'>${{ steps.firebase-tiles.outputs.details_url }}</a></td>
+              </tr>
+            </table>
+
+            [View Workflow Logs](${{ steps.logs.outputs.job_summary_url }})
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMENT_IDENTIFIER: "vercel-deploy"
