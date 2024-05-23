@@ -51,6 +51,7 @@ jobs:
 
       - name: Deploy to Vercel Action
         uses: BetaHuhn/deploy-to-vercel-action@v1
+        id: vercel-deploy
         with:
           CREATE_COMMENT: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,7 +73,7 @@ jobs:
 
             <table>
               <tr>
-                <td><strong>✅ Preview:</strong></td>
+                <td><strong>✅ PR Preview:</strong></td>
                 <td><a href='${{ steps.vercel-deploy.outputs.DEPLOYMENT_URLS }}'>${{ steps.vercel-deploy.outputs.DEPLOYMENT_URLS }}</a></td>
               </tr>
               <tr>
