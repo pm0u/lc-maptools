@@ -5,6 +5,9 @@ permissions:
   contents: read
   pull-requests: write
   deployments: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   build_and_preview:
     name: "Build preview"
@@ -20,7 +23,7 @@ jobs:
         id: subdomain
         uses: rlespinasse/slugify-value@v1.x
         with:
-          publish_env: false
+          publish-env: false
           key: SUBDOMAIN
           value: ${{ github.ref_name }}-pr-${{ github.events.number }}
 
@@ -28,7 +31,7 @@ jobs:
         id: subdomain-unique
         uses: rlespinasse/slugify-value@v1.x
         with:
-          publish_env: false
+          publish-env: false
           key: SUBDOMAIN_UNIQUE
           value: ${{ github.ref_name }}-pr-${{ github.events.number }}-${{ env.SHORT_SHA }}
 
