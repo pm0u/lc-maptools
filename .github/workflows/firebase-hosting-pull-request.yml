@@ -87,6 +87,10 @@ jobs:
                 <td><strong>🔍 Inspect:</strong></td>
                 <td><a href='${{ steps.vercel-deploy.outputs.DEPLOYMENT_INSPECTOR_URL }}'>${{ steps.vercel-deploy.outputs.DEPLOYMENT_INSPECTOR_URL }}</a></td>
               </tr>
+              <tr>
+                <td><strong>🀄️ Tile Server:</strong></td>
+                <td><a href='${{ steps.firebase-tiles.outputs.details_url }}'>${{ steps.firebase-tiles.outputs.details_url }}</a></td>
+              </tr>
             </table>
 
             [View Workflow Logs](${{ steps.logs.outputs.job_summary_url }})
