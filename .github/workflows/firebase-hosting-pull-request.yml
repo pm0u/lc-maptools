@@ -58,6 +58,7 @@ jobs:
         id: vercel-deploy
         with:
           CREATE_COMMENT: false
+          GITHUB_DEPLOYMENT: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
