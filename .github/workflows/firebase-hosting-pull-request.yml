@@ -19,20 +19,6 @@ jobs:
           echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
-      - name: Set Subdomain (PR Scoped)
-        id: subdomain
-        uses: rlespinasse/slugify-value@v1.x
-        with:
-          key: SUBDOMAIN
-          value: ${{ github.head_ref || github.ref_name }}-pr-${{ github.event.pull_request.number }}
-
-      - name: Set Subdomain (Unique)
-        id: subdomain-unique
-        uses: rlespinasse/slugify-value@v1.x
-        with:
-          key: SUBDOMAIN_UNIQUE
-          value: ${{ github.head_ref || github.ref_name }}-pr-${{ github.event.pull_request.number }}-${{ env.SHORT_SHA }}
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -71,9 +57,8 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           PRODUCTION: false
-          ALIAS_DOMAINS: |
-            ${{ env.SUBDOMAIN_SLUG_URL }}.vercel.app
-            ${{ env.SUBDOMAIN_UNIQUE_SLUG_URL }}.vercel.app
+          PR_PREVIEW_DOMAIN: "{REPO}-{BRANCH}-{PR}-{SHA}.vercel.app"
+          ALIAS_DOMAINS: "{REPO}-{BRANCH}-{PR}.vercel.app"
           BUILD_ENV: |
             NEXT_PUBLIC_MAPBOX_TOKEN=${{ secrets.MAPBOX_API_KEY }}
             NEXT_PUBLIC_TILE_SERVER_DOMAIN=${{ steps.firebase-tiles.outputs.details_url }}
