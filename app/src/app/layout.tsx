@@ -19,7 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="winter">
-      <head></head>
+      <head>
+        <link
+          href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
+          rel="stylesheet"
+        />
+      </head>
       <body className="h-screen w-screen relative bg-base-200 flex flex-col gap-2">
         <MapboxMapProvider>
           <NavBar />
@@ -31,11 +36,6 @@ export default function RootLayout({
           </DataLayersProvider>
           <MapboxMap />
         </MapboxMapProvider>
-
-        <link
-          href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
-          rel="stylesheet"
-        />
       </body>
     </html>
   );

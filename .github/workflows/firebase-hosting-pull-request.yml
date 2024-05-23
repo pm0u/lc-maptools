@@ -72,7 +72,7 @@ jobs:
         if: ${{ steps.vercel-deploy.outputs.DEPLOYMENT_CREATED }}
         with:
           message: |
-            This pull request has been deployed to Vercel.
+            The latest commit (`${{ env.SHORT_SHA }}`) has been deployed. 
 
             <table>
               <tr>
