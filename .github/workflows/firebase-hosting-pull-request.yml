@@ -74,7 +74,7 @@ jobs:
             <table>
               <tr>
                 <td><strong>✅ PR Preview:</strong></td>
-                <td><a href='${{ steps.vercel-deploy.outputs.DEPLOYMENT_URLS[0] }}'>${{ steps.vercel-deploy.outputs.DEPLOYMENT_URLS[0] }}</a></td>
+                <td><a href='${{ fromJSON(steps.vercel-deploy.outputs.DEPLOYMENT_URLS)[0] }}'>${{ fromJSON(steps.vercel-deploy.outputs.DEPLOYMENT_URLS)[0] }}</a></td>
               </tr>
               <tr>
                 <td><strong>🔦 Current Commit:</strong></td>
