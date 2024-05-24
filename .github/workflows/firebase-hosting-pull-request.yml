@@ -11,7 +11,6 @@ concurrency:
 jobs:
   build_and_preview:
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
-    name: Build & Deploy Preview
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
