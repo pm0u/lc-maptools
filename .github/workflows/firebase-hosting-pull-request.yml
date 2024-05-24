@@ -16,6 +16,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Log URL
         id: logs
         uses: pl-strflt/job-summary-url-action@v1
