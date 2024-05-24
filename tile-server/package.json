@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "generate": "./generate-tiles.sh"
+    "generate": "./generate-tiles.sh",
+    "serve": "firebase emulators:start"
   },
   "dependencies": {
     "tsx": "^4.10.5"

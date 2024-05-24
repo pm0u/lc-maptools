@@ -64,7 +64,7 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           PRODUCTION: false
-          PR_PREVIEW_DOMAIN: "{REPO}-{PR}-{BRANCH}.vercel.app"
+          PR_PREVIEW_DOMAIN: "{REPO}--pr-{PR}-{BRANCH}.vercel.app"
           BUILD_ENV: |
             NEXT_PUBLIC_MAPBOX_TOKEN=${{ secrets.MAPBOX_API_KEY }}
             NEXT_PUBLIC_TILE_SERVER_DOMAIN=${{ steps.firebase-tiles.outputs.details_url }}
