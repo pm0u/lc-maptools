@@ -4,11 +4,7 @@ import layerStyles from "~data/generated/tax_parcel-layer-styles.json";
 import publicLandStyles from "~data/generated/public_land-layer-styles.json";
 import SterlingsRamblings from "@/static/Eastside_Reroutes.json";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
-
-const tileDomain = process.env.NEXT_PUBLIC_TILE_SERVER_DOMAIN?.trim().replace(
-  /['"]/g,
-  ""
-);
+import { mapboxToken, tileDomain } from "@/env";
 
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
@@ -21,10 +17,7 @@ export const useMapboxMap = () => {
         map.remove();
       }
       const _map = new Map({
-        accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN?.trim().replace(
-          /['"]/g,
-          ""
-        ),
+        accessToken: mapboxToken,
         container: mapContainer,
         hash: true,
         // Leadville
