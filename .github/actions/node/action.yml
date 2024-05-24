@@ -5,11 +5,14 @@ description: Set node environment version and install dependencies
 runs:
   using: "composite"
   steps:
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
         node-version-file: ".nvmrc"
         cache: "yarn"
         cache-dependency-path: ./yarn.lock
-    - run: yarn --frozen-lockfile
-      shell: "bash"
+    - run: yarn --immutable --immutable-cache
+      shell: bash
