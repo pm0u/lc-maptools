@@ -1,3 +1,5 @@
+"use client";
+
 import { useDataLayers } from "@/contexts/data-layers";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 // @ts-expect-error
