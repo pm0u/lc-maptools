@@ -1,11 +1,7 @@
-"use client";
-
-import { useParams } from "next/navigation";
+import { QueryCard } from "@/components/query-card";
 
 const Page = () => {
-  const params = useParams<{ lnglat: string }>();
-  console.log(params.lnglat);
-  return <></>;
+  return <QueryCard />;
 };
 
 export default Page;

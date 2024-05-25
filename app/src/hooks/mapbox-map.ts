@@ -84,15 +84,7 @@ export const useMapboxMap = () => {
           const {
             lngLat: { lng, lat },
           } = e;
-          // just route to query...
           router.push(`/query/${lng},${lat}`);
-          //const bbox = [
-          //  [e.point.x - 5, e.point.y - 5],
-          //  [e.point.x + 5, e.point.y + 5],
-          //] as [[number, number], [number, number]];
-          //// Find features intersecting the bounding box.
-          //const selectedFeatures = _map.queryRenderedFeatures(bbox);
-          //console.log({ selectedFeatures });
         });
       });
     }
