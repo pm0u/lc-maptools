@@ -1,4 +1,4 @@
-import { QueryCard } from "@/components/query-card";
+import { QueryCard } from "@/app/query/[lngLat]/query-card";
 
 const Page = () => {
   return <QueryCard />;

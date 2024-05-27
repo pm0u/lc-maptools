@@ -1,10 +1,10 @@
 import { Card } from "@/components/card";
-import { CardContents } from "@/components/query-card/card-contents";
+import { CardContents } from "@/app/query/[lngLat]/query-card/card-contents";
 import { Suspense } from "react";
 
 export const QueryCard = () => {
   return (
-    <Card title="Query...">
+    <Card>
       <Suspense>
         <CardContents />
       </Suspense>

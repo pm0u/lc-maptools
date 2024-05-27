@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Map } from "mapbox-gl";
+import { useState, useEffect, useCallback } from "react";
+import mapboxgl, { Map, MapEventType } from "mapbox-gl";
 import layerStyles from "~data/generated/tax_parcel-layer-styles.json";
 import publicLandStyles from "~data/generated/public_land-layer-styles.json";
 import SterlingsRamblings from "@/static/Eastside_Reroutes.json";
@@ -8,12 +8,34 @@ import { mapboxToken, tileDomain } from "@/env";
 
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
+  const [mapInitialized, setMapInitialized] = useState(false);
   const [mapContainer, mapContainerRef] = useState<HTMLDivElement | null>(null);
   const router = useRouterWithHash();
+
+  const onMapRender = useCallback((e: MapEventType["render"]) => {
+    const { target: map } = e;
+    if (map.areTilesLoaded()) {
+      setMapInitialized(true);
+      map.off("render", onMapRender);
+    }
+  }, []);
+
+  const onClick = useCallback(
+    (e: mapboxgl.MapMouseEvent) => {
+      const {
+        lngLat: { lng, lat },
+      } = e;
+      router.push(`/query/${lng},${lat}`);
+    },
+    [router]
+  );
 
   useEffect(() => {
     if (mapContainer && mapContainer !== map?.getContainer()) {
       if (map) {
+        setMapInitialized(false);
+        map.off("render", onMapRender);
+        map.off("click", onClick);
         map.remove();
       }
       const _map = new Map({
@@ -26,6 +48,7 @@ export const useMapboxMap = () => {
       });
       setMap(_map);
       _map.on("load", () => {
+        _map.on("render", onMapRender);
         _map.addSource("EastsideReroutes", {
           type: "geojson",
           data: SterlingsRamblings as GeoJSON.FeatureCollection,
@@ -80,19 +103,15 @@ export const useMapboxMap = () => {
           },
         });
         _map.setTerrain({ source: "mapbox-dem", exaggeration: 2.5 });
-        _map.on("click", (e) => {
-          const {
-            lngLat: { lng, lat },
-          } = e;
-          router.push(`/query/${lng},${lat}`);
-        });
+        _map.on("click", onClick);
       });
     }
-  }, [mapContainer, map, router]);
+  }, [mapContainer, map, onClick, onMapRender]);
 
   return {
     map,
     mapContainer,
     mapContainerRef,
+    mapInitialized,
   };
 };

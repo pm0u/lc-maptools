@@ -17,6 +17,7 @@ type MapboxMapCtx = {
   mapContainerRef: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
   mapActionState: "dragging" | "idle";
   queryLngLat: (lngLat: LngLatLike) => MapboxGeoJSONFeature[];
+  mapInitialized: boolean;
 };
 
 // @ts-expect-error filled in in the context provider
@@ -27,7 +28,7 @@ export const MapboxMapProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { map, mapContainer, mapContainerRef } = useMapboxMap();
+  const { map, mapContainer, mapContainerRef, mapInitialized } = useMapboxMap();
   const [mapActionState, setMapActionState] = useState<"idle" | "dragging">(
     "idle"
   );
@@ -73,6 +74,7 @@ export const MapboxMapProvider = ({
         mapContainerRef,
         mapActionState,
         queryLngLat,
+        mapInitialized,
       }}
     >
       {children}
