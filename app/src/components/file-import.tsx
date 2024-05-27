@@ -5,6 +5,7 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 // @ts-expect-error
 import toGeoJson from "@mapbox/togeojson";
 import { useRouter } from "next/navigation";
+import { Card } from "@/components/card";
 
 export const FileImport = () => {
   const { addLayer, layers } = useDataLayers();
@@ -69,8 +70,7 @@ export const FileImport = () => {
   }, [onFileChange]);
 
   return (
-    <dialog className="card absolute left-20 top-0 py-8 px-4 w-1/4 m-0 drop-shadow-hover gap-4 pointer-events-auto">
-      <h2 className="card-title">Import Path</h2>
+    <Card title="Import Path">
       <div className="divider">Upload file</div>
       <input
         type="file"
@@ -86,6 +86,6 @@ export const FileImport = () => {
         />
         <button className="btn btn-primary">Import</button>
       </form>
-    </dialog>
+    </Card>
   );
 };
