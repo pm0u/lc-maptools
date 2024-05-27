@@ -1,4 +1,4 @@
-import { Close } from "@/app/query/[lngLat]/query-card/close";
+import { Close } from "@/components/card/close";
 
 export const Card = ({
   children,
