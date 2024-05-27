@@ -34,9 +34,3 @@ export const Card = ({
     </dialog>
   );
 };
-
-/**
- * Position
- * Closeable...
- * anything else?
- */
