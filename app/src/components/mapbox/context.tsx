@@ -9,7 +9,7 @@ import {
   useCallback,
 } from "react";
 
-const QUERY_BBOX_SIZE = 5;
+const QUERY_BBOX_SIZE = 1;
 
 type MapboxMapCtx = {
   map?: Map | undefined;
@@ -18,6 +18,7 @@ type MapboxMapCtx = {
   mapActionState: "dragging" | "idle";
   queryLngLat: (lngLat: LngLatLike) => MapboxGeoJSONFeature[];
   mapInitialized: boolean;
+  selectFeature: (feature: MapboxGeoJSONFeature) => void;
 };
 
 // @ts-expect-error filled in in the context provider
@@ -66,6 +67,29 @@ export const MapboxMapProvider = ({
     [map]
   );
 
+  const selectFeature = useCallback(
+    (feature: MapboxGeoJSONFeature) => {
+      if (map) {
+        let source;
+        if (
+          feature.geometry.type === "LineString" ||
+          feature.geometry.type === "MultiLineString"
+        ) {
+          source = map.getSource("selected-line-features");
+        } else if (
+          feature.geometry.type === "Polygon" ||
+          feature.geometry.type === "MultiPolygon"
+        ) {
+          source = map.getSource("selected-fill-features");
+        }
+        if (source && source.type === "geojson") {
+          source.setData(feature);
+        }
+      }
+    },
+    [map]
+  );
+
   return (
     <MapboxMapContext.Provider
       value={{
@@ -75,6 +99,7 @@ export const MapboxMapProvider = ({
         mapActionState,
         queryLngLat,
         mapInitialized,
+        selectFeature,
       }}
     >
       {children}

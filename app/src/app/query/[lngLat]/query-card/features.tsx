@@ -1,4 +1,5 @@
 import { FeatureInfo } from "@/app/query/[lngLat]/query-card/feature-info";
+import { useMapboxMapContext } from "@/components/mapbox/context";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 
@@ -7,6 +8,7 @@ export const Features = ({
 }: {
   features: MapboxGeoJSONFeature[];
 }) => {
+  const { selectFeature } = useMapboxMapContext();
   const [currentFeature, setCurrentFeature] = useState(features[0]);
   const [scrollPosition, setScrollPosition] = useState(0);
   const containerEl = useRef<HTMLDivElement>(null);
@@ -22,7 +24,11 @@ export const Features = ({
       const offset = index * cardWidth;
       setScrollPosition(offset);
     }
-  }, [currentFeature, features]);
+    console.log({ currentFeature });
+    if (currentFeature) {
+      selectFeature(currentFeature);
+    }
+  }, [currentFeature, features, selectFeature]);
 
   useEffect(() => {
     if (containerEl.current) {

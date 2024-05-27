@@ -53,6 +53,69 @@ export const useMapboxMap = () => {
           type: "geojson",
           data: SterlingsRamblings as GeoJSON.FeatureCollection,
         });
+        _map.addSource("selected-fill-features", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            geometry: { coordinates: [], type: "Polygon" },
+            properties: {},
+          },
+        });
+        _map.addSource("selected-line-features", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            geometry: { coordinates: [], type: "LineString" },
+            properties: {},
+          },
+        });
+        _map.addLayer({
+          id: "highlighted-fill-features",
+          type: "fill",
+          paint: {
+            "fill-outline-color": "#e5dfe1",
+            "fill-color": "red",
+            //"fill-color": "transparent",
+            //"fill-opacity": 1,
+          },
+        });
+        _map.addLayer({
+          id: "highlighted-line-features",
+          type: "line",
+          layout: {
+            "line-sort-key": 0,
+          },
+          paint: {
+            "line-blur": 0.5,
+            "line-color": "#e5dfe1",
+            "line-opacity": 0.5,
+          },
+        });
+        _map.addLayer({
+          id: "selected-fill-features",
+          type: "line",
+          source: "selected-fill-features",
+          layout: {
+            "line-sort-key": 9999,
+          },
+          paint: {
+            "line-color": "#8c0327",
+            "line-width": 5,
+          },
+        });
+        _map.addLayer({
+          id: "selected-line-features",
+          type: "line",
+          source: "selected-line-features",
+          layout: {
+            "line-sort-key": 0,
+          },
+          paint: {
+            "line-blur": 0.5,
+            "line-color": "#8c0327",
+            "line-opacity": 0.5,
+          },
+        });
         _map.addLayer({
           id: "EastsideReroutes",
           source: "EastsideReroutes",
