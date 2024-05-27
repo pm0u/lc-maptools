@@ -5,6 +5,7 @@ import publicLandStyles from "~data/generated/public_land-layer-styles.json";
 import SterlingsRamblings from "@/static/Eastside_Reroutes.json";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 import { mapboxToken, tileDomain } from "@/env";
+import { EMPTY_GEOJSON } from "@/lib/data";
 
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
@@ -55,35 +56,25 @@ export const useMapboxMap = () => {
         });
         _map.addSource("selected-fill-features", {
           type: "geojson",
-          data: {
-            type: "Feature",
-            geometry: { coordinates: [], type: "Polygon" },
-            properties: {},
-          },
+          data: EMPTY_GEOJSON,
         });
         _map.addSource("selected-line-features", {
           type: "geojson",
-          data: {
-            type: "Feature",
-            geometry: { coordinates: [], type: "LineString" },
-            properties: {},
-          },
+          data: EMPTY_GEOJSON,
         });
         _map.addLayer({
           id: "highlighted-fill-features",
-          type: "fill",
+          type: "line",
           paint: {
-            "fill-outline-color": "#e5dfe1",
-            "fill-color": "red",
-            //"fill-color": "transparent",
-            //"fill-opacity": 1,
+            "line-color": "#e5dfe1",
+            "line-width": 3,
           },
         });
         _map.addLayer({
           id: "highlighted-line-features",
           type: "line",
           layout: {
-            "line-sort-key": 0,
+            "line-sort-key": 9999,
           },
           paint: {
             "line-blur": 0.5,
@@ -108,12 +99,13 @@ export const useMapboxMap = () => {
           type: "line",
           source: "selected-line-features",
           layout: {
-            "line-sort-key": 0,
+            "line-cap": "round",
           },
           paint: {
-            "line-blur": 0.5,
+            "line-blur": 10,
             "line-color": "#8c0327",
-            "line-opacity": 0.5,
+            "line-opacity": 0.8,
+            "line-width": 20,
           },
         });
         _map.addLayer({

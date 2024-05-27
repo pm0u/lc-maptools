@@ -1,5 +1,6 @@
 "use client";
 import { useMapboxMap } from "@/hooks/mapbox-map";
+import { EMPTY_GEOJSON } from "@/lib/data";
 import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
 import {
   useContext,
@@ -9,7 +10,7 @@ import {
   useCallback,
 } from "react";
 
-const QUERY_BBOX_SIZE = 1;
+const QUERY_BBOX_SIZE = 5;
 
 type MapboxMapCtx = {
   map?: Map | undefined;
@@ -67,6 +68,18 @@ export const MapboxMapProvider = ({
     [map]
   );
 
+  const clearSelectedFeatures = useCallback(() => {
+    if (map) {
+      const sources = ["selected-line-features", "selected-fill-features"];
+      sources.forEach((source) => {
+        const mapSource = map.getSource(source);
+        if (mapSource && mapSource.type === "geojson") {
+          mapSource.setData(EMPTY_GEOJSON);
+        }
+      });
+    }
+  }, [map]);
+
   const selectFeature = useCallback(
     (feature: MapboxGeoJSONFeature) => {
       if (map) {
@@ -83,11 +96,13 @@ export const MapboxMapProvider = ({
           source = map.getSource("selected-fill-features");
         }
         if (source && source.type === "geojson") {
+          clearSelectedFeatures();
+          console.log("setting feature", feature);
           source.setData(feature);
         }
       }
     },
-    [map]
+    [map, clearSelectedFeatures]
   );
 
   return (

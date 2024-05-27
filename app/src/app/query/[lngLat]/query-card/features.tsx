@@ -24,7 +24,6 @@ export const Features = ({
       const offset = index * cardWidth;
       setScrollPosition(offset);
     }
-    console.log({ currentFeature });
     if (currentFeature) {
       selectFeature(currentFeature);
     }
