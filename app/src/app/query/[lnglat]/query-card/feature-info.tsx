@@ -7,6 +7,7 @@ export const FeatureInfo = ({
   feature: MapboxGeoJSONFeature;
   className?: string;
 }) => {
+  // @ts-expect-error
   const { NAME, ...propertiesToDisplay } = feature.properties;
   return (
     <div className={className}>
