@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 export const QueryCard = () => {
   return (
-    <Card>
+    <Card position="right">
       <Suspense>
         <CardContents />
       </Suspense>
