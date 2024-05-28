@@ -6,7 +6,7 @@
 # -pC - uncompressed
 # -ai - generate IDs if missing
 ###
-OPTIONS='-ps -pt -z16 -ai'
+OPTIONS='-ps -pt -z16 -pC -ai'
 
 echo "Generating tiles from JSON..."
 

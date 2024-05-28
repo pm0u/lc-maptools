@@ -13,14 +13,6 @@
           {
             "key": "Access-Control-Allow-Methods",
             "value": "GET"
-          },
-          {
-            "key": "Content-Encoding",
-            "value": "gzip"
-          },
-          {
-            "key": "Content-Type",
-            "value": "false"
           }
         ]
       }
