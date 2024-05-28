@@ -2,12 +2,11 @@
 # Run from project root!
 
 ###
-# -ps - don't simplify
 # -pt - don't combine tiny polygons
 # -pC - uncompressed
-# -pD - no duplication (features can extend past tile boundaries, only one per zoom level)
+# -ai - generate IDs if missing
 ###
-OPTIONS='-ps -pt -z16 -pC -pc'
+OPTIONS='-ps -pt -z16 -ai'
 
 echo "Generating tiles from JSON..."
 
@@ -18,8 +17,8 @@ mkdir -p tiles
 
 if [ -f "./tippecanoe" ]; then
   echo "Using local tippecanoe executable..."
-  ./tippecanoe $OPTIONS -e tiles ../data/generated/tax_parcels.json ../data/generated/public_land.json --force
+  ./tippecanoe $OPTIONS -e tiles ../data/generated/tax_parcels.json ../data/generated/public_land.json ../data/static/Eastside_Reroutes.json --force
 else
   echo "Using global tippecanoe executable..."
-  tippecanoe $OPTIONS -e tiles ../data/generated/tax_parcels.json ../data/generated/public_land.json --force
+  tippecanoe $OPTIONS -e tiles ../data/generated/tax_parcels.json ../data/generated/public_land.json ../data/static/Eastside_Reroutes.json --force
 fi

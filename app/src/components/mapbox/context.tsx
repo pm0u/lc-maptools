@@ -1,6 +1,6 @@
 "use client";
+import { getSelectedPaintProperties } from "@/config/styles";
 import { useMapboxMap } from "@/hooks/mapbox-map";
-import { EMPTY_GEOJSON } from "@/lib/data";
 import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
 import {
   useContext,
@@ -30,7 +30,14 @@ export const MapboxMapProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { map, mapContainer, mapContainerRef, mapInitialized } = useMapboxMap();
+  const {
+    map,
+    mapContainer,
+    mapContainerRef,
+    mapInitialized,
+    selectionLayers,
+    layers,
+  } = useMapboxMap();
   const [mapActionState, setMapActionState] = useState<"idle" | "dragging">(
     "idle"
   );
@@ -61,45 +68,28 @@ export const MapboxMapProvider = ({
           [point.x - QUERY_BBOX_SIZE, point.y - QUERY_BBOX_SIZE],
           [point.x + QUERY_BBOX_SIZE, point.y + QUERY_BBOX_SIZE],
         ] as [PointLike, PointLike];
-        return map.queryRenderedFeatures(bbox);
+        return map.queryRenderedFeatures(bbox, { layers });
       }
       throw Error("Map is not initialized");
     },
-    [map]
+    [map, layers]
   );
 
   const clearSelectedFeatures = useCallback(() => {
     if (map) {
-      const sources = ["selected-line-features", "selected-fill-features"];
-      sources.forEach((source) => {
-        const mapSource = map.getSource(source);
-        if (mapSource && mapSource.type === "geojson") {
-          mapSource.setData(EMPTY_GEOJSON);
-        }
+      selectionLayers.forEach((layer) => {
+        map.setPaintProperty(layer, "line-color", "transparent");
       });
     }
-  }, [map]);
+  }, [map, selectionLayers]);
 
   const selectFeature = useCallback(
     (feature: MapboxGeoJSONFeature) => {
+      clearSelectedFeatures();
       if (map) {
-        let source;
-        if (
-          feature.geometry.type === "LineString" ||
-          feature.geometry.type === "MultiLineString"
-        ) {
-          source = map.getSource("selected-line-features");
-        } else if (
-          feature.geometry.type === "Polygon" ||
-          feature.geometry.type === "MultiPolygon"
-        ) {
-          source = map.getSource("selected-fill-features");
-        }
-        if (source && source.type === "geojson") {
-          clearSelectedFeatures();
-          console.log("setting feature", feature);
-          source.setData(feature);
-        }
+        const layerId = `${feature.sourceLayer ?? feature.source}_selected`;
+        const [paintProperty, expression] = getSelectedPaintProperties(feature);
+        map.setPaintProperty(layerId, paintProperty, expression);
       }
     },
     [map, clearSelectedFeatures]
