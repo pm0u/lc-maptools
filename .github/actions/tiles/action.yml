@@ -11,7 +11,7 @@ runs:
         path: |
           tile-server/tiles/*
           data/generated/*
-        key: tiles-${{ env.DATE }}-${{ hashFiles('data/**') }}
+        key: tiles-${{ env.DATE }}-${{ hashFiles('data/**', 'tile-server/generate-tiles.sh') }}
 
     - name: Generate tiles & data
       if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
