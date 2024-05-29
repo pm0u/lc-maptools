@@ -1,6 +1,6 @@
 import type { GeoJsonProperties, Polygon, Geometry } from "geojson";
 
-type LCMDProperties = {
+export type LCMDProperties = {
   FID: number;
   OBJECTID: number;
   AccountNum: number;

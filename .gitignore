@@ -36,5 +36,6 @@ yarn-error.log*
 next-env.d.ts
 
 # generated tiles
-public/tiles
+/public/tiles
 generated
+.firebase
