@@ -52,7 +52,8 @@ export const Features = ({
             {currentFeature.properties?.name?.trim() ||
               currentFeature.properties?.NAME?.trim() ||
               currentFeature.properties?.description?.trim() ||
-              currentFeature.properties?.title?.trim()}
+              currentFeature.properties?.title?.trim() ||
+              "Unknown"}
           </div>
           <button
             className="join-item btn"
