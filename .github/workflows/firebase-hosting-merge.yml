@@ -58,4 +58,4 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           BUILD_ENV: |
             NEXT_PUBLIC_MAPBOX_TOKEN=${{ secrets.MAPBOX_API_KEY }}
-            NEXT_PUBLIC_TILE_SERVER_DOMAIN=${{ fromJSON(steps.firebase-tiles.outputs.urls)[0] }}
+            NEXT_PUBLIC_TILE_SERVER_DOMAIN=${{ steps.firebase-tiles.outputs.details_url }}
