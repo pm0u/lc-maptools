@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import mapboxgl, { LinePaint, Map, MapEventType } from "mapbox-gl";
+import mapboxgl, { Map, MapEventType } from "mapbox-gl";
 import layerStyles from "~data/generated/tax_parcel-layer-styles.json";
 import publicLandStyles from "~data/generated/public_land-layer-styles.json";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
@@ -9,7 +9,9 @@ import {
   HIGHLIGHTED_LINE_STYLE,
   SELECTED_FILL_STYLE,
   SELECTED_LINE_STYLE,
+  getLineWidth,
 } from "@/config/styles";
+import { getHighlightLayer, getSelectedLayer } from "@/lib/layers";
 
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
@@ -70,16 +72,6 @@ export const useMapboxMap = () => {
         const { highlightedLayers, selectedLayers } = addSelectableLayers(
           [
             {
-              id: "Eastside_Reroutes",
-              source: "LCMDParcels",
-              "source-layer": "Eastside_Reroutes",
-              type: "line",
-              paint: {
-                "line-color": "#fff",
-                "line-width": 4,
-              },
-            },
-            {
               id: "tax_parcels",
               slot: "bottom",
               source: "LCMDParcels",
@@ -96,6 +88,16 @@ export const useMapboxMap = () => {
               type: "fill",
               // @ts-expect-error
               paint: publicLandStyles,
+            },
+            {
+              id: "Eastside_Reroutes",
+              source: "LCMDParcels",
+              "source-layer": "Eastside_Reroutes",
+              type: "line",
+              paint: {
+                "line-color": "#fd6",
+                "line-width": getLineWidth({ unselectedSize: -20 }),
+              },
             },
           ],
           _map
@@ -147,7 +149,11 @@ const addHillShade = (map: Map) => {
 
 const addSelectableLayers = (layers: mapboxgl.AnyLayer[], map: Map) => {
   const layerResults = layers.map((layer) =>
-    addSelectableLayer({ layer, map })
+    addSelectableLayer({
+      layer,
+      map,
+      order: layer.type === "line" ? "below" : "above",
+    })
   );
   return layerResults.reduce(
     (result, { highlightedLayer, selectedLayer }) => {
@@ -166,31 +172,34 @@ const addSelectableLayers = (layers: mapboxgl.AnyLayer[], map: Map) => {
 const addSelectableLayer = ({
   layer,
   map,
+  order = "above",
 }: {
   layer: mapboxgl.AnyLayer;
   map: Map;
+  order?: "above" | "below";
 }) => {
-  map.addLayer(layer);
+  if (order === "above") {
+    map.addLayer(layer);
+  }
   if (layer.type === "fill" || layer.type === "line") {
     const { paint, layout, ...unstyledLayer } = layer;
     map.addLayer({
       ...unstyledLayer,
       type: "line",
-      id: `${layer.id}_selected`,
+      id: getSelectedLayer(layer.id),
       ...(layer.type === "fill" ? SELECTED_FILL_STYLE : SELECTED_LINE_STYLE),
-      // @ts-expect-error
-      slot: "middle",
     });
     map.addLayer({
       ...unstyledLayer,
       type: "line",
-      id: `${layer.id}_highlighted`,
+      id: getHighlightLayer(layer.id),
       ...(layer.type === "fill"
         ? HIGHLIGHTED_FILL_STYLE
         : HIGHLIGHTED_LINE_STYLE),
-      // @ts-expect-error
-      slot: "middle",
     });
+  }
+  if (order === "below") {
+    map.addLayer(layer);
   }
   return {
     highlightedLayer: `${layer.id}_highlighted`,

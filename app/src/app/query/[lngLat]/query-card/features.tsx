@@ -49,7 +49,10 @@ export const Features = ({
             «
           </button>
           <div className="join-item flex-1 text-center font-bold px-2">
-            {currentFeature.properties?.name ?? currentFeature.properties?.NAME}
+            {currentFeature.properties?.name?.trim() ||
+              currentFeature.properties?.NAME?.trim() ||
+              currentFeature.properties?.description?.trim() ||
+              currentFeature.properties?.title?.trim()}
           </div>
           <button
             className="join-item btn"

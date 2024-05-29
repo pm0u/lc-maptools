@@ -15,7 +15,7 @@ export const layerifyByOwner = (geoJson: ArcGISResponse) => {
         },
         fillOutlineColor: {
           ...obj.fillOutlineColor,
-          [feature.properties.NAME]: tinycolor(color).darken().toHexString(),
+          [feature.properties.NAME]: tinycolor(color).darken(15).toHexString(),
         },
       };
     },
@@ -58,7 +58,7 @@ export const layerifyPublicLand = () => {
   const fillOutlines = Object.fromEntries(
     Object.entries(fillColors).map(([k, v]) => [
       k,
-      tinycolor(v).darken().toHexString(),
+      tinycolor(v).darken(15).toHexString(),
     ])
   );
 

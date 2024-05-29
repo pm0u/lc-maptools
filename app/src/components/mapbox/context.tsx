@@ -1,6 +1,6 @@
 "use client";
-import { getSelectedPaintProperties } from "@/config/styles";
 import { useMapboxMap } from "@/hooks/mapbox-map";
+import { getBaseLayer, getSelectedLayer } from "@/lib/layers";
 import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
 import {
   useContext,
@@ -11,6 +11,7 @@ import {
 } from "react";
 
 const QUERY_BBOX_SIZE = 5;
+let SELECTED_FEATURES: MapboxGeoJSONFeature[] = [];
 
 type MapboxMapCtx = {
   map?: Map | undefined;
@@ -20,6 +21,7 @@ type MapboxMapCtx = {
   queryLngLat: (lngLat: LngLatLike) => MapboxGeoJSONFeature[];
   mapInitialized: boolean;
   selectFeature: (feature: MapboxGeoJSONFeature) => void;
+  clearSelectedFeatures: () => void;
 };
 
 // @ts-expect-error filled in in the context provider
@@ -30,14 +32,8 @@ export const MapboxMapProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const {
-    map,
-    mapContainer,
-    mapContainerRef,
-    mapInitialized,
-    selectionLayers,
-    layers,
-  } = useMapboxMap();
+  const { map, mapContainer, mapContainerRef, mapInitialized, layers } =
+    useMapboxMap();
   const [mapActionState, setMapActionState] = useState<"idle" | "dragging">(
     "idle"
   );
@@ -68,28 +64,30 @@ export const MapboxMapProvider = ({
           [point.x - QUERY_BBOX_SIZE, point.y - QUERY_BBOX_SIZE],
           [point.x + QUERY_BBOX_SIZE, point.y + QUERY_BBOX_SIZE],
         ] as [PointLike, PointLike];
-        return map.queryRenderedFeatures(bbox, { layers });
+        return map.queryRenderedFeatures(bbox);
       }
       throw Error("Map is not initialized");
     },
-    [map, layers]
+    [map]
   );
 
   const clearSelectedFeatures = useCallback(() => {
-    if (map) {
-      selectionLayers.forEach((layer) => {
-        map.setPaintProperty(layer, "line-color", "transparent");
-      });
-    }
-  }, [map, selectionLayers]);
+    SELECTED_FEATURES.forEach((feature) => {
+      map?.setFeatureState(feature, { selected: false });
+    });
+    SELECTED_FEATURES = [];
+  }, [map]);
 
   const selectFeature = useCallback(
-    (feature: MapboxGeoJSONFeature) => {
-      clearSelectedFeatures();
+    (feature: MapboxGeoJSONFeature, removeOthers = true) => {
       if (map) {
-        const layerId = `${feature.sourceLayer ?? feature.source}_selected`;
-        const [paintProperty, expression] = getSelectedPaintProperties(feature);
-        map.setPaintProperty(layerId, paintProperty, expression);
+        if (removeOthers) {
+          clearSelectedFeatures();
+          SELECTED_FEATURES = [feature];
+        } else {
+          SELECTED_FEATURES = [...SELECTED_FEATURES, feature];
+        }
+        map.setFeatureState(feature, { selected: true });
       }
     },
     [map, clearSelectedFeatures]
@@ -105,6 +103,7 @@ export const MapboxMapProvider = ({
         queryLngLat,
         mapInitialized,
         selectFeature,
+        clearSelectedFeatures,
       }}
     >
       {children}
