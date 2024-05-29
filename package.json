@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:start": "yarn generate:all && yarn dev",
-    "prebuild": "./ci-generate-tiles.sh",
+    "prebuild": "./prebuild/ci-generate-tiles.sh",
     "build": "next build",
     "generate:data": "tsx ./prebuild/get-data.ts",
     "generate:tiles": "./prebuild/generate-tiles.sh",
