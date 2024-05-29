@@ -53,7 +53,7 @@ jobs:
           entryPoint: ./tile-server
           projectId: lc-tiles
 
-      - name: Deploy to Vercel Action
+      - name: Deploy to Vercel (Preview)
         uses: BetaHuhn/deploy-to-vercel-action@v1
         id: vercel-deploy
         with:
