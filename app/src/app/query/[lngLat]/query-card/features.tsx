@@ -1,4 +1,5 @@
 import { FeatureInfo } from "@/app/query/[lngLat]/query-card/feature-info";
+import { useMapboxMapContext } from "@/components/mapbox/context";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 
@@ -7,6 +8,7 @@ export const Features = ({
 }: {
   features: MapboxGeoJSONFeature[];
 }) => {
+  const { selectFeature } = useMapboxMapContext();
   const [currentFeature, setCurrentFeature] = useState(features[0]);
   const [scrollPosition, setScrollPosition] = useState(0);
   const containerEl = useRef<HTMLDivElement>(null);
@@ -22,7 +24,10 @@ export const Features = ({
       const offset = index * cardWidth;
       setScrollPosition(offset);
     }
-  }, [currentFeature, features]);
+    if (currentFeature) {
+      selectFeature(currentFeature);
+    }
+  }, [currentFeature, features, selectFeature]);
 
   useEffect(() => {
     if (containerEl.current) {
@@ -44,7 +49,11 @@ export const Features = ({
             «
           </button>
           <div className="join-item flex-1 text-center font-bold px-2">
-            {currentFeature.properties?.name ?? currentFeature.properties?.NAME}
+            {currentFeature.properties?.name?.trim() ||
+              currentFeature.properties?.NAME?.trim() ||
+              currentFeature.properties?.description?.trim() ||
+              currentFeature.properties?.title?.trim() ||
+              "Unknown"}
           </div>
           <button
             className="join-item btn"

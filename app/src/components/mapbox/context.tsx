@@ -1,5 +1,6 @@
 "use client";
 import { useMapboxMap } from "@/hooks/mapbox-map";
+import { getBaseLayer, getSelectedLayer } from "@/lib/layers";
 import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
 import {
   useContext,
@@ -10,6 +11,7 @@ import {
 } from "react";
 
 const QUERY_BBOX_SIZE = 5;
+let SELECTED_FEATURES: MapboxGeoJSONFeature[] = [];
 
 type MapboxMapCtx = {
   map?: Map | undefined;
@@ -18,6 +20,8 @@ type MapboxMapCtx = {
   mapActionState: "dragging" | "idle";
   queryLngLat: (lngLat: LngLatLike) => MapboxGeoJSONFeature[];
   mapInitialized: boolean;
+  selectFeature: (feature: MapboxGeoJSONFeature) => void;
+  clearSelectedFeatures: () => void;
 };
 
 // @ts-expect-error filled in in the context provider
@@ -28,7 +32,8 @@ export const MapboxMapProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { map, mapContainer, mapContainerRef, mapInitialized } = useMapboxMap();
+  const { map, mapContainer, mapContainerRef, mapInitialized, layers } =
+    useMapboxMap();
   const [mapActionState, setMapActionState] = useState<"idle" | "dragging">(
     "idle"
   );
@@ -66,6 +71,28 @@ export const MapboxMapProvider = ({
     [map]
   );
 
+  const clearSelectedFeatures = useCallback(() => {
+    SELECTED_FEATURES.forEach((feature) => {
+      map?.setFeatureState(feature, { selected: false });
+    });
+    SELECTED_FEATURES = [];
+  }, [map]);
+
+  const selectFeature = useCallback(
+    (feature: MapboxGeoJSONFeature, removeOthers = true) => {
+      if (map) {
+        if (removeOthers) {
+          clearSelectedFeatures();
+          SELECTED_FEATURES = [feature];
+        } else {
+          SELECTED_FEATURES = [...SELECTED_FEATURES, feature];
+        }
+        map.setFeatureState(feature, { selected: true });
+      }
+    },
+    [map, clearSelectedFeatures]
+  );
+
   return (
     <MapboxMapContext.Provider
       value={{
@@ -75,6 +102,8 @@ export const MapboxMapProvider = ({
         mapActionState,
         queryLngLat,
         mapInitialized,
+        selectFeature,
+        clearSelectedFeatures,
       }}
     >
       {children}

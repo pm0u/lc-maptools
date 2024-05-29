@@ -10,7 +10,8 @@ import uniqBy from "lodash/uniqBy";
 
 export const CardContents = () => {
   const { lngLat } = useParams<{ lngLat: string }>();
-  const { queryLngLat, mapInitialized } = useMapboxMapContext();
+  const { queryLngLat, mapInitialized, clearSelectedFeatures } =
+    useMapboxMapContext();
   const [features, setFeatures] = useState<MapboxGeoJSONFeature[] | null>(null);
 
   useEffect(() => {
@@ -21,6 +22,13 @@ export const CardContents = () => {
       setFeatures(deduped);
     }
   }, [lngLat, queryLngLat, mapInitialized]);
+
+  useEffect(
+    () => () => {
+      clearSelectedFeatures();
+    },
+    [clearSelectedFeatures]
+  );
 
   if (!mapInitialized) {
     return (
