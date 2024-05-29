@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import { NavBar } from "@/components/navbar";
+import { MapboxMapProvider } from "@/components/mapbox/context";
+import { MapboxMap } from "@/components/mapbox/map";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,8 +15,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" data-theme="winter">
+      <head>
+        <link
+          href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="h-screen w-screen relative bg-base-200">
+        <NavBar />
+        <main className="h-full w-full relative">
+          <MapboxMapProvider>
+            <MapboxMap />
+            <div className="mt-20 absolute inset-0 mx-2">{children}</div>
+          </MapboxMapProvider>
+        </main>
+      </body>
     </html>
   );
 }

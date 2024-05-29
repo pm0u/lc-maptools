@@ -4,23 +4,36 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:start": "yarn generate:all && yarn dev",
+    "prebuild": "./ci-generate-tiles.sh",
     "build": "next build",
+    "generate:data": "tsx ./prebuild/get-data.ts",
+    "generate:tiles": "./prebuild/generate-tiles.sh",
+    "generate:all": "yarn generate:data && yarn generate:tiles",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@turf/turf": "7.0.0-alpha.115",
+    "@types/mapbox-gl": "^3.1.0",
+    "@types/tinycolor2": "^1.4.6",
+    "daisyui": "^4.10.3",
+    "geojson-pick": "^1.0.0",
+    "mapbox-gl": "^3.3.0",
+    "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.3"
+    "tinycolor2": "^1.6.0",
+    "tsx": "^4.8.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.3"
+    "typescript": "^5"
   }
 }
