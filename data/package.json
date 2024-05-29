@@ -1,0 +1,11 @@
+{
+  "name": "@lc-maptools/data",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "generate": "tsx ./generate-data.ts"
+  },
+  "dependencies": {
+    "tsx": "^4.10.5"
+  }
+}

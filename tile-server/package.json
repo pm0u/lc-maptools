@@ -1,0 +1,11 @@
+{
+  "name": "@lc-maptools/tile-server",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "generate": "./generate-tiles.sh"
+  },
+  "dependencies": {
+    "tsx": "^4.10.5"
+  }
+}

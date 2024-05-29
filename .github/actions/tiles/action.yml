@@ -1,5 +1,5 @@
-name: Tiles and data
-description: Generate tiles and data
+name: Tiles
+description: Generate tiles
 
 runs:
   using: "composite"
@@ -9,11 +9,11 @@ runs:
       uses: actions/cache@v4
       with:
         path: |
-          public/tiles/*
-          generated/*
-        key: tiles-${{ env.DATE }}-${{ hashFiles('prebuild/**') }}
+          tile-server/tiles/*
+          data/generated/*
+        key: tiles-${{ env.DATE }}-${{ hashFiles('data/**') }}
 
     - name: Generate tiles & data
       if: ${{ steps.tile-cache.outputs.cache-hit != 'true' }}
       shell: "bash"
-      run: yarn generate:all
+      run: yarn generate:tiles

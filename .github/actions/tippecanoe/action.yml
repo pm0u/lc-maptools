@@ -8,7 +8,7 @@ runs:
       id: tippecanoe-cache
       uses: actions/cache@v4
       with:
-        path: tippecanoe
+        path: tile-server/tippecanoe
         key: tippecanoe-${{ env.TIPPECANOE_VERSION }}
 
     - name: Install tippecanoe
