@@ -1,0 +1,37 @@
+name: Deploy to Firebase Hosting on merge
+"on":
+  push:
+    branches:
+      - main
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set day
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Install Tippecanoe
+        uses: ./.github/actions/tippecanoe
+        env:
+          TIPPECANOE_VERSION: ${{ secrets.TIPPECANOE_VERSION }}
+
+      - name: Install Node Dependencies
+        uses: ./.github/actions/node
+
+      - name: Tiles and Data
+        uses: ./.github/actions/tiles
+        env:
+          DATE: ${{ env.DATE }}
+
+      - name: Build
+        run: yarn build
+        env:
+          NEXT_PUBLIC_MAPBOX_TOKEN: "${{ secrets.MAPBOX_API_KEY }}"
+
+      - name: Firebase Deploy (Production)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LC_TILES }}"
+          channelId: live
+          projectId: lc-tiles
