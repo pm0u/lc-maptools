@@ -5,6 +5,4 @@ cd tippecanoe
 make -j
 make install
 
-node ./generate-tiles.js
-
-./generate-tiles.sh
+yarn generate-all
