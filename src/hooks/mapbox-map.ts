@@ -26,6 +26,7 @@ export const useMapboxMap = () => {
           tiles: [
             `${window.location.protocol}${window.location.host}/tiles/{z}/{x}/{y}.pbf`,
           ],
+          maxzoom: 16,
         });
         _map.addLayer({
           id: "tax_parcels",
