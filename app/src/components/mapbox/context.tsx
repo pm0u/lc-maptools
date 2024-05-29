@@ -1,13 +1,23 @@
 "use client";
 import { useMapboxMap } from "@/hooks/mapbox-map";
-import { Map } from "mapbox-gl";
-import { useContext, createContext, useEffect, useState } from "react";
+import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
+import {
+  useContext,
+  createContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+
+const QUERY_BBOX_SIZE = 5;
 
 type MapboxMapCtx = {
   map?: Map | undefined;
   mapContainer: HTMLDivElement | null;
   mapContainerRef: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
   mapActionState: "dragging" | "idle";
+  queryLngLat: (lngLat: LngLatLike) => MapboxGeoJSONFeature[];
+  mapInitialized: boolean;
 };
 
 // @ts-expect-error filled in in the context provider
@@ -18,7 +28,7 @@ export const MapboxMapProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { map, mapContainer, mapContainerRef } = useMapboxMap();
+  const { map, mapContainer, mapContainerRef, mapInitialized } = useMapboxMap();
   const [mapActionState, setMapActionState] = useState<"idle" | "dragging">(
     "idle"
   );
@@ -41,9 +51,31 @@ export const MapboxMapProvider = ({
     };
   }, [map]);
 
+  const queryLngLat = useCallback(
+    (lngLat: LngLatLike) => {
+      if (map) {
+        const point = map.project(lngLat);
+        const bbox = [
+          [point.x - QUERY_BBOX_SIZE, point.y - QUERY_BBOX_SIZE],
+          [point.x + QUERY_BBOX_SIZE, point.y + QUERY_BBOX_SIZE],
+        ] as [PointLike, PointLike];
+        return map.queryRenderedFeatures(bbox);
+      }
+      throw Error("Map is not initialized");
+    },
+    [map]
+  );
+
   return (
     <MapboxMapContext.Provider
-      value={{ map, mapContainer, mapContainerRef, mapActionState }}
+      value={{
+        map,
+        mapContainer,
+        mapContainerRef,
+        mapActionState,
+        queryLngLat,
+        mapInitialized,
+      }}
     >
       {children}
     </MapboxMapContext.Provider>
