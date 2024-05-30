@@ -13,6 +13,8 @@ import {
 } from "@/config/styles";
 import { getHighlightLayer, getSelectedLayer } from "@/lib/layers";
 
+export const LAND_LAYERS = ["tax_parcels", "public_land"];
+
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
   const [mapInitialized, setMapInitialized] = useState(false);
@@ -57,6 +59,7 @@ export const useMapboxMap = () => {
         zoom: 10,
         maxZoom: 22,
       });
+      _map.showTileBoundaries = true;
       setMap(_map);
       _map.on("load", () => {
         // To trigger events that are waiting on tile data

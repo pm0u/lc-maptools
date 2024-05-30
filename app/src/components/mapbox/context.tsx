@@ -1,7 +1,7 @@
 "use client";
-import { useMapboxMap } from "@/hooks/mapbox-map";
-import { getBaseLayer, getSelectedLayer } from "@/lib/layers";
+import { LAND_LAYERS, useMapboxMap } from "@/hooks/mapbox-map";
 import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
+import { flatten, lineChunk } from "@turf/turf";
 import {
   useContext,
   createContext,
@@ -9,6 +9,9 @@ import {
   useState,
   useCallback,
 } from "react";
+import { MapboxLineFeature } from "@/types/mapbox";
+import { isMultiLineString } from "@/helpers/geojson";
+import { jsMap } from "@/helpers/map";
 
 const QUERY_BBOX_SIZE = 5;
 let SELECTED_FEATURES: MapboxGeoJSONFeature[] = [];
@@ -22,6 +25,7 @@ type MapboxMapCtx = {
   mapInitialized: boolean;
   selectFeature: (feature: MapboxGeoJSONFeature) => void;
   clearSelectedFeatures: () => void;
+  propertiesAlongLine: (feature: MapboxLineFeature) => MapboxGeoJSONFeature[];
 };
 
 // @ts-expect-error filled in in the context provider
@@ -55,6 +59,55 @@ export const MapboxMapProvider = ({
       map?.off("dragend", onDragEnd);
     };
   }, [map]);
+
+  const propertiesAlongLine = useCallback(
+    (feature: MapboxLineFeature) => {
+      if (map) {
+        console.log({ feature });
+        let chunks: GeoJSON.Feature<GeoJSON.LineString>[];
+        if (isMultiLineString(feature)) {
+          console.log("isMultiLineString");
+          const flattened = flatten(feature);
+          console.log({ flattened });
+          chunks = flattened.features
+            .map(
+              (feature) => lineChunk(feature, 30, { units: "feet" }).features
+            )
+            .flat();
+          console.log({ chunks });
+        } else {
+          chunks = lineChunk(feature, 10, { units: "feet" }).features;
+        }
+
+        const crossedFeatures: MapboxGeoJSONFeature[] = [];
+
+        chunks.forEach((chunk) => {
+          console.log({ chunk });
+          const point = [
+            chunk.geometry.coordinates[0][0],
+            chunk.geometry.coordinates[0][1],
+          ] as [number, number];
+          const features = map.queryRenderedFeatures(map.project(point), {
+            layers: LAND_LAYERS,
+          });
+          console.log({ features, point });
+          features.forEach((feature) => {
+            if (feature.id) {
+              if (
+                crossedFeatures.every((_feature) => feature.id !== _feature.id)
+              )
+                crossedFeatures.push(feature);
+            } else {
+              console.error("Feature missing id, skipping", feature);
+            }
+          });
+        });
+        return crossedFeatures;
+      }
+      throw Error("Map is not initialized");
+    },
+    [map]
+  );
 
   const queryLngLat = useCallback(
     (lngLat: LngLatLike) => {
@@ -104,6 +157,7 @@ export const MapboxMapProvider = ({
         mapInitialized,
         selectFeature,
         clearSelectedFeatures,
+        propertiesAlongLine,
       }}
     >
       {children}
