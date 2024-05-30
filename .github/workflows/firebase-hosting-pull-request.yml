@@ -46,12 +46,13 @@ jobs:
 
       - name: Firebase Deploy Tiles (Preview)
         id: firebase-tiles
-        uses: FirebaseExtended/action-hosting-deploy@v0
+        uses: FirebaseExtended/action-hosting-deploy@v0.9.0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LC_TILES }}"
           entryPoint: ./tile-server
           projectId: lc-tiles
+          disableComment: true
 
       - name: Deploy to Vercel (Preview)
         uses: BetaHuhn/deploy-to-vercel-action@v1
