@@ -55,13 +55,16 @@ export const PropertyCrossings = ({
                   >
                     <td>
                       <div
+                        // @ts-expect-error CSS vars are OK
                         style={{ "--bg-color": bg, "--border-color": border }}
                         className="bg-[var(--bg-color)] border-[var(--border-color)] w-8 h-8 border"
                       />
                     </td>
                     <td
                       className={
-                        property.properties?.NAME?.trim() ? "" : "text-base-300"
+                        property.properties?.NAME?.trim()
+                          ? ""
+                          : "text-neutral-content"
                       }
                     >
                       {property.properties?.NAME?.trim() || "UNKNOWN"}
