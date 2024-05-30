@@ -59,7 +59,6 @@ export const useMapboxMap = () => {
         zoom: 10,
         maxZoom: 22,
       });
-      _map.showTileBoundaries = true;
       setMap(_map);
       _map.on("load", () => {
         // To trigger events that are waiting on tile data
@@ -98,7 +97,7 @@ export const useMapboxMap = () => {
               "source-layer": "Eastside_Reroutes",
               type: "line",
               paint: {
-                "line-color": "#fd6",
+                "line-color": "#594630",
                 "line-width": getLineWidth({ unselectedSize: -20 }),
               },
             },

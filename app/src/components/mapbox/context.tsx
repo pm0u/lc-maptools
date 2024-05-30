@@ -1,7 +1,13 @@
 "use client";
 import { LAND_LAYERS, useMapboxMap } from "@/hooks/mapbox-map";
 import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
-import { flatten, lineChunk } from "@turf/turf";
+import {
+  bbox,
+  bboxPolygon,
+  flatten,
+  lineChunk,
+  transformScale,
+} from "@turf/turf";
 import {
   useContext,
   createContext,
@@ -9,12 +15,13 @@ import {
   useState,
   useCallback,
 } from "react";
-import { MapboxLineFeature } from "@/types/mapbox";
+import { BBoxXY, MapboxLineFeature } from "@/types/mapbox";
 import { isMultiLineString } from "@/helpers/geojson";
 import { jsMap } from "@/helpers/map";
 
 const QUERY_BBOX_SIZE = 5;
 let SELECTED_FEATURES: MapboxGeoJSONFeature[] = [];
+let HIGHLIGHTED_FEATURES: MapboxGeoJSONFeature[] = [];
 
 type MapboxMapCtx = {
   map?: Map | undefined;
@@ -23,9 +30,18 @@ type MapboxMapCtx = {
   mapActionState: "dragging" | "idle";
   queryLngLat: (lngLat: LngLatLike) => MapboxGeoJSONFeature[];
   mapInitialized: boolean;
-  selectFeature: (feature: MapboxGeoJSONFeature) => void;
+  selectFeature: (
+    feature: MapboxGeoJSONFeature,
+    options?: { removeOthers?: boolean; zoomTo?: boolean }
+  ) => void;
+  highlightFeature: (
+    feature: MapboxGeoJSONFeature,
+    options?: { removeOthers?: boolean; zoomTo?: boolean }
+  ) => void;
   clearSelectedFeatures: () => void;
+  clearHighlightedFeatures: () => void;
   propertiesAlongLine: (feature: MapboxLineFeature) => MapboxGeoJSONFeature[];
+  zoomToFeature: (feature: MapboxGeoJSONFeature) => void;
 };
 
 // @ts-expect-error filled in in the context provider
@@ -63,26 +79,21 @@ export const MapboxMapProvider = ({
   const propertiesAlongLine = useCallback(
     (feature: MapboxLineFeature) => {
       if (map) {
-        console.log({ feature });
         let chunks: GeoJSON.Feature<GeoJSON.LineString>[];
         if (isMultiLineString(feature)) {
-          console.log("isMultiLineString");
           const flattened = flatten(feature);
-          console.log({ flattened });
           chunks = flattened.features
             .map(
               (feature) => lineChunk(feature, 30, { units: "feet" }).features
             )
             .flat();
-          console.log({ chunks });
         } else {
           chunks = lineChunk(feature, 10, { units: "feet" }).features;
         }
 
-        const crossedFeatures: MapboxGeoJSONFeature[] = [];
+        const crossedFeatures = new jsMap<string, MapboxGeoJSONFeature>();
 
         chunks.forEach((chunk) => {
-          console.log({ chunk });
           const point = [
             chunk.geometry.coordinates[0][0],
             chunk.geometry.coordinates[0][1],
@@ -90,21 +101,41 @@ export const MapboxMapProvider = ({
           const features = map.queryRenderedFeatures(map.project(point), {
             layers: LAND_LAYERS,
           });
-          console.log({ features, point });
           features.forEach((feature) => {
             if (feature.id) {
-              if (
-                crossedFeatures.every((_feature) => feature.id !== _feature.id)
-              )
-                crossedFeatures.push(feature);
+              if (!crossedFeatures.has(feature.id.toString()))
+                crossedFeatures.set(feature.id.toString(), feature);
             } else {
               console.error("Feature missing id, skipping", feature);
             }
           });
         });
-        return crossedFeatures;
+        return Array.from(crossedFeatures.values());
       }
       throw Error("Map is not initialized");
+    },
+    [map]
+  );
+
+  const zoomToFeature = useCallback(
+    (feature: MapboxGeoJSONFeature, offset = [-140, 0] as [number, number]) => {
+      if (map) {
+        const bounds = bbox(
+          transformScale(
+            bboxPolygon(
+              bbox(feature, {
+                recompute: true,
+              })
+            ),
+            0.000000001
+          )
+        ).slice(0, 4) as BBoxXY;
+        map.fitBounds(bounds, {
+          pitch: map.getPitch(),
+          bearing: map.getBearing(),
+          offset,
+        });
+      }
     },
     [map]
   );
@@ -131,8 +162,24 @@ export const MapboxMapProvider = ({
     SELECTED_FEATURES = [];
   }, [map]);
 
+  const clearHighlightedFeatures = useCallback(() => {
+    HIGHLIGHTED_FEATURES.forEach((feature) => {
+      map?.setFeatureState(feature, { highlighted: false });
+    });
+    SELECTED_FEATURES = [];
+  }, [map]);
+
   const selectFeature = useCallback(
-    (feature: MapboxGeoJSONFeature, removeOthers = true) => {
+    (
+      feature: MapboxGeoJSONFeature,
+      {
+        removeOthers = true,
+        zoomTo = false,
+      }: { removeOthers?: boolean; zoomTo?: boolean } = {
+        removeOthers: true,
+        zoomTo: false,
+      }
+    ) => {
       if (map) {
         if (removeOthers) {
           clearSelectedFeatures();
@@ -141,9 +188,39 @@ export const MapboxMapProvider = ({
           SELECTED_FEATURES = [...SELECTED_FEATURES, feature];
         }
         map.setFeatureState(feature, { selected: true });
+        if (zoomTo) {
+          zoomToFeature(feature);
+        }
       }
     },
-    [map, clearSelectedFeatures]
+    [map, clearSelectedFeatures, zoomToFeature]
+  );
+
+  const highlightFeature = useCallback(
+    (
+      feature: MapboxGeoJSONFeature,
+      {
+        removeOthers = true,
+        zoomTo = false,
+      }: { removeOthers?: boolean; zoomTo?: boolean } = {
+        removeOthers: true,
+        zoomTo: false,
+      }
+    ) => {
+      if (map) {
+        if (removeOthers) {
+          clearHighlightedFeatures();
+          HIGHLIGHTED_FEATURES = [feature];
+        } else {
+          HIGHLIGHTED_FEATURES = [...HIGHLIGHTED_FEATURES, feature];
+        }
+        map.setFeatureState(feature, { highlighted: true });
+        if (zoomTo) {
+          zoomToFeature(feature);
+        }
+      }
+    },
+    [map, clearHighlightedFeatures, zoomToFeature]
   );
 
   return (
@@ -158,6 +235,9 @@ export const MapboxMapProvider = ({
         selectFeature,
         clearSelectedFeatures,
         propertiesAlongLine,
+        zoomToFeature,
+        highlightFeature,
+        clearHighlightedFeatures,
       }}
     >
       {children}

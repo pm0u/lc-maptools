@@ -2,8 +2,8 @@ import { Expression, LineLayout, LinePaint } from "mapbox-gl";
 
 const SELECTED_FILL_COLOR = "#8c0327";
 const SELECTED_LINE_COLOR = "#8c0327";
-const HIGHLIGHTED_FILL_COLOR = "#e5dfe1";
-const HIGHLIGHTED_LINE_COLOR = "#e5dfe1";
+const HIGHLIGHTED_FILL_COLOR = "#fff232";
+const HIGHLIGHTED_LINE_COLOR = "#fff232";
 
 export const getLineWidth = ({
   selectedSize = 1,
@@ -28,8 +28,8 @@ export const getLineWidth = ({
     ? [
         "case",
         ["boolean", ["feature-state", "selected"], false],
-        ["^", 2, 3 * (1 + selectedSize / 100)],
-        ["^", 2, 1.5 * (1 + unselectedSize / 100)],
+        ["^", 2, 0.7 * (1 + selectedSize / 100)],
+        ["^", 2, 0.4 * (1 + unselectedSize / 100)],
       ]
     : ["^", 2, 1.5 * (1 + unselectedSize / 100)],
   18,
@@ -61,16 +61,20 @@ export const SELECTED_LINE_STYLE: { paint: LinePaint; layout: LineLayout } = {
     "line-join": "round",
   },
   paint: {
-    "line-blur": ["interpolate", ["exponential", 2], ["zoom"], 10, 5, 18, 15],
+    "line-gap-width": getLineWidth({
+      selectedSize: -30,
+      unselectedSize: 8,
+      selectable: true,
+    }),
     "line-width": getLineWidth({
-      selectedSize: 4,
+      selectedSize: -35,
       unselectedSize: 8,
       selectable: true,
     }),
     "line-color": [
       "case",
       ["boolean", ["feature-state", "selected"], false],
-      SELECTED_LINE_COLOR,
+      "white",
       "transparent",
     ],
   },
@@ -78,7 +82,9 @@ export const SELECTED_LINE_STYLE: { paint: LinePaint; layout: LineLayout } = {
 
 export const HIGHLIGHTED_FILL_STYLE: { paint: LinePaint } = {
   paint: {
-    "line-width": 3,
+    "line-width": getLineWidth({
+      unselectedSize: -20,
+    }),
     "line-color": [
       "case",
       ["boolean", ["feature-state", "highlighted"], false],
