@@ -1,4 +1,8 @@
-import { getFullGeoJson } from "./internal";
+import {
+  PUBLIC_LAND_PROPERTIES,
+  TAX_PARCEL_PROPERTIES,
+  getFullGeoJson,
+} from "./internal";
 import { promises } from "node:fs";
 import { LCMD_QUERY_ENDPOINT, LCPL_QUERY_ENDPOINT } from "./internal";
 import { layerifyByOwner, layerifyPublicLand } from "./internal";
@@ -13,7 +17,7 @@ export const generateData = () => {
       Promise.all([
         getFullGeoJson(
           LCMD_QUERY_ENDPOINT,
-          "NAME,MILL_LEVY,ASSESSED_V,FID"
+          TAX_PARCEL_PROPERTIES.join(",")
         ).then((data) => {
           const layerStyles = layerifyByOwner(data);
           console.log(`Writing data for ${LCMD_QUERY_ENDPOINT}`);
@@ -25,7 +29,10 @@ export const generateData = () => {
             writeFile("generated/tax_parcels.json", JSON.stringify(data)),
           ]);
         }),
-        getFullGeoJson(LCPL_QUERY_ENDPOINT, "adm_manage,FID").then((data) => {
+        getFullGeoJson(
+          LCPL_QUERY_ENDPOINT,
+          PUBLIC_LAND_PROPERTIES.join(",")
+        ).then((data) => {
           const layerStyles = layerifyPublicLand();
           console.log(`Writing data for ${LCPL_QUERY_ENDPOINT}`);
           return Promise.all([

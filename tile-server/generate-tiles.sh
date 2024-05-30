@@ -5,8 +5,13 @@
 # -pt - don't combine tiny polygons
 # -pC - uncompressed
 # -ai - generate IDs if missing
+# -pk - no size limit
+# -pS - only simplify below maxzoom
+# -pg - no tilestats in metadata (used for mapbox tile api?)
+# -x - exclude property
 ###
-OPTIONS='-pt -z17 -pC -ai -pS'
+EXCLUDE='-x stroke-width -x stroke-opacity -x fill -x stroke -x class -x gpstype -x pattern -x fill-opacity -x creator'
+OPTIONS="-pt -z16 -pC -ai -pk -pg -pS $EXCLUDE"
 
 echo "Generating tiles from JSON..."
 

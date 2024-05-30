@@ -36,8 +36,8 @@ export const Features = ({
   }, [scrollPosition]);
 
   return (
-    <div>
-      <div className="pb-2">
+    <div className="flex flex-col overflow-hidden">
+      <div className="pb-2 border-b border-b-base-200">
         <div className="join flex items-center">
           <button
             className="join-item btn"
@@ -53,6 +53,7 @@ export const Features = ({
               currentFeature.properties?.NAME?.trim() ||
               currentFeature.properties?.description?.trim() ||
               currentFeature.properties?.title?.trim() ||
+              currentFeature.properties?.adm_manage?.trim() ||
               "Unknown"}
           </div>
           <button
@@ -66,16 +67,14 @@ export const Features = ({
           </button>
         </div>
       </div>
-      <div className="overflow-hidden scroll-smooth" ref={containerEl}>
-        <div className="flex">
-          {features.map((feature, i) => (
-            <FeatureInfo
-              feature={feature}
-              key={feature.id ?? i}
-              className="min-w-full"
-            />
-          ))}
-        </div>
+      <div className="overflow-hidden scroll-smooth flex" ref={containerEl}>
+        {features.map((feature, i) => (
+          <FeatureInfo
+            feature={feature}
+            key={feature.id ?? i}
+            className="min-w-full overflow-y-scroll"
+          />
+        ))}
       </div>
     </div>
   );
