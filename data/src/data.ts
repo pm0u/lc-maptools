@@ -1,4 +1,4 @@
-import { ArcGISResponse } from "../types/geo-json";
+import { ArcGISResponse } from "../types/properties";
 
 const PAGE_SIZE = 2000;
 

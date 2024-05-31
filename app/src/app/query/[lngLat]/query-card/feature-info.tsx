@@ -2,6 +2,7 @@ import { FeatureProperties } from "@/app/query/[lngLat]/query-card/feature-prope
 import { PropertyCrossings } from "@/app/query/[lngLat]/query-card/property-crossings";
 import { tw } from "@/helpers";
 import { isLine } from "@/helpers/geojson";
+import { LakeCountyFeature } from "@/types/features";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
@@ -11,7 +12,7 @@ export const FeatureInfo = ({
   feature,
   className,
 }: {
-  feature: MapboxGeoJSONFeature;
+  feature: LakeCountyFeature | MapboxGeoJSONFeature;
   className?: string;
 }) => {
   return (
