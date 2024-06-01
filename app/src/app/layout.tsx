@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { MapboxMap } from "@/components/mapbox/map";
 import { MapboxMapProvider } from "@/components/mapbox/mapbox-map-context";
 import { DataLayersProvider } from "@/contexts/data-layers";
+import { AppFooter } from "@/app/footer";
 
 export const metadata: Metadata = {
   title: "Lake County Mappings",
@@ -32,6 +33,7 @@ export default function RootLayout({
           </DataLayersProvider>
           <MapboxMap />
         </MapboxMapProvider>
+        <AppFooter />
       </body>
     </html>
   );
