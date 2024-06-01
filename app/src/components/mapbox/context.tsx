@@ -127,7 +127,7 @@ export const MapboxMapProvider = ({
                 recompute: true,
               })
             ),
-            0.000000001
+            0.0000000000000001
           )
         ).slice(0, 4) as BBoxXY;
         map.fitBounds(bounds, {
@@ -166,7 +166,7 @@ export const MapboxMapProvider = ({
     HIGHLIGHTED_FEATURES.forEach((feature) => {
       map?.setFeatureState(feature, { highlighted: false });
     });
-    SELECTED_FEATURES = [];
+    HIGHLIGHTED_FEATURES = [];
   }, [map]);
 
   const selectFeature = useCallback(

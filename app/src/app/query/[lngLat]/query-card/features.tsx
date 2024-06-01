@@ -16,7 +16,7 @@ export const Features = ({
   const { onClose } = useCardContext();
 
   useEffect(() => {
-    const off = onClose(() => clearSelectedFeatures());
+    const off = onClose(clearSelectedFeatures);
     return () => {
       off();
     };

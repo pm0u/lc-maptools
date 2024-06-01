@@ -20,15 +20,18 @@ export const PropertyCrossings = ({
     highlightFeature,
     clearHighlightedFeatures,
     zoomToFeature,
+    map,
   } = useMapboxMapContext();
 
   useEffect(() => {
-    zoomToFeature(feature);
-    setTimeout(() => {
-      const _properties = propertiesAlongLine(feature);
-      setProperties(_properties);
-    }, 100);
-  }, [propertiesAlongLine, feature, zoomToFeature]);
+    if (map) {
+      zoomToFeature(feature);
+      map.once("moveend", () => {
+        const _properties = propertiesAlongLine(feature);
+        setProperties(_properties);
+      });
+    }
+  }, [propertiesAlongLine, feature, zoomToFeature, map]);
 
   return (
     <div className="overflow-x-auto">
