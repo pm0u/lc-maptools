@@ -97,7 +97,12 @@ export const useMapboxMap = () => {
               "source-layer": "Eastside_Reroutes",
               type: "line",
               paint: {
-                "line-color": "#594630",
+                "line-color": [
+                  "case",
+                  ["boolean", ["feature-state", "selected"], false],
+                  "#48c242",
+                  "#594630",
+                ],
                 "line-width": getLineWidth({ unselectedSize: -20 }),
               },
             },

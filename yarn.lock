@@ -391,6 +391,7 @@ __metadata:
     eslint-config-next: "npm:14.2.3"
     lodash: "npm:^4.17.21"
     mapbox-gl: "npm:^3.3.0"
+    mitt: "npm:^3.0.1"
     next: "npm:14.2.3"
     postcss: "npm:^8"
     react: "npm:^18"
@@ -5098,6 +5099,13 @@ __metadata:
     minipass: "npm:^3.0.0"
     yallist: "npm:^4.0.0"
   checksum: 10c0/64fae024e1a7d0346a1102bb670085b17b7f95bf6cfdf5b128772ec8faf9ea211464ea4add406a3a6384a7d87a0cd1a96263692134323477b4fb43659a6cab78
+  languageName: node
+  linkType: hard
+
+"mitt@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "mitt@npm:3.0.1"
+  checksum: 10c0/3ab4fdecf3be8c5255536faa07064d05caa3dd332bd318ff02e04621f7b3069ca1de9106cfe8e7ced675abfc2bec2ce4c4ef321c4a1bb1fb29df8ae090741913
   languageName: node
   linkType: hard
 

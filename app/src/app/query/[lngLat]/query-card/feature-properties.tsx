@@ -1,5 +1,3 @@
-import { TaxInfo } from "@/app/query/[lngLat]/query-card/tax-info";
-import { isLCMDParcel } from "@/types/features";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 export const FeatureProperties = ({
