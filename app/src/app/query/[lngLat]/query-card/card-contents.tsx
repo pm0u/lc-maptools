@@ -1,12 +1,11 @@
 "use client";
 
-import { useMapboxMapContext } from "@/components/mapbox/context";
+import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { Features } from "@/app/query/[lngLat]/query-card/features";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Loader } from "@/app/query/[lngLat]/query-card/loader";
-import uniqBy from "lodash/uniqBy";
 
 export const CardContents = () => {
   const { lngLat } = useParams<{ lngLat: string }>();
@@ -17,9 +16,7 @@ export const CardContents = () => {
   useEffect(() => {
     if (mapInitialized) {
       const [lng, lat] = decodeURIComponent(lngLat).split(",");
-      const queriedFeatures = queryLngLat([parseFloat(lng), parseFloat(lat)]);
-      const deduped = uniqBy(queriedFeatures, (feature) => feature.id);
-      setFeatures(deduped);
+      setFeatures(queryLngLat([parseFloat(lng), parseFloat(lat)]));
     }
   }, [lngLat, queryLngLat, mapInitialized]);
 

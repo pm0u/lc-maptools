@@ -1,6 +1,6 @@
 import { FeatureInfo } from "@/app/query/[lngLat]/query-card/feature-info";
 import { useCardContext } from "@/components/card/context";
-import { useMapboxMapContext } from "@/components/mapbox/context";
+import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { usePathname, useSearchParams } from "next/navigation";

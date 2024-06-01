@@ -1,4 +1,4 @@
-import { FileImport } from "@/components/file-import";
+import { FileImport } from "./file-import";
 
 const Page = () => {
   return <FileImport />;

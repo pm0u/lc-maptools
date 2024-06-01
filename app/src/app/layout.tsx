@@ -2,10 +2,9 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 import { MapboxMap } from "@/components/mapbox/map";
-import { MapboxMapProvider } from "@/components/mapbox/context";
-import { NavBar } from "@/components/navbar";
-import { LeftSideBar } from "@/components/left-sidebar";
+import { MapboxMapProvider } from "@/components/mapbox/mapbox-map-context";
 import { DataLayersProvider } from "@/contexts/data-layers";
+import { AppFooter } from "@/app/footer";
 
 export const metadata: Metadata = {
   title: "Lake County Mappings",
@@ -27,15 +26,14 @@ export default function RootLayout({
       </head>
       <body className="h-screen w-screen relative bg-base-200 flex flex-col gap-2">
         <MapboxMapProvider>
-          <NavBar />
           <DataLayersProvider>
             <div className="z-10 relative flex-1 m-8 pointer-events-none">
-              <LeftSideBar />
               {children}
             </div>
           </DataLayersProvider>
           <MapboxMap />
         </MapboxMapProvider>
+        <AppFooter />
       </body>
     </html>
   );
