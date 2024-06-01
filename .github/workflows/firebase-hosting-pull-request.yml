@@ -26,13 +26,14 @@ jobs:
           SHA=${{ github.event.pull_request.head.sha }}
           echo "SHORT_SHA=${SHA::7}" >> $GITHUB_ENV
 
+      - name: Install Node Dependencies
+        uses: ./.github/actions/node
+
+        # After node so that corepack is enabled
       - name: Install Tippecanoe
         uses: ./.github/actions/tippecanoe
         env:
           TIPPECANOE_VERSION: 2.53.0
-
-      - name: Install Node Dependencies
-        uses: ./.github/actions/node
 
       - name: Data
         uses: ./.github/actions/data
