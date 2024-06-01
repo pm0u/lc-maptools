@@ -1,6 +1,6 @@
 "use client";
 
-import { useMapboxMapContext } from "@/components/mapbox/context";
+import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { randomColor } from "~data";
 import { useCallback, useContext, useState, createContext } from "react";
 import tinycolor from "tinycolor2";

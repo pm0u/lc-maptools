@@ -1,5 +1,5 @@
 "use client";
-import { useMapboxMapContext } from "./context";
+import { useMapboxMapContext } from "./mapbox-map-context";
 import { cva } from "class-variance-authority";
 
 const map = cva(["!z-0 !inset-0 !absolute"], {
