@@ -31,7 +31,7 @@ export const getLineWidth = ({
         ["^", 2, 0.7 * (1 + selectedSize / 100)],
         ["^", 2, 0.4 * (1 + unselectedSize / 100)],
       ]
-    : ["^", 2, 1.5 * (1 + unselectedSize / 100)],
+    : ["^", 2, 0.4 * (1 + unselectedSize / 100)],
   18,
   selectable
     ? [

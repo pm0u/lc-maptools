@@ -103,7 +103,7 @@ export const useMapboxMap = () => {
                   "#48c242",
                   "#594630",
                 ],
-                "line-width": getLineWidth({ unselectedSize: -20 }),
+                "line-width": getLineWidth({ unselectedSize: -30 }),
               },
             },
           ],
