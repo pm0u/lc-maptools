@@ -11,8 +11,10 @@
 # -pg - no tilestats in metadata (used for mapbox tile api?)
 # -x - exclude property
 ###
+FILTER='{"tax_parcels":["!=","AREAID",0]}'
+echo $FILTER
 EXCLUDE='-x stroke-width -x stroke-opacity -x fill -x stroke -x class -x gpstype -x pattern -x fill-opacity -x creator'
-OPTIONS="-pt -z16 -pC -pc -ai -pk -pg -pS $EXCLUDE"
+OPTIONS="-pt -z16 -pC -pc -ai -pk -pg -pS $EXCLUDE --feature-filter=$FILTER"
 
 echo "Generating tiles from JSON..."
 

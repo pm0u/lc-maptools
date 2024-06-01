@@ -1,4 +1,4 @@
-import { LCMDParcel } from "@/types/features";
+import { LCMDParcel, isLCMDParcel } from "@/types/features";
 import { AreaId } from "../../../data/types/properties";
 
 type AreaDef = {
@@ -67,6 +67,20 @@ export const millLevy = lcTaxAreas.reduce((levies, area) => {
     [area.id]: area.millLevy,
   };
 }, {} as Record<AreaId, number>);
+
+export const getFormattedCountyTaxesForFeatures = (features: LCMDParcel[]) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(getCountyTaxesForFeatures(features));
+};
+
+export const getCountyTaxesForFeatures = (features: LCMDParcel[]) => {
+  return features.reduce(
+    (total, feature) => total + getCountyTaxes(feature),
+    0
+  );
+};
 
 export const getCountyTaxes = (feature: LCMDParcel) => {
   return feature.properties.ASSESSED_V * millLevy[feature.properties.AREAID];

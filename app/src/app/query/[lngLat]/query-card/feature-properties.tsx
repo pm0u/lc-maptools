@@ -25,7 +25,6 @@ export const FeatureProperties = ({
           ))}
         </tbody>
       </table>
-      {isLCMDParcel(feature) ? <TaxInfo feature={feature} /> : null}
     </div>
   ) : null;
 };
