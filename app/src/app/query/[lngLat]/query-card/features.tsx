@@ -24,7 +24,6 @@ export const Features = ({
 
   useEffect(() => {
     if (searchParams.get("feature") !== `${features.indexOf(currentFeature)}`) {
-      console.log("features", { pathname });
       const newParams = new URLSearchParams(searchParams);
       newParams.set("feature", features.indexOf(currentFeature).toString());
       router.replace(pathname + `?` + newParams.toString());

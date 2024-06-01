@@ -127,20 +127,17 @@ export const MapboxMapProvider = ({
   const zoomToFeature = useCallback(
     (feature: MapboxGeoJSONFeature, offset = [-140, 0] as [number, number]) => {
       if (map) {
-        const bounds = bbox(
-          transformScale(
-            bboxPolygon(
-              bbox(feature, {
-                recompute: true,
-              })
-            ),
-            0.0000000000000001
-          )
-        ).slice(0, 4) as BBoxXY;
+        const bounds = bbox(feature, {
+          recompute: true,
+        }).slice(0, 4) as BBoxXY;
         map.fitBounds(bounds, {
           pitch: map.getPitch(),
           bearing: map.getBearing(),
           offset,
+        });
+        // BBox is too big for some reason, so get a little closer
+        map.once("moveend", () => {
+          map.zoomIn();
         });
       }
     },
