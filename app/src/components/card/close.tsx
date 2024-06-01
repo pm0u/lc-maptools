@@ -1,16 +1,12 @@
 "use client";
 import { IoClose } from "react-icons/io5";
-import { useCallback } from "react";
-import { useRouterWithHash } from "@/hooks/use-router-with-hash";
+import { useCardContext } from "@/components/card/context";
 
 export const Close = () => {
-  const router = useRouterWithHash();
-  const onClose = useCallback(() => {
-    router.push("/");
-  }, [router]);
+  const { close } = useCardContext();
   return (
     <div className="flex items-center justify-end">
-      <button className="btn btn-ghost btn-circle" onClick={onClose}>
+      <button className="btn btn-ghost btn-circle" onClick={close}>
         <IoClose className="h-8 w-auto" />
       </button>
     </div>

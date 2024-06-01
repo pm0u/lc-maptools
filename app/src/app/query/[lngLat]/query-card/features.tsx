@@ -1,6 +1,9 @@
 import { FeatureInfo } from "@/app/query/[lngLat]/query-card/feature-info";
+import { useCardContext } from "@/components/card/context";
 import { useMapboxMapContext } from "@/components/mapbox/context";
+import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export const Features = ({
@@ -8,14 +11,31 @@ export const Features = ({
 }: {
   features: MapboxGeoJSONFeature[];
 }) => {
-  const { selectFeature } = useMapboxMapContext();
-  const [currentFeature, setCurrentFeature] = useState(features[0]);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const { selectFeature, clearSelectedFeatures } = useMapboxMapContext();
   const containerEl = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+  const [currentFeature, setCurrentFeature] = useState(
+    features[parseInt(searchParams.get("feature") ?? "0")]
+  );
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const pathname = usePathname();
+  const router = useRouterWithHash();
+  const { onClose } = useCardContext();
 
   useEffect(() => {
-    setCurrentFeature(features[0]);
-  }, [features]);
+    if (searchParams.get("feature") !== `${features.indexOf(currentFeature)}`) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("feature", features.indexOf(currentFeature).toString());
+      router.replace(pathname + `?` + newParams.toString());
+    }
+  }, [currentFeature, features, router, searchParams, pathname]);
+
+  useEffect(() => {
+    const off = onClose(clearSelectedFeatures);
+    return () => {
+      off();
+    };
+  }, [currentFeature, clearSelectedFeatures, onClose]);
 
   useEffect(() => {
     if (containerEl.current) {

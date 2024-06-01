@@ -16,7 +16,7 @@ const config: Config = {
     },
   },
   daisyui: {
-    themes: ["autumn"],
+    themes: ["cmyk"],
   },
 };
 export default config;

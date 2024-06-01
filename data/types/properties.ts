@@ -1,6 +1,12 @@
 import type { GeoJsonProperties, Polygon, Geometry } from "geojson";
 
-export type LCMDProperties = {
+export const areaIds = [
+  191, 112, 114, 193, 195, 196, 197, 198, 199, 189,
+] as const;
+
+export type AreaId = (typeof areaIds)[number];
+
+export type AvailableLCMDProperties = {
   FID: number;
   OBJECTID: number;
   AccountNum: number;
@@ -33,7 +39,7 @@ export type LCMDProperties = {
   PARCELNB: string;
   MHSPACE: string;
   PARCELSEQ: number;
-  AREAID: number;
+  AREAID: AreaId;
   ACCTTYPE: string;
   BUSINESSNA: string;
   MAPNO: string;
@@ -116,18 +122,27 @@ export type LCMDProperties = {
   Shape__Length: number;
 };
 
+export type AvailablePublicLandProperties = {
+  adm_manage: string;
+  adm_code: string;
+  GIS_acres: number;
+};
+
 export type ExtendedGeoJson<
   AddtlProperties extends GeoJsonProperties = GeoJsonProperties,
   Geo extends Geometry = Polygon
-> = GeoJSON.FeatureCollection<Geo, LCMDProperties & AddtlProperties> & {
+> = GeoJSON.FeatureCollection<
+  Geo,
+  AvailableLCMDProperties & AddtlProperties
+> & {
   id: string;
 };
 
-export type ExtendedLCMDGeoJson = ExtendedGeoJson<LCMDProperties>;
+export type ExtendedLCMDGeoJson = ExtendedGeoJson<AvailableLCMDProperties>;
 
 export type ArcGISResponse = GeoJSON.FeatureCollection<
   Polygon,
-  LCMDProperties
+  AvailableLCMDProperties
 > & {
   properties?: {
     exceededTransferLimit?: true;

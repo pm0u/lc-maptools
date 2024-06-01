@@ -16,16 +16,12 @@
       {
         "name": "next"
       }
-    ],
-    "paths": {
-      "@/*": ["./src/*"],
-      "~/*": ["./*"]
-    }
+    ]
   },
   "include": [
     "@types/node",
     "src/*",
-    "types/geo-json.ts",
+    "types/properties.ts",
     "src/generate-data.ts",
     "index.ts"
   ]

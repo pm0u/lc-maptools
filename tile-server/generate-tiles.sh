@@ -4,14 +4,18 @@
 ###
 # -pt - don't combine tiny polygons
 # -pC - uncompressed
+# -pc - don't clip
 # -ai - generate IDs if missing
 # -pk - no size limit
 # -pS - only simplify below maxzoom
 # -pg - no tilestats in metadata (used for mapbox tile api?)
 # -x - exclude property
 ###
+# Remove tax parcels with invalid AREAID
+FILTER='{"tax_parcels":["!=","AREAID",0]}'
+# Exclude properties from GeoJSON that we don't need
 EXCLUDE='-x stroke-width -x stroke-opacity -x fill -x stroke -x class -x gpstype -x pattern -x fill-opacity -x creator'
-OPTIONS="-pt -z16 -pC -ai -pk -pg -pS $EXCLUDE"
+OPTIONS="-pt -z16 -pC -pc -ai -pk -pg -pS $EXCLUDE --feature-filter=$FILTER"
 
 echo "Generating tiles from JSON..."
 

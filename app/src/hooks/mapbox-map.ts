@@ -13,6 +13,8 @@ import {
 } from "@/config/styles";
 import { getHighlightLayer, getSelectedLayer } from "@/lib/layers";
 
+export const LAND_LAYERS = ["tax_parcels", "public_land"];
+
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
   const [mapInitialized, setMapInitialized] = useState(false);
@@ -95,8 +97,13 @@ export const useMapboxMap = () => {
               "source-layer": "Eastside_Reroutes",
               type: "line",
               paint: {
-                "line-color": "#fd6",
-                "line-width": getLineWidth({ unselectedSize: -20 }),
+                "line-color": [
+                  "case",
+                  ["boolean", ["feature-state", "selected"], false],
+                  "#48c242",
+                  "#594630",
+                ],
+                "line-width": getLineWidth({ unselectedSize: -30 }),
               },
             },
           ],

@@ -1,4 +1,5 @@
 import { Close } from "@/components/card/close";
+import { CardInner } from "@/components/card/inner";
 import { cva } from "class-variance-authority";
 
 const card = cva(
@@ -28,9 +29,11 @@ export const Card = ({
 }) => {
   return (
     <dialog className={card({ position })}>
-      {closable ? <Close /> : null}
-      {title ? <h2 className="card-title">{title}</h2> : null}
-      {children}
+      <CardInner>
+        {closable ? <Close /> : null}
+        {title ? <h2 className="card-title">{title}</h2> : null}
+        {children}
+      </CardInner>
     </dialog>
   );
 };

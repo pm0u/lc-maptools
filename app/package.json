@@ -12,6 +12,7 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@headlessui/react": "^2.0.4",
     "@mapbox/togeojson": "mapbox/togeojson",
     "@turf/turf": "7.0.0-alpha.116",
     "@types/mapbox-gl": "^3.1.0",
@@ -20,6 +21,7 @@
     "daisyui": "^4.10.3",
     "lodash": "^4.17.21",
     "mapbox-gl": "^3.3.0",
+    "mitt": "^3.0.1",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
