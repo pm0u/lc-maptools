@@ -22,8 +22,21 @@ export const useRouterWithHash = () => {
     [router]
   );
 
+  const replace = useCallback(
+    (...args: Parameters<typeof router.replace>) => {
+      const [url, options] = args;
+      if (!url.includes("#")) {
+        router.replace(`${url}${getHash()}`, options);
+        return;
+      }
+      router.replace(...args);
+    },
+    [router]
+  );
+
   return {
     ...router,
+    replace,
     push,
   };
 };

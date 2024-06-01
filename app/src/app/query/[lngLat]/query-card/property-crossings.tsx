@@ -20,6 +20,7 @@ export const PropertyCrossings = ({
     highlightFeature,
     clearHighlightedFeatures,
     zoomToFeature,
+    zoomAndQueryFeature,
     map,
   } = useMapboxMapContext();
 
@@ -58,7 +59,10 @@ export const PropertyCrossings = ({
                       onMouseEnter={() => {
                         highlightFeature(property);
                       }}
-                      className="hover:bg-base-200"
+                      className="hover:bg-base-200 cursor-pointer"
+                      onClick={() => {
+                        zoomAndQueryFeature(property);
+                      }}
                     >
                       <td>
                         <div

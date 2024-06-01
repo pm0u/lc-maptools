@@ -6,6 +6,7 @@ import {
   bboxPolygon,
   flatten,
   lineChunk,
+  pointOnFeature,
   transformScale,
 } from "@turf/turf";
 import {
@@ -18,6 +19,8 @@ import {
 import { BBoxXY, MapboxLineFeature } from "@/types/mapbox";
 import { isMultiLineString } from "@/helpers/geojson";
 import { jsMap } from "@/helpers/map";
+import { useRouter } from "next/navigation";
+import { uniqBy } from "lodash";
 
 const QUERY_BBOX_SIZE = 5;
 let SELECTED_FEATURES: MapboxGeoJSONFeature[] = [];
@@ -28,7 +31,10 @@ type MapboxMapCtx = {
   mapContainer: HTMLDivElement | null;
   mapContainerRef: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
   mapActionState: "dragging" | "idle";
-  queryLngLat: (lngLat: LngLatLike) => MapboxGeoJSONFeature[];
+  queryLngLat: (
+    lngLat: LngLatLike,
+    options?: { dedupe: boolean }
+  ) => MapboxGeoJSONFeature[];
   mapInitialized: boolean;
   selectFeature: (
     feature: MapboxGeoJSONFeature,
@@ -42,6 +48,7 @@ type MapboxMapCtx = {
   clearHighlightedFeatures: () => void;
   propertiesAlongLine: (feature: MapboxLineFeature) => MapboxGeoJSONFeature[];
   zoomToFeature: (feature: MapboxGeoJSONFeature) => void;
+  zoomAndQueryFeature: (feature: MapboxGeoJSONFeature) => void;
 };
 
 // @ts-expect-error filled in in the context provider
@@ -52,11 +59,11 @@ export const MapboxMapProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { map, mapContainer, mapContainerRef, mapInitialized, layers } =
-    useMapboxMap();
+  const { map, mapContainer, mapContainerRef, mapInitialized } = useMapboxMap();
   const [mapActionState, setMapActionState] = useState<"idle" | "dragging">(
     "idle"
   );
+  const router = useRouter();
 
   useEffect(() => {
     const onDragStart = () => {
@@ -141,14 +148,20 @@ export const MapboxMapProvider = ({
   );
 
   const queryLngLat = useCallback(
-    (lngLat: LngLatLike) => {
+    (
+      lngLat: LngLatLike,
+      { dedupe = true }: { dedupe: boolean } = { dedupe: true }
+    ) => {
       if (map) {
         const point = map.project(lngLat);
         const bbox = [
           [point.x - QUERY_BBOX_SIZE, point.y - QUERY_BBOX_SIZE],
           [point.x + QUERY_BBOX_SIZE, point.y + QUERY_BBOX_SIZE],
         ] as [PointLike, PointLike];
-        return map.queryRenderedFeatures(bbox);
+        const features = map.queryRenderedFeatures(bbox);
+        if (!dedupe) return features;
+        const deduped = uniqBy(features, (feature) => feature.id);
+        return deduped;
       }
       throw Error("Map is not initialized");
     },
@@ -223,6 +236,38 @@ export const MapboxMapProvider = ({
     [map, clearHighlightedFeatures, zoomToFeature]
   );
 
+  const zoomAndQueryFeature = useCallback(
+    (feature: MapboxGeoJSONFeature) => {
+      if (map) {
+        const point = pointOnFeature(feature);
+        const features = queryLngLat(
+          point.geometry.coordinates.slice(0, 2) as [number, number]
+        );
+        const featureInd = features.findIndex(
+          (queriedFeature) => queriedFeature.id === feature.id
+        );
+        clearSelectedFeatures();
+        clearHighlightedFeatures();
+        router.push(
+          `/query/${point.geometry.coordinates
+            .slice(0, 2)
+            .join(",")}?feature=${featureInd}`
+        );
+        setTimeout(() => {
+          zoomToFeature(feature);
+        }, 1);
+      }
+    },
+    [
+      router,
+      zoomToFeature,
+      map,
+      queryLngLat,
+      clearSelectedFeatures,
+      clearHighlightedFeatures,
+    ]
+  );
+
   return (
     <MapboxMapContext.Provider
       value={{
@@ -238,6 +283,7 @@ export const MapboxMapProvider = ({
         zoomToFeature,
         highlightFeature,
         clearHighlightedFeatures,
+        zoomAndQueryFeature,
       }}
     >
       {children}
