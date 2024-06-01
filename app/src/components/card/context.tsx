@@ -17,22 +17,24 @@ const CardContext = createContext<CardContextType>(
   {}
 );
 
-const cardEvents = mitt<CardEvents>();
-
 export const CardProvider = ({ children }: { children: React.ReactNode }) => {
+  const cardEvents = useMemo(() => mitt<CardEvents>(), []);
   const router = useRouterWithHash();
 
-  const onClose = useCallback((fn: () => void) => {
-    cardEvents.on("close", fn);
-    return () => {
-      cardEvents.off("close", fn);
-    };
-  }, []);
+  const onClose = useCallback(
+    (fn: () => void) => {
+      cardEvents.on("close", fn);
+      return () => {
+        cardEvents.off("close", fn);
+      };
+    },
+    [cardEvents]
+  );
 
   const close = useCallback(() => {
     cardEvents.emit("close");
     router.push("/");
-  }, [router]);
+  }, [router, cardEvents]);
 
   const value = useMemo(() => ({ onClose, close }), [onClose, close]);
 

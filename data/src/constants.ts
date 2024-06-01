@@ -1,7 +1,7 @@
 import {
   AvailableLCMDProperties,
   AvailablePublicLandProperties,
-} from "~/types/properties";
+} from "../types/properties";
 
 export const LCMD_QUERY_ENDPOINT =
   "https://services1.arcgis.com/38PTfoP8IjlBsxZN/arcgis/rest/services/LCMDParcelInfo/FeatureServer/0/query";
