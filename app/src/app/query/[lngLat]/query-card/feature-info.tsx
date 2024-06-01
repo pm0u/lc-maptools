@@ -3,7 +3,6 @@ import { PropertyCrossings } from "@/app/query/[lngLat]/query-card/property-cros
 import { tw } from "@/helpers";
 import { isLine } from "@/helpers/geojson";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
-import { LakeCountyFeature } from "@/types/features";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -15,7 +14,7 @@ export const FeatureInfo = ({
   feature,
   className,
 }: {
-  feature: LakeCountyFeature | MapboxGeoJSONFeature;
+  feature: MapboxGeoJSONFeature;
   className?: string;
 }) => {
   const router = useRouterWithHash();

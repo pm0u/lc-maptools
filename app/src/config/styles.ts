@@ -1,7 +1,7 @@
 import { Expression, LineLayout, LinePaint } from "mapbox-gl";
 
 const SELECTED_FILL_COLOR = "#8c0327";
-const SELECTED_LINE_COLOR = "#8c0327";
+const SELECTED_LINE_COLOR = "#fff";
 const HIGHLIGHTED_FILL_COLOR = "#fff232";
 const HIGHLIGHTED_LINE_COLOR = "#fff232";
 
@@ -74,7 +74,7 @@ export const SELECTED_LINE_STYLE: { paint: LinePaint; layout: LineLayout } = {
     "line-color": [
       "case",
       ["boolean", ["feature-state", "selected"], false],
-      "white",
+      SELECTED_LINE_COLOR,
       "transparent",
     ],
   },

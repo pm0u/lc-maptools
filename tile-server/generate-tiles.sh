@@ -11,8 +11,9 @@
 # -pg - no tilestats in metadata (used for mapbox tile api?)
 # -x - exclude property
 ###
+# Remove tax parcels with invalid AREAID
 FILTER='{"tax_parcels":["!=","AREAID",0]}'
-echo $FILTER
+# Exclude properties from GeoJSON that we don't need
 EXCLUDE='-x stroke-width -x stroke-opacity -x fill -x stroke -x class -x gpstype -x pattern -x fill-opacity -x creator'
 OPTIONS="-pt -z16 -pC -pc -ai -pk -pg -pS $EXCLUDE --feature-filter=$FILTER"
 
