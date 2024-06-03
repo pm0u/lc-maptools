@@ -7,12 +7,6 @@ import { useCallback, useMemo, useState } from "react";
 import { MdContentCopy } from "react-icons/md";
 import { ExportModal } from "@/components/export-modal";
 
-/**
- * @todo allow user to specify yes/no column headings
- *
- * Some kinda dropdown menu thing.. checkbox? or options?
- */
-
 export const BottomRow = ({
   features,
   withTaxes = true,

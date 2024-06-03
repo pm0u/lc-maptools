@@ -1,14 +1,7 @@
 "use client";
 import { LAND_LAYERS, useMapboxMap } from "@/hooks/mapbox-map";
 import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
-import {
-  bbox,
-  bboxPolygon,
-  flatten,
-  lineChunk,
-  pointOnFeature,
-  transformScale,
-} from "@turf/turf";
+import { bbox, flatten, lineChunk, pointOnFeature } from "@turf/turf";
 import {
   useContext,
   createContext,
@@ -47,7 +40,10 @@ type MapboxMapCtx = {
   clearSelectedFeatures: () => void;
   clearHighlightedFeatures: () => void;
   propertiesAlongLine: (feature: MapboxLineFeature) => MapboxGeoJSONFeature[];
-  zoomToFeature: (feature: MapboxGeoJSONFeature) => void;
+  zoomToFeature: (
+    feature: MapboxGeoJSONFeature,
+    options?: { offset?: [number, number]; pitch?: number }
+  ) => void;
   zoomAndQueryFeature: (feature: MapboxGeoJSONFeature) => void;
 };
 
@@ -91,7 +87,7 @@ export const MapboxMapProvider = ({
           const flattened = flatten(feature);
           chunks = flattened.features
             .map(
-              (feature) => lineChunk(feature, 30, { units: "feet" }).features
+              (feature) => lineChunk(feature, 10, { units: "feet" }).features
             )
             .flat();
         } else {
@@ -125,13 +121,21 @@ export const MapboxMapProvider = ({
   );
 
   const zoomToFeature = useCallback(
-    (feature: MapboxGeoJSONFeature, offset = [-140, 0] as [number, number]) => {
+    (
+      feature: MapboxGeoJSONFeature,
+      {
+        offset = [-140, 0],
+        pitch,
+      }: { offset?: [number, number]; pitch?: number } = {
+        offset: [-140, 0] as [number, number],
+      }
+    ) => {
       if (map) {
         const bounds = bbox(feature, {
           recompute: true,
         }).slice(0, 4) as BBoxXY;
         map.fitBounds(bounds, {
-          pitch: map.getPitch(),
+          pitch: pitch ?? map.getPitch(),
           bearing: map.getBearing(),
           offset,
         });
