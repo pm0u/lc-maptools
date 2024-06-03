@@ -64,14 +64,18 @@ export const BottomRow = ({
         </td>
         {withTaxes ? <TotalTaxValue features={features} /> : null}
       </tr>
-      <ExportModal
-        data={exportableFeatures}
-        open={exporting}
-        onClose={() => {
-          setExporting(false);
-        }}
-        exportName={exportName}
-      />
+      <tr className="hidden">
+        <td>
+          <ExportModal
+            data={exportableFeatures}
+            open={exporting}
+            onClose={() => {
+              setExporting(false);
+            }}
+            exportName={exportName}
+          />
+        </td>
+      </tr>
     </>
   );
 };

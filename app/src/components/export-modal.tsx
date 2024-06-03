@@ -2,6 +2,13 @@ import { CloseButton } from "@/components/card/close-button";
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { objectsToCsv } from "@/lib/csv";
 import { downloadBlob } from "@/lib/download";
+import {
+  getCountyTaxes,
+  getFormattedCountyTaxes,
+  isTaxCalculableFeature,
+} from "@/lib/tax";
+import { isLCMDParcel } from "@/types/features";
+import { isPolygonFeature } from "@/types/mapbox";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useCallback, useState } from "react";
 import type { MouseEventHandler } from "react";
@@ -24,28 +31,62 @@ export const ExportModal = ({
 }) => {
   const [, copy] = useCopyToClipboard();
   const [includeHeadings, setIncludeHeadings] = useState(true);
+  const [includeTaxValues, setIncludeTaxValues] = useState(true);
   const [copyText, setCopyText] = useState(COPY_TEXT.rest);
 
   const onExport: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault();
+      if (includeTaxValues) {
+        const dataWithTax = data.map((item) => {
+          if (isTaxCalculableFeature(item)) {
+            return {
+              ...item,
+              taxValue: getFormattedCountyTaxes(item),
+            };
+          }
+          return item;
+        });
+        const csv = objectsToCsv(dataWithTax, {
+          withHeadings: includeHeadings,
+        });
+        downloadBlob(csv, `${exportName}.csv`);
+        return;
+      }
       const csv = objectsToCsv(data, { withHeadings: includeHeadings });
       downloadBlob(csv, `${exportName}.csv`);
     },
-    [data, includeHeadings]
+    [data, includeHeadings, exportName, includeTaxValues]
   );
 
   const onCopy: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault();
-      const csv = objectsToCsv(data, { withHeadings: includeHeadings });
-      copy(csv);
+      if (includeTaxValues) {
+        const dataWithTax = data.map((item) => {
+          if (isTaxCalculableFeature(item)) {
+            return {
+              ...item,
+              taxValue: getFormattedCountyTaxes(item),
+            };
+          }
+          return item;
+        });
+        console.log({ dataWithTax });
+        const csv = objectsToCsv(dataWithTax, {
+          withHeadings: includeHeadings,
+        });
+        copy(csv);
+      } else {
+        const csv = objectsToCsv(data, { withHeadings: includeHeadings });
+        copy(csv);
+      }
       setCopyText(COPY_TEXT.completed);
       setTimeout(() => {
         setCopyText(COPY_TEXT.rest);
       }, 800);
     },
-    [includeHeadings, data, copy]
+    [includeHeadings, data, copy, includeTaxValues]
   );
 
   return (
@@ -58,8 +99,8 @@ export const ExportModal = ({
             <CloseButton onClose={onClose} />
           </div>
           <form className="flex flex-col items-start">
-            <div className="flex-flex-col items-start pb-2">
-              <label className="label cursor-pointer">
+            <div className="flex-flex-col justify-start pb-2">
+              <label className="label cursor-pointer justify-start">
                 <input
                   type="checkbox"
                   className="checkbox"
@@ -69,6 +110,19 @@ export const ExportModal = ({
                   onChange={() => setIncludeHeadings((s) => !s)}
                 />
                 <span className="label-text pl-4">Include Headings</span>
+              </label>
+              <label className="label cursor-pointer justify-start">
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  id="withTaxValues"
+                  name="withTaxValues"
+                  checked={includeTaxValues}
+                  onChange={() => setIncludeTaxValues((s) => !s)}
+                />
+                <span className="label-text pl-4">
+                  Include Computed Tax Values
+                </span>
               </label>
             </div>
             <div className="flex gap-2">

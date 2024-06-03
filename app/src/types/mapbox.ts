@@ -19,3 +19,13 @@ export type MapboxPolygonFeature =
   | MapboxFeature<GeoJSON.MultiPolygon>;
 
 export type BBoxXY = [number, number, number, number];
+
+export const isPolygonFeature = (obj: object): obj is MapboxPolygonFeature => {
+  return (
+    "geometry" in obj &&
+    typeof obj.geometry === "object" &&
+    obj.geometry !== null &&
+    "type" in obj.geometry &&
+    (obj.geometry.type === "Polygon" || obj.geometry.type === "MultiPolygon")
+  );
+};
