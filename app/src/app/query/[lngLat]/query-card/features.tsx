@@ -2,6 +2,7 @@ import { FeatureInfo } from "@/app/query/[lngLat]/query-card/feature-info";
 import { useCardContext } from "@/components/card/context";
 import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
+import { getFeatureName } from "@/lib/data";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -69,12 +70,7 @@ export const Features = ({
             «
           </button>
           <div className="join-item flex-1 text-center font-bold px-2">
-            {currentFeature.properties?.name?.trim() ||
-              currentFeature.properties?.NAME?.trim() ||
-              currentFeature.properties?.description?.trim() ||
-              currentFeature.properties?.title?.trim() ||
-              currentFeature.properties?.adm_manage?.trim() ||
-              "Unknown"}
+            {getFeatureName(currentFeature)}
           </div>
           <button
             className="join-item btn"

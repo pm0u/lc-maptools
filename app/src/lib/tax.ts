@@ -1,10 +1,32 @@
-import { LCMDParcel, isLCMDParcel } from "@/types/features";
-import { AreaId } from "../../../data/types/properties";
+import { LCMDParcel } from "@/types/features";
+import { AreaId, areaIds } from "../../../data/types/properties";
 
 type AreaDef = {
   name: string;
   id: AreaId;
   millLevy: number;
+};
+
+export type TaxCalculableFeature = {
+  properties: {
+    ASSESSED_V: number;
+    AREAID: AreaId;
+  };
+};
+
+export const isTaxCalculableFeature = (
+  item: object
+): item is TaxCalculableFeature => {
+  return (
+    "properties" in item &&
+    typeof item.properties === "object" &&
+    item.properties !== null &&
+    "AREAID" in item.properties &&
+    typeof item.properties.AREAID === "number" &&
+    areaIds.includes(item.properties.AREAID as AreaId) &&
+    "ASSESSED_V" in item.properties &&
+    typeof item.properties.ASSESSED_V === "number"
+  );
 };
 
 export const lcTaxAreas: AreaDef[] = [
@@ -68,25 +90,27 @@ export const millLevy = lcTaxAreas.reduce((levies, area) => {
   };
 }, {} as Record<AreaId, number>);
 
-export const getFormattedCountyTaxesForFeatures = (features: LCMDParcel[]) => {
+export const getFormattedCountyTaxesForFeatures = (
+  features: TaxCalculableFeature[]
+) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   }).format(getCountyTaxesForFeatures(features));
 };
 
-export const getCountyTaxesForFeatures = (features: LCMDParcel[]) => {
+export const getCountyTaxesForFeatures = (features: TaxCalculableFeature[]) => {
   return features.reduce(
     (total, feature) => total + getCountyTaxes(feature),
     0
   );
 };
 
-export const getCountyTaxes = (feature: LCMDParcel) => {
+export const getCountyTaxes = (feature: TaxCalculableFeature) => {
   return feature.properties.ASSESSED_V * millLevy[feature.properties.AREAID];
 };
 
-export const getFormattedCountyTaxes = (feature: LCMDParcel) => {
+export const getFormattedCountyTaxes = (feature: TaxCalculableFeature) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",

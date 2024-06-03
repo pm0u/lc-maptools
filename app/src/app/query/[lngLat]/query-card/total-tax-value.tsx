@@ -10,9 +10,9 @@ export const TotalTaxValue = ({
   const validFeatures = features.filter(isLCMDParcel);
 
   return (
-    <tr>
-      <td colSpan={2}>Total</td>
+    <>
+      <td>Total</td>
       <td>{getFormattedCountyTaxesForFeatures(validFeatures)}</td>
-    </tr>
+    </>
   );
 };

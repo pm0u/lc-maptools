@@ -31,7 +31,7 @@ export const Card = ({
     <dialog className={card({ position })}>
       <CardInner>
         {closable ? <Close /> : null}
-        {title ? <h2 className="card-title">{title}</h2> : null}
+        {title ? <h2 className="card-title pr-8">{title}</h2> : null}
         {children}
       </CardInner>
     </dialog>

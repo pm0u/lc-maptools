@@ -1,4 +1,7 @@
+import { BottomRow } from "@/app/query/[lngLat]/query-card/bottom-row";
+import { getFeatureName } from "@/lib/data";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
+import slugify from "slugify";
 
 export const FeatureProperties = ({
   feature,
@@ -21,6 +24,13 @@ export const FeatureProperties = ({
               <td>{v}</td>
             </tr>
           ))}
+          <BottomRow
+            withTaxes={false}
+            features={[feature]}
+            exportName={slugify(getFeatureName(feature).toLocaleLowerCase(), {
+              replacement: "_",
+            })}
+          />
         </tbody>
       </table>
     </div>
