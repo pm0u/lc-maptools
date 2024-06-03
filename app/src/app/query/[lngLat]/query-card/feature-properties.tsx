@@ -1,3 +1,4 @@
+import { BottomRow } from "@/app/query/[lngLat]/query-card/bottom-row";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 export const FeatureProperties = ({
@@ -21,6 +22,7 @@ export const FeatureProperties = ({
               <td>{v}</td>
             </tr>
           ))}
+          <BottomRow withTaxes={false} features={[feature]} />
         </tbody>
       </table>
     </div>

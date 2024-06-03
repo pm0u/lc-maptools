@@ -1,7 +1,7 @@
 import { FaGithub } from "react-icons/fa";
 export const AppFooter = () => {
   return (
-    <div className="bg-base-100 bg-opacity-50 flex gap-2 pt-1 px-1 absolute bottom-0 left-1/2 -translate-x-1/2 items-center text-xs">
+    <div className="bg-base-100 bg-opacity-50 flex gap-2 py-0.5 px-1 absolute bottom-0 left-1/2 -translate-x-1/2 items-center text-xs">
       <span>created by paul mourer</span>
       <span>|</span>
       <span>open source</span>

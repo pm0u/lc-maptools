@@ -1,3 +1,4 @@
+import { BottomRow } from "@/app/query/[lngLat]/query-card/bottom-row";
 import { Loader } from "@/app/query/[lngLat]/query-card/loader";
 import { TaxInfo } from "@/app/query/[lngLat]/query-card/tax-info";
 import { TotalTaxValue } from "@/app/query/[lngLat]/query-card/total-tax-value";
@@ -82,7 +83,7 @@ export const PropertyCrossings = ({
                     </tr>
                   );
                 })}
-                <TotalTaxValue features={properties} />
+                <BottomRow features={properties} />
               </tbody>
             </table>
           </>
