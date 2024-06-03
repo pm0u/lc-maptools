@@ -16,9 +16,11 @@ import { ExportModal } from "@/components/export-modal";
 export const BottomRow = ({
   features,
   withTaxes = true,
+  exportName,
 }: {
   features: MapboxGeoJSONFeature[];
   withTaxes?: boolean;
+  exportName?: string;
 }) => {
   const [, copy] = useCopyToClipboard();
   const [exporting, setExporting] = useState(false);
@@ -68,6 +70,7 @@ export const BottomRow = ({
         onClose={() => {
           setExporting(false);
         }}
+        exportName={exportName}
       />
     </>
   );

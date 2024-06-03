@@ -3,10 +3,12 @@ import { Loader } from "@/app/query/[lngLat]/query-card/loader";
 import { TaxInfo } from "@/app/query/[lngLat]/query-card/tax-info";
 import { TotalTaxValue } from "@/app/query/[lngLat]/query-card/total-tax-value";
 import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
+import { getFeatureName } from "@/lib/data";
 import { isLCMDParcel } from "@/types/features";
 import { MapboxLineFeature } from "@/types/mapbox";
 import { FillLayer, MapboxGeoJSONFeature } from "mapbox-gl";
 import { useEffect, useState } from "react";
+import slugify from "slugify";
 
 export const PropertyCrossings = ({
   feature,
@@ -83,7 +85,13 @@ export const PropertyCrossings = ({
                     </tr>
                   );
                 })}
-                <BottomRow features={properties} />
+                <BottomRow
+                  features={properties}
+                  exportName={`${slugify(
+                    getFeatureName(feature).toLowerCase(),
+                    { replacement: "_" }
+                  )}_crossings`}
+                />
               </tbody>
             </table>
           </>
