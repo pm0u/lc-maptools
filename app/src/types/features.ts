@@ -26,7 +26,10 @@ export type LakeCountyFeature = LCMDParcel | PublicParcel;
 export const isLCMDParcel = (
   feature: MapboxGeoJSONFeature
 ): feature is LCMDParcel => {
-  return feature.sourceLayer === "tax_parcels";
+  return (
+    feature.sourceLayer === "tax_parcels" ||
+    feature.sourceLayer === "tax_parcels_old"
+  );
 };
 
 export const isPublicLandParcel = (

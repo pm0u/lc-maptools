@@ -1,5 +1,8 @@
-import { LCMDParcel } from "@/types/features";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { AreaId, areaIds } from "../../../data/types/properties";
+import { MapboxPolygonFeature } from "@/types/mapbox";
+
+const countyPropertyOwnerNames = ["BOARD OF COUNTY COMMISSIONERS"];
 
 type AreaDef = {
   name: string;
@@ -7,16 +10,17 @@ type AreaDef = {
   millLevy: number;
 };
 
-export type TaxCalculableFeature = {
+export type TaxCalculableFeature = MapboxPolygonFeature & {
   properties: {
     ASSESSED_V: number;
     AREAID: AreaId;
+    CUR_TAX?: number;
   };
 };
 
-export const isTaxCalculableFeature = (
-  item: object
-): item is TaxCalculableFeature => {
+export const isTaxCalculableFeature = <T extends object>(
+  item: T
+): item is TaxCalculableFeature & T => {
   return (
     "properties" in item &&
     typeof item.properties === "object" &&
@@ -27,6 +31,10 @@ export const isTaxCalculableFeature = (
     "ASSESSED_V" in item.properties &&
     typeof item.properties.ASSESSED_V === "number"
   );
+};
+
+export const isCountyProperty = (feature: MapboxGeoJSONFeature) => {
+  return countyPropertyOwnerNames.includes(feature.properties?.NAME?.trim());
 };
 
 export const lcTaxAreas: AreaDef[] = [
@@ -107,6 +115,12 @@ export const getCountyTaxesForFeatures = (features: TaxCalculableFeature[]) => {
 };
 
 export const getCountyTaxes = (feature: TaxCalculableFeature) => {
+  if (
+    "CUR_TAX" in feature.properties &&
+    typeof feature.properties.CUR_TAX === "number"
+  ) {
+    return feature.properties.CUR_TAX;
+  }
   return feature.properties.ASSESSED_V * millLevy[feature.properties.AREAID];
 };
 

@@ -3,6 +3,7 @@ import { Loader } from "@/app/query/[lngLat]/query-card/loader";
 import { TaxInfo } from "@/app/query/[lngLat]/query-card/tax-info";
 import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { getFeatureName } from "@/lib/data";
+import { isTaxCalculableFeature } from "@/lib/tax";
 import { isLCMDParcel } from "@/types/features";
 import { MapboxLineFeature } from "@/types/mapbox";
 import { FillLayer, MapboxGeoJSONFeature } from "mapbox-gl";
@@ -80,7 +81,7 @@ export const PropertyCrossings = ({
                           property.properties?.adm_manage?.trim() ||
                           "UNKNOWN"}
                       </td>
-                      {isLCMDParcel(property) ? (
+                      {isTaxCalculableFeature(property) ? (
                         <TaxInfo feature={property} />
                       ) : null}
                     </tr>

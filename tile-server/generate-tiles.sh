@@ -26,8 +26,8 @@ mkdir -p tiles
 
 if [ -f "./tippecanoe" ]; then
   echo "Using local tippecanoe executable..."
-  ./tippecanoe $OPTIONS -e tiles ../data/generated/tax_parcels.json ../data/generated/public_land.json ../data/static/Eastside_Reroutes.json --force
+  ./tippecanoe $OPTIONS -e tiles ../data/static/tax_parcels_old.json ../data/generated/tax_parcels.json ../data/generated/public_land.json ../data/static/Eastside_Reroutes.json --force
 else
   echo "Using global tippecanoe executable..."
-  tippecanoe $OPTIONS -e tiles ../data/generated/tax_parcels.json ../data/generated/public_land.json ../data/static/Eastside_Reroutes.json --force
+  tippecanoe $OPTIONS -e tiles ../data/static/tax_parcels_old.json ../data/generated/tax_parcels.json ../data/generated/public_land.json ../data/static/Eastside_Reroutes.json --force
 fi

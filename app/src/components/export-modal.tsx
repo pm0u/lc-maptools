@@ -3,13 +3,13 @@ import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { objectsToCsv } from "@/lib/csv";
 import { downloadBlob } from "@/lib/download";
 import {
-  getCountyTaxes,
   getFormattedCountyTaxes,
+  isCountyProperty,
   isTaxCalculableFeature,
 } from "@/lib/tax";
-import { isLCMDParcel } from "@/types/features";
-import { isPolygonFeature } from "@/types/mapbox";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { cloneDeep } from "lodash";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { useCallback, useState } from "react";
 import type { MouseEventHandler } from "react";
 
@@ -24,7 +24,7 @@ export const ExportModal = ({
   onClose,
   exportName = "map_data",
 }: {
-  data: object[];
+  data: MapboxGeoJSONFeature[];
   open: boolean;
   onClose: () => void;
   exportName?: string;
@@ -32,13 +32,18 @@ export const ExportModal = ({
   const [, copy] = useCopyToClipboard();
   const [includeHeadings, setIncludeHeadings] = useState(true);
   const [includeTaxValues, setIncludeTaxValues] = useState(true);
+  const [excludeCountyProperty, setExcludeCountyProperty] = useState(true);
   const [copyText, setCopyText] = useState(COPY_TEXT.rest);
 
   const onExport: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault();
+      let features = cloneDeep(data).filter((f) => isTaxCalculableFeature(f));
+      if (excludeCountyProperty) {
+        features = features.filter((f) => !isCountyProperty(f));
+      }
       if (includeTaxValues) {
-        const dataWithTax = data.map((item) => {
+        features = features.map((item) => {
           if (isTaxCalculableFeature(item)) {
             return {
               ...item,
@@ -47,23 +52,22 @@ export const ExportModal = ({
           }
           return item;
         });
-        const csv = objectsToCsv(dataWithTax, {
-          withHeadings: includeHeadings,
-        });
-        downloadBlob(csv, `${exportName}.csv`);
-        return;
       }
-      const csv = objectsToCsv(data, { withHeadings: includeHeadings });
+      const csv = objectsToCsv(features, { withHeadings: includeHeadings });
       downloadBlob(csv, `${exportName}.csv`);
     },
-    [data, includeHeadings, exportName, includeTaxValues]
+    [data, includeHeadings, exportName, includeTaxValues, excludeCountyProperty]
   );
 
   const onCopy: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault();
+      let features = cloneDeep(data).filter((f) => isTaxCalculableFeature(f));
+      if (excludeCountyProperty) {
+        features = features.filter((f) => !isCountyProperty(f));
+      }
       if (includeTaxValues) {
-        const dataWithTax = data.map((item) => {
+        features = features.map((item) => {
           if (isTaxCalculableFeature(item)) {
             return {
               ...item,
@@ -72,21 +76,15 @@ export const ExportModal = ({
           }
           return item;
         });
-        console.log({ dataWithTax });
-        const csv = objectsToCsv(dataWithTax, {
-          withHeadings: includeHeadings,
-        });
-        copy(csv);
-      } else {
-        const csv = objectsToCsv(data, { withHeadings: includeHeadings });
-        copy(csv);
       }
+      const csv = objectsToCsv(features, { withHeadings: includeHeadings });
+      copy(csv);
       setCopyText(COPY_TEXT.completed);
       setTimeout(() => {
         setCopyText(COPY_TEXT.rest);
       }, 800);
     },
-    [includeHeadings, data, copy, includeTaxValues]
+    [includeHeadings, data, copy, includeTaxValues, excludeCountyProperty]
   );
 
   return (
@@ -122,6 +120,19 @@ export const ExportModal = ({
                 />
                 <span className="label-text pl-4">
                   Include Computed Tax Values
+                </span>
+              </label>
+              <label className="label cursor-pointer justify-start">
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  id="excludeCounty"
+                  name="excludeCounty"
+                  checked={excludeCountyProperty}
+                  onChange={() => setExcludeCountyProperty((s) => !s)}
+                />
+                <span className="label-text pl-4">
+                  Exclude County Property (County does not collect tax revenue)
                 </span>
               </label>
             </div>

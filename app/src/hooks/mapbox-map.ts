@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import mapboxgl, { Map, MapEventType } from "mapbox-gl";
-import layerStyles from "~data/generated/tax_parcel-layer-styles.json";
+import layerStyles from "~data/generated/tax_parcels-layer-styles.json";
+import oldLayerStyles from "~data/generated/tax_parcels_old-layer-styles.json";
 import publicLandStyles from "~data/generated/public_land-layer-styles.json";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 import { mapboxToken, tileDomain } from "@/env";
@@ -13,7 +14,7 @@ import {
 } from "@/config/styles";
 import { getHighlightLayer, getSelectedLayer } from "@/lib/layers";
 
-export const LAND_LAYERS = ["tax_parcels", "public_land"];
+export const LAND_LAYERS = ["tax_parcels", "public_land", "tax_parcels_old"];
 
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
@@ -22,7 +23,7 @@ export const useMapboxMap = () => {
   const router = useRouterWithHash();
   const [selectionLayers, setSelectionlayers] = useState<string[]>([]);
   const [highlightLayers, setHighlightLayers] = useState<string[]>([]);
-  const [layers, setLayers] = useState<string[]>([]);
+  //const [layers, setLayers] = useState<string[]>([]);
 
   const onMapRender = useCallback((e: MapEventType["render"]) => {
     const { target: map } = e;
@@ -83,6 +84,18 @@ export const useMapboxMap = () => {
               paint: layerStyles,
             },
             {
+              id: "tax_parcels_old",
+              slot: "bottom",
+              source: "LCMDParcels",
+              "source-layer": "tax_parcels_old",
+              type: "fill",
+              // @ts-expect-error
+              paint: oldLayerStyles,
+              layout: {
+                visibility: "none",
+              },
+            },
+            {
               id: "public_land",
               source: "LCMDParcels",
               slot: "bottom",
@@ -111,7 +124,12 @@ export const useMapboxMap = () => {
         );
         setSelectionlayers(selectedLayers);
         setHighlightLayers(highlightedLayers);
-        setLayers(["Eastside_Reroutes", "tax_parcels", "public_land"]);
+        //setLayers([
+        //  "Eastside_Reroutes",
+        //  "tax_parcels",
+        //  "public_land",
+        //  "tax_parcels_old",
+        //]);
         addHillShade(_map);
 
         // Events
@@ -128,7 +146,7 @@ export const useMapboxMap = () => {
     mapInitialized,
     selectionLayers,
     highlightLayers,
-    layers,
+    //layers,
   };
 };
 

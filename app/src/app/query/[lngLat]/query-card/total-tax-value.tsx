@@ -1,5 +1,9 @@
-import { getFormattedCountyTaxesForFeatures } from "@/lib/tax";
-import { isLCMDParcel } from "@/types/features";
+import {
+  TaxCalculableFeature,
+  getFormattedCountyTaxesForFeatures,
+  isCountyProperty,
+  isTaxCalculableFeature,
+} from "@/lib/tax";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 export const TotalTaxValue = ({
@@ -7,7 +11,9 @@ export const TotalTaxValue = ({
 }: {
   features: MapboxGeoJSONFeature[];
 }) => {
-  const validFeatures = features.filter(isLCMDParcel);
+  const validFeatures = features.filter(
+    (feature) => isTaxCalculableFeature(feature) && !isCountyProperty(feature)
+  ) as TaxCalculableFeature[];
 
   return (
     <>

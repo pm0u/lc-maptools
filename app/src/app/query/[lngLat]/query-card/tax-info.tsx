@@ -1,10 +1,17 @@
-import { getFormattedCountyTaxes } from "@/lib/tax";
-import { LCMDParcel } from "@/types/features";
+import {
+  TaxCalculableFeature,
+  getFormattedCountyTaxes,
+  isCountyProperty,
+} from "@/lib/tax";
 
-export const TaxInfo = ({ feature }: { feature: LCMDParcel }) => {
+export const TaxInfo = ({ feature }: { feature: TaxCalculableFeature }) => {
   return (
     <td>
-      <span>{getFormattedCountyTaxes(feature)}</span>
+      {isCountyProperty(feature) ? (
+        <span>-</span>
+      ) : (
+        <span>{getFormattedCountyTaxes(feature)}</span>
+      )}
     </td>
   );
 };

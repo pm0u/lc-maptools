@@ -7,6 +7,7 @@ import { promises } from "node:fs";
 import { LCMD_QUERY_ENDPOINT, LCPL_QUERY_ENDPOINT } from "./internal";
 import { layerifyByOwner, layerifyPublicLand } from "./internal";
 const { writeFile, mkdir, rm } = promises;
+import oldParcelJson from "../static/tax_parcels_old.json";
 
 export const generateData = () => {
   console.log("Deleting any existing data and fetching fresh");
@@ -23,7 +24,7 @@ export const generateData = () => {
           console.log(`Writing data for ${LCMD_QUERY_ENDPOINT}`);
           return Promise.all([
             writeFile(
-              "generated/tax_parcel-layer-styles.json",
+              "generated/tax_parcels-layer-styles.json",
               JSON.stringify(layerStyles)
             ),
             writeFile("generated/tax_parcels.json", JSON.stringify(data)),
@@ -43,6 +44,20 @@ export const generateData = () => {
             writeFile("generated/public_land.json", JSON.stringify(data)),
           ]);
         }),
-      ])
+      ]).then(async () => {
+        // @ts-expect-error
+        const layerStyles = layerifyByOwner(oldParcelJson);
+        console.log(`Writing data for old tax parcels`);
+        return Promise.all([
+          writeFile(
+            "generated/tax_parcels_old-layer-styles.json",
+            JSON.stringify(layerStyles)
+          ),
+          writeFile(
+            "generated/tax_parcels_old.json",
+            JSON.stringify(oldParcelJson)
+          ),
+        ]);
+      })
     );
 };

@@ -10,6 +10,7 @@
     "app:prebuild": "yarn workspace @lc-maptools/app prebuild",
     "app:build": "yarn workspace @lc-maptools/app build",
     "app:dev": "yarn workspace @lc-maptools/app dev",
+    "app:start": "yarn workspace @lc-maptools/app start",
     "ci:install-tippecanoe": "./ci-install-tippecanoe.sh",
     "dev": "concurrently -c blue,magenta -n app,tiles \"yarn app:dev\" \"yarn tiles:serve\"",
     "dev:start": "yarn generate && yarn dev",

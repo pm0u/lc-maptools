@@ -45,6 +45,9 @@ type MapboxMapCtx = {
     options?: { offset?: [number, number]; pitch?: number }
   ) => void;
   zoomAndQueryFeature: (feature: MapboxGeoJSONFeature) => void;
+  toggleLayer: (layerId: string) => void;
+  isLayerVisible: (layerId: string) => boolean;
+  //layers: string[];
 };
 
 // @ts-expect-error filled in in the context provider
@@ -117,7 +120,7 @@ export const MapboxMapProvider = ({
       }
       throw Error("Map is not initialized");
     },
-    [map]
+    [map, layers]
   );
 
   const zoomToFeature = useCallback(
@@ -159,14 +162,14 @@ export const MapboxMapProvider = ({
           [point.x - QUERY_BBOX_SIZE, point.y - QUERY_BBOX_SIZE],
           [point.x + QUERY_BBOX_SIZE, point.y + QUERY_BBOX_SIZE],
         ] as [PointLike, PointLike];
-        const features = map.queryRenderedFeatures(bbox);
+        const features = map.queryRenderedFeatures(bbox, { layers });
         if (!dedupe) return features;
         const deduped = uniqBy(features, (feature) => feature.id);
         return deduped;
       }
       throw Error("Map is not initialized");
     },
-    [map]
+    [map, layers]
   );
 
   const clearSelectedFeatures = useCallback(() => {
@@ -269,6 +272,31 @@ export const MapboxMapProvider = ({
     ]
   );
 
+  const toggleLayer = useCallback(
+    (layerId: (typeof layers)[number]) => {
+      if (map) {
+        map.setLayoutProperty(
+          layerId,
+          "visibility",
+          map.getLayoutProperty(layerId, "visibility") !== "none"
+            ? "none"
+            : "visible"
+        );
+      }
+    },
+    [map]
+  );
+
+  const isLayerVisible = useCallback(
+    (layerId: (typeof layers)[number]) => {
+      if (map) {
+        return map.getLayoutProperty(layerId, "visibility") !== "none";
+      }
+      return false;
+    },
+    [map]
+  );
+
   return (
     <MapboxMapContext.Provider
       value={{
@@ -285,6 +313,9 @@ export const MapboxMapProvider = ({
         highlightFeature,
         clearHighlightedFeatures,
         zoomAndQueryFeature,
+        toggleLayer,
+        isLayerVisible,
+        //layers,
       }}
     >
       {children}
