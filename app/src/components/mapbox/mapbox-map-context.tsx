@@ -58,7 +58,8 @@ export const MapboxMapProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { map, mapContainer, mapContainerRef, mapInitialized } = useMapboxMap();
+  const { map, mapContainer, mapContainerRef, mapInitialized, layers } =
+    useMapboxMap();
   const [mapActionState, setMapActionState] = useState<"idle" | "dragging">(
     "idle"
   );
@@ -120,7 +121,7 @@ export const MapboxMapProvider = ({
       }
       throw Error("Map is not initialized");
     },
-    [map, layers]
+    [map]
   );
 
   const zoomToFeature = useCallback(
@@ -162,14 +163,15 @@ export const MapboxMapProvider = ({
           [point.x - QUERY_BBOX_SIZE, point.y - QUERY_BBOX_SIZE],
           [point.x + QUERY_BBOX_SIZE, point.y + QUERY_BBOX_SIZE],
         ] as [PointLike, PointLike];
-        const features = map.queryRenderedFeatures(bbox, { layers });
+        const features = map.queryRenderedFeatures(bbox);
+        console.log({ features });
         if (!dedupe) return features;
         const deduped = uniqBy(features, (feature) => feature.id);
         return deduped;
       }
       throw Error("Map is not initialized");
     },
-    [map, layers]
+    [map]
   );
 
   const clearSelectedFeatures = useCallback(() => {

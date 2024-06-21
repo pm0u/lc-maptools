@@ -2,7 +2,6 @@
   "private": true,
   "workspaces": [
     "app",
-    "tile-server",
     "data"
   ],
   "packageManager": "yarn@4.2.2",
@@ -11,13 +10,7 @@
     "app:build": "yarn workspace @lc-maptools/app build",
     "app:dev": "yarn workspace @lc-maptools/app dev",
     "app:start": "yarn workspace @lc-maptools/app start",
-    "ci:install-tippecanoe": "./ci-install-tippecanoe.sh",
-    "dev": "concurrently -c blue,magenta -n app,tiles \"yarn app:dev\" \"yarn tiles:serve\"",
-    "dev:start": "yarn generate && yarn dev",
-    "generate:data": "yarn workspace @lc-maptools/data generate",
-    "generate:tiles": "yarn workspace @lc-maptools/tile-server generate",
-    "generate": "yarn generate:data && yarn generate:tiles",
-    "tiles:serve": "yarn workspace @lc-maptools/tile-server serve"
+    "generate:data": "yarn workspace @lc-maptools/data generate"
   },
   "dependencies": {
     "concurrently": "^8.2.2"

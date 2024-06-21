@@ -23,7 +23,7 @@ export const useMapboxMap = () => {
   const router = useRouterWithHash();
   const [selectionLayers, setSelectionlayers] = useState<string[]>([]);
   const [highlightLayers, setHighlightLayers] = useState<string[]>([]);
-  //const [layers, setLayers] = useState<string[]>([]);
+  const [layers, setLayers] = useState<string[]>([]);
 
   const onMapRender = useCallback((e: MapEventType["render"]) => {
     const { target: map } = e;
@@ -67,7 +67,7 @@ export const useMapboxMap = () => {
 
         _map.addSource("LCMDParcels", {
           type: "vector",
-          tiles: [`${tileDomain}/{z}/{x}/{y}.pbf`],
+          tiles: [`${tileDomain}/tiles/{z}/{x}/{y}`],
           maxzoom: 16,
         });
 
@@ -107,7 +107,7 @@ export const useMapboxMap = () => {
             {
               id: "Eastside_Reroutes",
               source: "LCMDParcels",
-              "source-layer": "Eastside_Reroutes",
+              "source-layer": "eastside_reroutes",
               type: "line",
               paint: {
                 "line-color": [
@@ -124,12 +124,12 @@ export const useMapboxMap = () => {
         );
         setSelectionlayers(selectedLayers);
         setHighlightLayers(highlightedLayers);
-        //setLayers([
-        //  "Eastside_Reroutes",
-        //  "tax_parcels",
-        //  "public_land",
-        //  "tax_parcels_old",
-        //]);
+        setLayers([
+          "Eastside_Reroutes",
+          "tax_parcels",
+          "public_land",
+          "tax_parcels_old",
+        ]);
         addHillShade(_map);
 
         // Events
@@ -146,7 +146,7 @@ export const useMapboxMap = () => {
     mapInitialized,
     selectionLayers,
     highlightLayers,
-    //layers,
+    layers,
   };
 };
 
