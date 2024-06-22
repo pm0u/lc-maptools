@@ -2,12 +2,12 @@ import { MapboxPolygonFeature } from "@/types/mapbox";
 import {
   PUBLIC_LAND_PROPERTIES,
   TAX_PARCEL_PROPERTIES,
-} from "../../../data/src/constants";
+} from "../../data/src/constants";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import {
   AvailableLCMDProperties,
   AvailablePublicLandProperties,
-} from "../../../data/types/properties";
+} from "../../data/types/properties";
 
 export type LCMDParcel = Omit<MapboxPolygonFeature, "properties"> & {
   properties: {

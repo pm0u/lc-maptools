@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import mapboxgl, { Map, MapEventType } from "mapbox-gl";
-import layerStyles from "~data/generated/tax_parcels-layer-styles.json";
-import oldLayerStyles from "~data/generated/tax_parcels_old-layer-styles.json";
-import publicLandStyles from "~data/generated/public_land-layer-styles.json";
+import layerStyles from "~/data/generated/tax_parcels-layer-styles.json";
+import oldLayerStyles from "~/data/generated/tax_parcels_old-layer-styles.json";
+import publicLandStyles from "~/data/generated/public_land-layer-styles.json";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 import { mapboxToken, tileDomain } from "@/env";
 import {
