@@ -11,9 +11,9 @@ import oldParcelJson from "../static/tax_parcels_old.json";
 
 export const generateData = () => {
   console.log("Deleting any existing data and fetching fresh");
-  return rm("generated", { force: true, recursive: true })
+  return rm("data/generated", { force: true, recursive: true })
     .catch()
-    .then(() => mkdir("generated"))
+    .then(() => mkdir("data/generated"))
     .then(() =>
       Promise.all([
         getFullGeoJson(
@@ -24,10 +24,10 @@ export const generateData = () => {
           console.log(`Writing data for ${LCMD_QUERY_ENDPOINT}`);
           return Promise.all([
             writeFile(
-              "generated/tax_parcels-layer-styles.json",
+              "data/generated/tax_parcels-layer-styles.json",
               JSON.stringify(layerStyles)
             ),
-            writeFile("generated/tax_parcels.json", JSON.stringify(data)),
+            writeFile("data/generated/tax_parcels.json", JSON.stringify(data)),
           ]);
         }),
         getFullGeoJson(
@@ -50,11 +50,11 @@ export const generateData = () => {
         console.log(`Writing data for old tax parcels`);
         return Promise.all([
           writeFile(
-            "generated/tax_parcels_old-layer-styles.json",
+            "data/generated/tax_parcels_old-layer-styles.json",
             JSON.stringify(layerStyles)
           ),
           writeFile(
-            "generated/tax_parcels_old.json",
+            "data/generated/tax_parcels_old.json",
             JSON.stringify(oldParcelJson)
           ),
         ]);

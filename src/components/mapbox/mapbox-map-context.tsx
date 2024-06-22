@@ -47,7 +47,7 @@ type MapboxMapCtx = {
   zoomAndQueryFeature: (feature: MapboxGeoJSONFeature) => void;
   toggleLayer: (layerId: string) => void;
   isLayerVisible: (layerId: string) => boolean;
-  //layers: string[];
+  layers: string[];
 };
 
 // @ts-expect-error filled in in the context provider
@@ -317,7 +317,7 @@ export const MapboxMapProvider = ({
         zoomAndQueryFeature,
         toggleLayer,
         isLayerVisible,
-        //layers,
+        layers,
       }}
     >
       {children}
