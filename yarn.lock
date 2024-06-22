@@ -414,14 +414,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@lc-maptools/tile-server@workspace:tile-server":
-  version: 0.0.0-use.local
-  resolution: "@lc-maptools/tile-server@workspace:tile-server"
-  dependencies:
-    tsx: "npm:^4.10.5"
-  languageName: unknown
-  linkType: soft
-
 "@mapbox/jsonlint-lines-primitives@npm:^2.0.2":
   version: 2.0.2
   resolution: "@mapbox/jsonlint-lines-primitives@npm:2.0.2"
