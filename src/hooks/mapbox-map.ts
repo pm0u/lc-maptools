@@ -4,7 +4,7 @@ import layerStyles from "~/data/generated/tax_parcels-layer-styles.json";
 import oldLayerStyles from "~/data/generated/tax_parcels_old-layer-styles.json";
 import publicLandStyles from "~/data/generated/public_land-layer-styles.json";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
-import { mapboxToken, tileDomain } from "@/env";
+import { mapboxToken } from "@/env";
 import {
   HIGHLIGHTED_FILL_STYLE,
   HIGHLIGHTED_LINE_STYLE,
@@ -67,7 +67,9 @@ export const useMapboxMap = () => {
 
         _map.addSource("LCMDParcels", {
           type: "vector",
-          tiles: [`${tileDomain}/tiles/{z}/{x}/{y}`],
+          tiles: [
+            `${window.location.protocol}${window.location.host}/tiles/{z}/{x}/{y}`,
+          ],
           maxzoom: 16,
         });
 
