@@ -38,10 +38,10 @@ export const generateData = () => {
           console.log(`Writing data for ${LCPL_QUERY_ENDPOINT}`);
           return Promise.all([
             writeFile(
-              "generated/public_land-layer-styles.json",
+              "data/generated/public_land-layer-styles.json",
               JSON.stringify(layerStyles)
             ),
-            writeFile("generated/public_land.json", JSON.stringify(data)),
+            writeFile("data/generated/public_land.json", JSON.stringify(data)),
           ]);
         }),
       ]).then(async () => {
