@@ -157,6 +157,7 @@ export const MapboxMapProvider = ({
       lngLat: LngLatLike,
       { dedupe = true }: { dedupe: boolean } = { dedupe: true }
     ) => {
+      console.log("queryLngLat");
       if (map) {
         const point = map.project(lngLat);
         const bbox = [

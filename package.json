@@ -4,10 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:start": "yarn generate:data && yarn dev",
-    "prebuild": "yarn generate:data",
     "build": "next build",
-    "generate:data": "tsx ./data/generate-data.ts",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc"
