@@ -60,11 +60,15 @@ export const getLCMDLayers = async () => {
   return createSelectableLayers([
     {
       id: "tax_parcels",
+      // @ts-expect-error
       slot: "bottom",
       source: "LCMDParcels",
       "source-layer": "tax_parcels",
       type: "fill",
       paint: parcelStyles,
+      layout: {
+        visibility: "visible",
+      },
     },
     //{
     //  id: "tax_parcels_old",
