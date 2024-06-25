@@ -34,13 +34,13 @@ export const toColorFilter = (colors: {
   return {
     "fill-color": [
       "match",
-      ["get", "NAME"],
+      ["get", "name"],
       ...Object.entries(colors.fillColor).flat(),
       "#d2d2d2",
     ] satisfies Expression,
     "fill-outline-color": [
       "match",
-      ["get", "NAME"],
+      ["get", "name"],
       ...Object.entries(colors.fillOutlineColor).flat(),
       "#d2d2d2",
     ] satisfies Expression,
