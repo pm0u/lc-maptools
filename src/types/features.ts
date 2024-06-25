@@ -7,7 +7,7 @@ import { MapboxGeoJSONFeature } from "mapbox-gl";
 import {
   AvailableLCMDProperties,
   AvailablePublicLandProperties,
-} from "../../data/types/properties";
+} from "./properties";
 
 export type LCMDParcel = Omit<MapboxPolygonFeature, "properties"> & {
   properties: {

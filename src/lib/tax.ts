@@ -1,5 +1,5 @@
 import { MapboxGeoJSONFeature } from "mapbox-gl";
-import { AreaId, areaIds } from "../../data/types/properties";
+import { AreaId, areaIds } from "../types/properties";
 import { MapboxPolygonFeature } from "@/types/mapbox";
 
 const countyPropertyOwnerNames = ["BOARD OF COUNTY COMMISSIONERS"];

@@ -1,7 +1,7 @@
-import { ArcGISResponse } from "../types/properties";
+import { ArcGISResponse } from "../../types/properties";
 import { Expression } from "mapbox-gl";
 import tinycolor from "tinycolor2";
-import { selectColor } from "./internal";
+import { selectColor } from "../../../data/src/internal";
 
 export const layerifyByOwner = (geoJson: ArcGISResponse) => {
   const colors = geoJson.features.reduce(

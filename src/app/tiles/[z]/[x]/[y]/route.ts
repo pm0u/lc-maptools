@@ -1,3 +1,4 @@
+import { TILE_DATA_CDN_CACHE, TILE_DATA_CLIENT_CACHE } from "@/config/cache";
 import { tileQuery } from "@/lib/tile";
 
 type TileParams = { z: string; x: string; y: string };
@@ -41,7 +42,11 @@ export async function GET(
 
     const res = new Response(tile[0].mvt, {
       status: 200,
-      headers: { "Content-Type": "application/x-protobuf" },
+      headers: {
+        "Content-Type": "application/x-protobuf",
+        "s-max-age": TILE_DATA_CDN_CACHE.toString(),
+        "max-age": TILE_DATA_CLIENT_CACHE.toString(),
+      },
     });
     return res;
   } catch (e) {
