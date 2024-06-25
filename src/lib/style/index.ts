@@ -6,6 +6,8 @@ import {
   getLineWidth,
 } from "@/config/styles";
 import { getHighlightLayer, getSelectedLayer } from "@/lib/layers";
+import { getPrivateLandNames } from "@/lib/style/data";
+import { layerifyByName, layerifyPublicLand } from "@/lib/style/layerify";
 
 export const createSelectableLayer = ({
   layer,
@@ -38,11 +40,7 @@ export const createSelectableLayer = ({
   if (order === "below") {
     layers.push(layer);
   }
-  return {
-    layers,
-    highlightedLayer: `${layer.id}_highlighted`,
-    selectedLayer: `${layer.id}_selected`,
-  };
+  return layers;
 };
 
 export const createSelectableLayers = (layers: mapboxgl.AnyLayer[]) => {
@@ -52,43 +50,34 @@ export const createSelectableLayers = (layers: mapboxgl.AnyLayer[]) => {
       order: layer.type === "line" ? "below" : "above",
     })
   );
-  return layerResults.reduce(
-    (result, { highlightedLayer, selectedLayer }) => {
-      return {
-        highlightedLayers: [...result.highlightedLayers, highlightedLayer],
-        selectedLayers: [...result.selectedLayers, selectedLayer],
-      };
-    },
-    { highlightedLayers: [], selectedLayers: [] } as {
-      highlightedLayers: string[];
-      selectedLayers: string[];
-    }
-  );
+  return layerResults.flat();
 };
 
-const { highlightedLayers, selectedLayers } = addSelectableLayers(
-  [
+export const getLCMDLayers = async () => {
+  const parcelNames = await getPrivateLandNames();
+  const parcelStyles = layerifyByName(parcelNames);
+
+  return createSelectableLayers([
     {
       id: "tax_parcels",
       slot: "bottom",
       source: "LCMDParcels",
       "source-layer": "tax_parcels",
       type: "fill",
-      // @ts-expect-error
-      paint: layerStyles,
+      paint: parcelStyles,
     },
-    {
-      id: "tax_parcels_old",
-      slot: "bottom",
-      source: "LCMDParcels",
-      "source-layer": "tax_parcels_old",
-      type: "fill",
-      // @ts-expect-error
-      paint: oldLayerStyles,
-      layout: {
-        visibility: "none",
-      },
-    },
+    //{
+    //  id: "tax_parcels_old",
+    //  slot: "bottom",
+    //  source: "LCMDParcels",
+    //  "source-layer": "tax_parcels_old",
+    //  type: "fill",
+    //  // @ts-expect-error
+    //  paint: oldLayerStyles,
+    //  layout: {
+    //    visibility: "none",
+    //  },
+    //},
     {
       id: "public_land",
       source: "LCMDParcels",
@@ -96,7 +85,7 @@ const { highlightedLayers, selectedLayers } = addSelectableLayers(
       "source-layer": "public_land",
       type: "fill",
       // @ts-expect-error
-      paint: publicLandStyles,
+      paint: layerifyPublicLand(),
     },
     {
       id: "Eastside_Reroutes",
@@ -113,6 +102,5 @@ const { highlightedLayers, selectedLayers } = addSelectableLayers(
         "line-width": getLineWidth({ unselectedSize: -30 }),
       },
     },
-  ],
-  _map
-);
+  ]);
+};

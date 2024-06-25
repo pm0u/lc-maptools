@@ -22,7 +22,7 @@ export const queryLayer = ({
   layer: string;
   fields: string[];
 }) => /* sql */ `
-  (SELECT ST_AsMVT(q, '${layer}', 4096, 'geom', 'id') AS l FROM
+  (SELECT ST_AsMVT(q, '${layer}', 4096, 'geom') AS l FROM
         (SELECT ST_AsMvtGeom(
             geom,
             ST_TileEnvelope(${z}, ${x}, ${y}),

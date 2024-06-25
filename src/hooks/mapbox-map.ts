@@ -2,8 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import mapboxgl, { Map, MapEventType } from "mapbox-gl";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 import { mapboxToken } from "@/env";
+import Router from "next/navigation";
 
 export const LAND_LAYERS = ["tax_parcels", "public_land", "tax_parcels_old"];
+
+let isInitialized = false;
 
 export const useMapboxMap = () => {
   const [map, setMap] = useState<Map>();
@@ -20,53 +23,57 @@ export const useMapboxMap = () => {
     }
   }, []);
 
-  const onClick = useCallback(
-    (e: mapboxgl.MapMouseEvent) => {
-      const {
-        lngLat: { lng, lat },
-      } = e;
-      router.push(`/query/${lng},${lat}`);
-    },
-    [router]
-  );
+  const onClick = useCallback((e: mapboxgl.MapMouseEvent) => {
+    const {
+      lngLat: { lng, lat },
+    } = e;
+    router.push(`/query/${lng},${lat}`);
+  }, []);
 
   useEffect(() => {
-    if (mapContainer && mapContainer !== map?.getContainer()) {
-      if (map) {
-        setMapInitialized(false);
-        map.off("render", onMapRender);
-        map.off("click", onClick);
-        map.remove();
+    let _map: mapboxgl.Map;
+    const initMap = async () => {
+      if (mapContainer && !isInitialized) {
+        isInitialized = true;
+        const style = await fetch("/stylesheet.json").then((res) => res.json());
+        _map = new Map({
+          accessToken: mapboxToken,
+          container: mapContainer,
+          hash: true,
+          // Leadville
+          center: [-106.3335, 39.22324],
+          zoom: 10,
+          maxZoom: 22,
+          style,
+        });
+        _map.on("load", () => {
+          // To trigger events that are waiting on tile data
+          _map.on("render", onMapRender);
+          // Layers
+          setLayers([
+            "eastside_reroutes",
+            "tax_parcels",
+            "public_land",
+            "tax_parcels_old",
+          ]);
+          // Events
+          _map.on("click", onClick);
+        });
+        setMap(_map);
       }
-      const _map = new Map({
-        accessToken: mapboxToken,
-        container: mapContainer,
-        hash: true,
-        // Leadville
-        center: [-106.3335, 39.22324],
-        zoom: 10,
-        maxZoom: 22,
-      });
-      setMap(_map);
-      _map.on("load", () => {
-        // To trigger events that are waiting on tile data
-        _map.on("render", onMapRender);
+    };
 
-        // Layers
-        setLayers([
-          "Eastside_Reroutes",
-          "tax_parcels",
-          "public_land",
-          "tax_parcels_old",
-        ]);
-        // May need to setTerrrain ?
+    initMap();
 
-        // Events
-
-        _map.on("click", onClick);
-      });
-    }
-  }, [mapContainer, map, onClick, onMapRender]);
+    return () => {
+      console.log("cleanupMap");
+      isInitialized = false;
+      setMapInitialized(false);
+      _map?.off("render", onMapRender);
+      _map?.off("click", onClick);
+      _map?.remove();
+    };
+  }, [mapContainer, onClick, onMapRender]);
 
   return {
     map,

@@ -1,21 +1,20 @@
-import { ArcGISResponse } from "../../types/properties";
 import { Expression } from "mapbox-gl";
 import tinycolor from "tinycolor2";
-import { selectColor } from "../../../data/src/internal";
+import { selectColor } from "@/lib/color";
 
-export const layerifyByOwner = (geoJson: ArcGISResponse) => {
-  const colors = geoJson.features.reduce(
-    (obj, feature, i) => {
-      if (feature.properties.NAME in obj) return obj;
-      const color = obj.fillColor[feature.properties.NAME] ?? selectColor(i);
+export const layerifyByName = (names: string[]) => {
+  const colors = names.reduce(
+    (obj, name, i) => {
+      if (name in obj) return obj;
+      const color = obj.fillColor[name] ?? selectColor(i);
       return {
         fillColor: {
           ...obj.fillColor,
-          [feature.properties.NAME]: color,
+          [name]: color,
         },
         fillOutlineColor: {
           ...obj.fillOutlineColor,
-          [feature.properties.NAME]: tinycolor(color).darken(15).toHexString(),
+          [name]: tinycolor(color).darken(15).toHexString(),
         },
       };
     },

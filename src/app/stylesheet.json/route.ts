@@ -1,36 +1,24 @@
-import type { Style } from "mapbox-gl";
 import { TILE_DATA_CDN_CACHE, TILE_DATA_CLIENT_CACHE } from "@/config/cache";
+import { getLCMDLayers } from "@/lib/style";
+import { extendMapboxStandard } from "@/lib/style/mapbox-standard";
 
 export async function GET(req: Request) {
-  const style: Style = {
-    version: 1,
+  const lcmdLayers = await getLCMDLayers();
+
+  const style = extendMapboxStandard({
     sources: {
-      "mapbox-dem-hillshade": {
-        type: "raster-dem",
-        url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-        maxzoom: 13,
-      },
-      "mapbox-dem": {
-        type: "raster-dem",
-        url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-        maxzoom: 13,
-      },
       LCMDParcels: {
         type: "vector",
-        tiles: [`${req.headers.get("host")}/tiles/{z}/{x}/{y}`],
+        tiles: [
+          `${
+            req.headers.get("x-forwarded-proto") ?? "http"
+          }://${req.headers.get("host")}/tiles/{z}/{x}/{y}`,
+        ],
       },
     },
-    layers: [
-      {
-        id: "hillshading",
-        source: "mapbox-dem-hillshade",
-        type: "hillshade",
-        paint: {
-          "hillshade-exaggeration": 2.5,
-        },
-      },
-    ],
-  };
+    // @ts-expect-error
+    layers: [...lcmdLayers],
+  });
 
   const res = new Response(JSON.stringify(style), {
     headers: {
@@ -42,41 +30,3 @@ export async function GET(req: Request) {
 
   return res;
 }
-
-const createSelectableLayers = ({
-  layer,
-  order = "above",
-}: {
-  layer: mapboxgl.AnyLayer;
-  order?: "above" | "below";
-}) => {
-  const layers = [];
-  if (order === "above") {
-    layers.push(layer);
-  }
-  if (layer.type === "fill" || layer.type === "line") {
-    const { paint, layout, ...unstyledLayer } = layer;
-    layers.push({
-      ...unstyledLayer,
-      type: "line",
-      id: getSelectedLayer(layer.id),
-      ...(layer.type === "fill" ? SELECTED_FILL_STYLE : SELECTED_LINE_STYLE),
-    });
-    layers.push({
-      ...unstyledLayer,
-      type: "line",
-      id: getHighlightLayer(layer.id),
-      ...(layer.type === "fill"
-        ? HIGHLIGHTED_FILL_STYLE
-        : HIGHLIGHTED_LINE_STYLE),
-    });
-  }
-  if (order === "below") {
-    layers.push(layer);
-  }
-  return {
-    layers,
-    highlightedLayer: `${layer.id}_highlighted`,
-    selectedLayer: `${layer.id}_selected`,
-  };
-};
