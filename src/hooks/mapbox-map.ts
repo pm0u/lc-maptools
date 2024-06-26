@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import mapboxgl, { Map, MapEventType } from "mapbox-gl";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 import { mapboxToken } from "@/env";
-import Router from "next/navigation";
 
 export const LAND_LAYERS = ["tax_parcels", "public_land", "tax_parcels_old"];
 

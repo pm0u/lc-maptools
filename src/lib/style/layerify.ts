@@ -1,50 +1,32 @@
-import { Expression } from "mapbox-gl";
 import tinycolor from "tinycolor2";
 import { selectColor } from "@/lib/color";
+import mapboxgl from "mapbox-gl";
 
 export const layerifyByName = (names: string[]) => {
   const colors = names.reduce(
-    (obj, name, i) => {
-      if (name in obj) return obj;
-      const color = obj.fillColor[name] ?? selectColor(i);
+    (properties, name, i) => {
+      const color = selectColor(i);
       return {
-        fillColor: {
-          ...obj.fillColor,
-          [name]: color,
-        },
-        fillOutlineColor: {
-          ...obj.fillOutlineColor,
-          [name]: tinycolor(color).darken(15).toHexString(),
-        },
+        ...properties,
+        "fill-color": [...properties["fill-color"], name, color],
+        "fill-outline-color": [
+          ...properties["fill-outline-color"],
+          name,
+          tinycolor(color).darken(15).toHexString(),
+        ],
       };
     },
-    { fillColor: {}, fillOutlineColor: {} } as {
-      fillColor: Record<string, string>;
-      fillOutlineColor: Record<string, string>;
+    {
+      "fill-color": ["match", ["get", "name"]],
+      "fill-outline-color": ["match", ["get", "name"]],
+      "fill-opacity": 0.4,
     }
   );
-  return toColorFilter(colors);
-};
-
-export const toColorFilter = (colors: {
-  fillColor: Record<string, string>;
-  fillOutlineColor: Record<string, string>;
-}) => {
   return {
-    "fill-color": [
-      "match",
-      ["get", "name"],
-      ...Object.entries(colors.fillColor).flat(),
-      "#d2d2d2",
-    ] satisfies Expression,
-    "fill-outline-color": [
-      "match",
-      ["get", "name"],
-      ...Object.entries(colors.fillOutlineColor).flat(),
-      "#d2d2d2",
-    ] satisfies Expression,
-    "fill-opacity": 0.4,
-  };
+    ...colors,
+    "fill-color": [...colors["fill-color"], "#d2d2d2"],
+    "fill-outline-color": [...colors["fill-outline-color"], "#d2d2d2"],
+  } as Partial<mapboxgl.FillPaint>;
 };
 
 export const layerifyPublicLand = () => {

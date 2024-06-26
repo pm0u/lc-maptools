@@ -3,6 +3,7 @@ import { sql } from "@/lib/db";
 export const layerDefs = {
   tax_parcels: ["NAME", "acres"],
   public_land: ["adm_manage"],
+  eastside_reroutes: ["description", "name"],
 };
 
 export const allLayers = Object.keys(layerDefs) as Array<

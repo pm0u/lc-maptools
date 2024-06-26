@@ -66,9 +66,6 @@ export const getLCMDLayers = async () => {
       "source-layer": "tax_parcels",
       type: "fill",
       paint: parcelStyles,
-      layout: {
-        visibility: "visible",
-      },
     },
     //{
     //  id: "tax_parcels_old",
@@ -92,7 +89,7 @@ export const getLCMDLayers = async () => {
       paint: layerifyPublicLand(),
     },
     {
-      id: "Eastside_Reroutes",
+      id: "eastside_reroutes",
       source: "LCMDParcels",
       "source-layer": "eastside_reroutes",
       type: "line",
