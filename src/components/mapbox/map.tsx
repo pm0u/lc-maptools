@@ -12,13 +12,13 @@ const map = cva(["!z-0 !inset-0 !absolute"], {
   },
 });
 
-const MapboxMap = memo(() => {
+const MapboxMap = () => {
   const { mapContainerRef, mapActionState } = useMapboxMapContext();
 
   return (
     <div ref={mapContainerRef} className={map({ cursor: mapActionState })} />
   );
-});
+};
 
 MapboxMap.displayName = "MapboxMap";
 

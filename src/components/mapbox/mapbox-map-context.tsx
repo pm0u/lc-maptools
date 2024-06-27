@@ -21,7 +21,6 @@ let HIGHLIGHTED_FEATURES: MapboxGeoJSONFeature[] = [];
 
 type MapboxMapCtx = {
   map?: Map | undefined;
-  mapContainer: HTMLDivElement | null;
   mapContainerRef: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
   mapActionState: "dragging" | "idle";
   queryLngLat: (
@@ -157,7 +156,6 @@ export const MapboxMapProvider = ({
       lngLat: LngLatLike,
       { dedupe = true }: { dedupe: boolean } = { dedupe: true }
     ) => {
-      console.log("queryLngLat");
       if (map) {
         const point = map.project(lngLat);
         const bbox = [
@@ -165,7 +163,6 @@ export const MapboxMapProvider = ({
           [point.x + QUERY_BBOX_SIZE, point.y + QUERY_BBOX_SIZE],
         ] as [PointLike, PointLike];
         const features = map.queryRenderedFeatures(bbox);
-        console.log({ features });
         if (!dedupe) return features;
         const deduped = uniqBy(features, (feature) => feature.id);
         return deduped;
@@ -304,7 +301,6 @@ export const MapboxMapProvider = ({
     <MapboxMapContext.Provider
       value={{
         map,
-        mapContainer,
         mapContainerRef,
         mapActionState,
         queryLngLat,

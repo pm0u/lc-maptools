@@ -14,7 +14,7 @@ export const CardContents = () => {
   const [features, setFeatures] = useState<MapboxGeoJSONFeature[] | null>(null);
 
   useEffect(() => {
-    if (mapInitialized) {
+    if (mapInitialized && lngLat) {
       const [lng, lat] = decodeURIComponent(lngLat).split(",");
       setFeatures(queryLngLat([parseFloat(lng), parseFloat(lat)]));
     }

@@ -16,11 +16,19 @@ export const useMapboxMap = () => {
 
   const onMapRender = useCallback((e: MapEventType["render"]) => {
     const { target: map } = e;
-    if (map.areTilesLoaded()) {
+    if (map.areTilesLoaded() && map.isStyleLoaded()) {
       setMapInitialized(true);
       map.off("render", onMapRender);
     }
   }, []);
+
+  const onStyleImportLoad = useCallback(
+    (e: MapEventType["style.import.load"]) => {
+      const { target: map } = e;
+      addHillShade(map);
+    },
+    []
+  );
 
   const onClick = useCallback((e: mapboxgl.MapMouseEvent) => {
     const {
@@ -45,32 +53,29 @@ export const useMapboxMap = () => {
           maxZoom: 22,
           style,
         });
-        _map.on("load", () => {
-          // To trigger events that are waiting on tile data
-          _map.on("render", onMapRender);
-          // Layers
-          setLayers([
-            "eastside_reroutes",
-            "tax_parcels",
-            "public_land",
-            "tax_parcels_old",
-          ]);
-          // Events
-          _map.on("click", onClick);
-        });
+        //fetch("/stylesheet.json")
+        //  .then((res) => res.json())
+        //  .then((style) => {
+        //    _map.setStyle(style);
+        //  });
         setMap(_map);
+        _map.on("render", onMapRender);
+        _map.on("click", onClick);
+        _map.on("style.import.load", onStyleImportLoad);
       }
     };
 
     initMap();
 
     return () => {
-      console.log("cleanupMap");
-      isInitialized = false;
-      setMapInitialized(false);
-      _map?.off("render", onMapRender);
-      _map?.off("click", onClick);
-      _map?.remove();
+      if (_map) {
+        isInitialized = false;
+        setMapInitialized(false);
+        _map.off("render", onMapRender);
+        _map.off("style.import.load", onStyleImportLoad);
+        _map.off("click", onClick);
+        _map.remove();
+      }
     };
   }, [mapContainer, onClick, onMapRender]);
 
@@ -81,4 +86,26 @@ export const useMapboxMap = () => {
     mapInitialized,
     layers,
   };
+};
+
+const addHillShade = (map: Map) => {
+  map.addSource("mapbox-dem-hillshade", {
+    type: "raster-dem",
+    url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+    maxzoom: 13,
+  });
+  map.addSource("mapbox-dem", {
+    type: "raster-dem",
+    url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+    maxzoom: 13,
+  });
+  map.addLayer({
+    id: "hillshading",
+    source: "mapbox-dem-hillshade",
+    type: "hillshade",
+    paint: {
+      "hillshade-exaggeration": 0.2,
+    },
+  });
+  map.setTerrain({ source: "mapbox-dem", exaggeration: 1.9 });
 };
