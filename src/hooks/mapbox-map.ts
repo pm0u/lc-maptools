@@ -53,12 +53,8 @@ export const useMapboxMap = () => {
           maxZoom: 22,
           style,
         });
-        //fetch("/stylesheet.json")
-        //  .then((res) => res.json())
-        //  .then((style) => {
-        //    _map.setStyle(style);
-        //  });
         setMap(_map);
+        setLayers([...LAND_LAYERS, "eastside_reroutes"]);
         _map.on("render", onMapRender);
         _map.on("click", onClick);
         _map.on("style.import.load", onStyleImportLoad);
@@ -77,7 +73,7 @@ export const useMapboxMap = () => {
         _map.remove();
       }
     };
-  }, [mapContainer, onClick, onMapRender]);
+  }, [mapContainer, onClick, onMapRender, onStyleImportLoad]);
 
   return {
     map,
