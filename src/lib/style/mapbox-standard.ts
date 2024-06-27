@@ -3,6 +3,7 @@ import { Style } from "mapbox-gl";
 export const extendMapboxStandard = (style: Partial<Style>): Style => {
   return {
     version: 8,
+    // @ts-expect-error
     imports: [
       {
         id: "basemap",
