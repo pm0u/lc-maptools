@@ -53,7 +53,7 @@ export type AvailableLCMDProperties = {
   /** street name of plot address */
   STREETNAME: string;
   /** street designation eg ave, st, etc */
-  DESIGNATIO: string;
+  DESIGNATION: string;
   DIRECTIONS: string;
   SUFFIX: string;
   UNITNUMBER: string;

@@ -1,8 +1,14 @@
 import { sql } from "@/lib/db";
+import {
+  AvailableLCMDProperties,
+  AvailablePublicLandProperties,
+} from "@/types/properties";
 
 export const layerDefs = {
-  tax_parcels: ["NAME", "acres"],
-  public_land: ["adm_manage"],
+  tax_parcels: ["NAME", "ACRES"] satisfies Array<keyof AvailableLCMDProperties>,
+  public_land: ["adm_manage", "GIS_acres"] satisfies Array<
+    keyof AvailablePublicLandProperties
+  >,
   eastside_reroutes: ["description", "name"],
 };
 
