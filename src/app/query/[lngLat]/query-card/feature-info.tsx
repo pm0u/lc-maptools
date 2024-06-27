@@ -57,6 +57,16 @@ export const FeatureInfo = ({
         </TabList>
         <TabPanels className="bg-white flex-1 rounded-b-lg rounded-e-lg overflow-y-scroll border relative">
           <TabPanel>
+            {/** just to test that the API works.. */}
+            <button
+              className="btn"
+              onClick={() => {
+                const params = new URLSearchParams();
+                fetch(`/a/crossings/eastside_reroutes/${feature.id}`);
+              }}
+            >
+              I am a button
+            </button>
             <FeatureProperties feature={feature} />
           </TabPanel>
           {isLine(feature) ? (

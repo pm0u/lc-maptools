@@ -1,20 +1,5 @@
 import { sql } from "@/lib/db";
-import {
-  AvailableLCMDProperties,
-  AvailablePublicLandProperties,
-} from "@/types/properties";
-
-export const layerDefs = {
-  tax_parcels: ["NAME", "ACRES"] satisfies Array<keyof AvailableLCMDProperties>,
-  public_land: ["adm_manage", "GIS_acres"] satisfies Array<
-    keyof AvailablePublicLandProperties
-  >,
-  eastside_reroutes: ["description", "name"],
-};
-
-export const allLayers = Object.keys(layerDefs) as Array<
-  keyof typeof layerDefs
->;
+import { DEFAULT_TILE_LAYERS, layerDefs } from "@/lib/spatial";
 
 export const queryLayer = ({
   z,
@@ -44,7 +29,7 @@ export const tileQuery = ({
   z,
   x,
   y,
-  layers = allLayers,
+  layers = DEFAULT_TILE_LAYERS,
 }: {
   z: string;
   x: string;

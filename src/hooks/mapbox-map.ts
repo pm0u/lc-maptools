@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import mapboxgl, { Map, MapEventType } from "mapbox-gl";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
 import { mapboxToken } from "@/env";
-
-export const LAND_LAYERS = ["tax_parcels", "public_land", "tax_parcels_old"];
+import { LAND_LAYERS } from "@/lib/spatial";
 
 let isInitialized = false;
 

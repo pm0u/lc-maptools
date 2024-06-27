@@ -1,5 +1,6 @@
 "use client";
-import { LAND_LAYERS, useMapboxMap } from "@/hooks/mapbox-map";
+import { useMapboxMap } from "@/hooks/mapbox-map";
+import { LAND_LAYERS } from "@/lib/spatial";
 import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
 import { bbox, flatten, lineChunk, pointOnFeature } from "@turf/turf";
 import {

@@ -1,5 +1,5 @@
 import { TILE_DATA_CDN_CACHE, TILE_DATA_CLIENT_CACHE } from "@/config/cache";
-import { tileQuery } from "@/lib/tile";
+import { tileQuery } from "@/lib/spatial/tile";
 
 type TileParams = { z: string; x: string; y: string };
 
@@ -19,6 +19,20 @@ const isNumberString = (val: any) => {
   return true;
 };
 
+/**
+ * Planetary limits
+ */
+const maxY = 2 ** 20;
+const maxX = 2 ** 20;
+/**
+ * Mapbox zoom limit
+ */
+const maxZ = 22;
+
+const isValidX = (x: number) => x >= 0 && x <= maxX;
+const isValidY = (y: number) => y >= 0 && y <= maxY;
+const isValidZ = (z: number) => z >= 0 && z <= maxZ;
+
 function assertTileParams(params: object): asserts params is TileParams {
   if (!("x" in params) || !("y" in params) || !("z" in params))
     throw Error("Invalid params");
@@ -30,12 +44,42 @@ function assertTileParams(params: object): asserts params is TileParams {
     throw Error("Invalid params");
 }
 
+function assertPositionValues(
+  params: TileParams
+): asserts params is TileParams {
+  if (
+    !isValidZ(parseInt(params.z)) ||
+    !isValidX(parseInt(params.x)) ||
+    !isValidY(parseInt(params.y))
+  ) {
+    throw Error("Invalid param value range");
+  }
+}
+
 export async function GET(
   _request: Request,
   { params }: { params: { z: string; x: string; y: string } }
 ) {
   try {
-    assertTileParams(params);
+    try {
+      try {
+        assertTileParams(params);
+      } catch (e) {
+        const res = new Response(null, {
+          status: 400,
+          statusText: "Tile position unparseable",
+        });
+        return res;
+      }
+      assertPositionValues(params);
+    } catch (e) {
+      const res = new Response(null, {
+        status: 400,
+        statusText: "Tile position out of range",
+      });
+      return res;
+    }
+
     const { z, x, y } = params;
 
     const tile = await tileQuery({ z, x, y });
