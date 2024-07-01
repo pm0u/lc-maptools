@@ -1,0 +1,3 @@
+- Need to set up monorepo - separate tiles (firebase) from frontend app (vercel)
+- Tiles generate and deploy to firebase static
+- Need to generate JSON data for the FE app still.. they will deploy separately so this will just need to be a package in the monorepo that is consumed so they are 1:1
