@@ -31,7 +31,7 @@ export async function GET(
       crossingLayers,
     });
 
-    return new Response(JSON.stringify(propertyCrossings), {
+    return new Response(JSON.stringify(propertyCrossings.map((c) => c.json)), {
       status: 200,
       headers: { "content-type": "application/json" },
     });

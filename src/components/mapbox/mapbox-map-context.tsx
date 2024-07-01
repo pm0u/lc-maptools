@@ -1,7 +1,12 @@
 "use client";
 import { useMapboxMap } from "@/hooks/mapbox-map";
 import { LAND_LAYERS } from "@/lib/spatial";
-import { LngLatLike, Map, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
+import mapboxgl, {
+  LngLatLike,
+  Map,
+  MapboxGeoJSONFeature,
+  PointLike,
+} from "mapbox-gl";
 import { bbox, flatten, lineChunk, pointOnFeature } from "@turf/turf";
 import {
   useContext,
@@ -17,8 +22,8 @@ import { useRouter } from "next/navigation";
 import { uniqBy } from "lodash";
 
 const QUERY_BBOX_SIZE = 5;
-let SELECTED_FEATURES: MapboxGeoJSONFeature[] = [];
-let HIGHLIGHTED_FEATURES: MapboxGeoJSONFeature[] = [];
+let SELECTED_FEATURES: mapboxgl.FeatureIdentifier[] = [];
+let HIGHLIGHTED_FEATURES: mapboxgl.FeatureIdentifier[] = [];
 
 type MapboxMapCtx = {
   map?: Map | undefined;
@@ -30,11 +35,11 @@ type MapboxMapCtx = {
   ) => MapboxGeoJSONFeature[];
   mapInitialized: boolean;
   selectFeature: (
-    feature: MapboxGeoJSONFeature,
+    feature: mapboxgl.FeatureIdentifier,
     options?: { removeOthers?: boolean; zoomTo?: boolean }
   ) => void;
   highlightFeature: (
-    feature: MapboxGeoJSONFeature,
+    feature: mapboxgl.FeatureIdentifier,
     options?: { removeOthers?: boolean; zoomTo?: boolean }
   ) => void;
   clearSelectedFeatures: () => void;
@@ -175,27 +180,28 @@ export const MapboxMapProvider = ({
 
   const clearSelectedFeatures = useCallback(() => {
     SELECTED_FEATURES.forEach((feature) => {
-      map?.setFeatureState(feature, { selected: false });
+      console.log({ map });
+      if (map) {
+        map.setFeatureState(feature, { selected: false });
+      }
     });
     SELECTED_FEATURES = [];
   }, [map]);
 
   const clearHighlightedFeatures = useCallback(() => {
     HIGHLIGHTED_FEATURES.forEach((feature) => {
-      map?.setFeatureState(feature, { highlighted: false });
+      if (map) {
+        map.setFeatureState(feature, { highlighted: false });
+      }
     });
     HIGHLIGHTED_FEATURES = [];
   }, [map]);
 
   const selectFeature = useCallback(
     (
-      feature: MapboxGeoJSONFeature,
-      {
-        removeOthers = true,
-        zoomTo = false,
-      }: { removeOthers?: boolean; zoomTo?: boolean } = {
+      feature: mapboxgl.FeatureIdentifier,
+      { removeOthers = true }: { removeOthers?: boolean } = {
         removeOthers: true,
-        zoomTo: false,
       }
     ) => {
       if (map) {
@@ -206,23 +212,16 @@ export const MapboxMapProvider = ({
           SELECTED_FEATURES = [...SELECTED_FEATURES, feature];
         }
         map.setFeatureState(feature, { selected: true });
-        if (zoomTo) {
-          zoomToFeature(feature);
-        }
       }
     },
-    [map, clearSelectedFeatures, zoomToFeature]
+    [map, clearSelectedFeatures]
   );
 
   const highlightFeature = useCallback(
     (
-      feature: MapboxGeoJSONFeature,
-      {
-        removeOthers = true,
-        zoomTo = false,
-      }: { removeOthers?: boolean; zoomTo?: boolean } = {
+      feature: mapboxgl.FeatureIdentifier,
+      { removeOthers = true }: { removeOthers?: boolean } = {
         removeOthers: true,
-        zoomTo: false,
       }
     ) => {
       if (map) {
@@ -233,12 +232,9 @@ export const MapboxMapProvider = ({
           HIGHLIGHTED_FEATURES = [...HIGHLIGHTED_FEATURES, feature];
         }
         map.setFeatureState(feature, { highlighted: true });
-        if (zoomTo) {
-          zoomToFeature(feature);
-        }
       }
     },
-    [map, clearHighlightedFeatures, zoomToFeature]
+    [map, clearHighlightedFeatures]
   );
 
   const zoomAndQueryFeature = useCallback(

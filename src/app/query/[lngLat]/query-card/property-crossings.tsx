@@ -4,9 +4,10 @@ import { TaxInfo } from "@/app/query/[lngLat]/query-card/tax-info";
 import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { getFeatureName } from "@/lib/data";
 import { isTaxCalculableFeature } from "@/lib/tax";
+import { CrossedPropertiesResponse } from "@/types/crossings";
 import { isLCMDParcel } from "@/types/features";
 import { MapboxLineFeature } from "@/types/mapbox";
-import { FillLayer, MapboxGeoJSONFeature } from "mapbox-gl";
+import { FillLayer } from "mapbox-gl";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
 
@@ -15,29 +16,26 @@ export const PropertyCrossings = ({
 }: {
   feature: MapboxLineFeature;
 }) => {
-  const [properties, setProperties] = useState<MapboxGeoJSONFeature[] | null>(
-    null
-  );
+  const [properties, setProperties] =
+    useState<CrossedPropertiesResponse | null>(null);
   const {
-    propertiesAlongLine,
     highlightFeature,
     clearHighlightedFeatures,
-    zoomToFeature,
     zoomAndQueryFeature,
     map,
   } = useMapboxMapContext();
 
   useEffect(() => {
-    if (map) {
-      const currentPitch = map.getPitch();
-      zoomToFeature(feature, { pitch: 0 });
-      map.once("moveend", () => {
-        const _properties = propertiesAlongLine(feature);
-        setProperties(_properties);
-        zoomToFeature(feature, { pitch: currentPitch });
-      });
-    }
-  }, [propertiesAlongLine, feature, zoomToFeature, map]);
+    const getCrossings = async () => {
+      if (feature && feature.id) {
+        const crossings = await fetch(
+          `/a/crossings/${feature.sourceLayer}/${feature.id}`
+        ).then((res) => res.json());
+        setProperties(crossings);
+      }
+    };
+    getCrossings();
+  }, [feature]);
 
   return (
     <div className="overflow-x-auto">
@@ -51,7 +49,9 @@ export const PropertyCrossings = ({
                 }}
               >
                 {properties.map((property) => {
-                  const layer = property.layer as FillLayer;
+                  const layer = map?.getLayer(
+                    property.sourceLayer
+                  ) as FillLayer;
                   const bg = layer.paint?.["fill-color"]
                     ?.toString()
                     .replace(/1\)$/, "0.6)");

@@ -7,7 +7,9 @@ import {
  * Properties included in tiles
  */
 export const layerDefs = {
-  tax_parcels: ["NAME", "ACRES"] satisfies Array<keyof AvailableLCMDProperties>,
+  tax_parcels: ["NAME", "ACRES", "ASSESSED_V", "AREAID"] satisfies Array<
+    keyof AvailableLCMDProperties
+  >,
   public_land: ["adm_manage", "GIS_acres"] satisfies Array<
     keyof AvailablePublicLandProperties
   >,
