@@ -1,24 +1,45 @@
 {
+  "name": "@lc-maptools/app",
+  "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "app",
-    "tile-server",
-    "data"
-  ],
-  "packageManager": "yarn@4.2.2",
   "scripts": {
-    "app:prebuild": "yarn workspace @lc-maptools/app prebuild",
-    "app:build": "yarn workspace @lc-maptools/app build",
-    "app:dev": "yarn workspace @lc-maptools/app dev",
-    "ci:install-tippecanoe": "./ci-install-tippecanoe.sh",
-    "dev": "concurrently -c blue,magenta -n app,tiles \"yarn app:dev\" \"yarn tiles:serve\"",
-    "dev:start": "yarn generate && yarn dev",
-    "generate:data": "yarn workspace @lc-maptools/data generate",
-    "generate:tiles": "yarn workspace @lc-maptools/tile-server generate",
-    "generate": "yarn generate:data && yarn generate:tiles",
-    "tiles:serve": "yarn workspace @lc-maptools/tile-server serve"
+    "data:arcgis": "tsx data/write-arcgis-data.ts",
+    "data:update": "./data/data-update.sh",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc"
   },
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "@headlessui/react": "^2.0.4",
+    "@mapbox/togeojson": "mapbox/togeojson",
+    "@turf/turf": "7.0.0-alpha.116",
+    "@types/mapbox-gl": "^3.1.0",
+    "@types/tinycolor2": "^1.4.6",
+    "class-variance-authority": "^0.7.0",
+    "daisyui": "^4.10.3",
+    "lodash": "^4.17.21",
+    "mapbox-gl": "^3.3.0",
+    "mitt": "^3.0.1",
+    "next": "14.2.3",
+    "postgres": "^3.4.4",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5.2.1",
+    "slugify": "^1.6.6",
+    "tinycolor2": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "tsx": "^4.16.0",
+    "typescript": "^5"
   }
 }
