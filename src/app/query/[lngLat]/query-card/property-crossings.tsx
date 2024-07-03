@@ -4,12 +4,7 @@ import { TaxInfo } from "@/app/query/[lngLat]/query-card/tax-info";
 import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { getFeatureName } from "@/lib/data";
 import { isTaxCalculableFeature } from "@/lib/tax";
-/** @todo: Merge all the types. One type. But need lowercases */
-import {
-  LakeCountyFeature,
-  isLCMDParcel,
-  isPublicLandParcel,
-} from "@/types/features";
+import { LakeCountyFeature } from "@/types/features";
 import { MapboxLineFeature } from "@/types/mapbox";
 import { FillLayer } from "mapbox-gl";
 import { useEffect, useState } from "react";
@@ -82,7 +77,7 @@ export const PropertyCrossings = ({
                         />
                       </td>
                       <td colSpan={!isTaxCalculableFeature(property) ? 2 : 1}>
-                        {getFeatureName(feature)}
+                        {getFeatureName(property)}
                       </td>
                       {isTaxCalculableFeature(property) ? (
                         <TaxInfo feature={property} />
