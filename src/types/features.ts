@@ -30,12 +30,14 @@ export const PUBLIC_LAND_PROPERTIES = [
 ] as const satisfies (keyof AvailablePublicLandProperties)[];
 
 export type LCMDParcel = Omit<MapboxPolygonFeature, "properties"> & {
+  id: number;
   properties: {
     [key in (typeof TAX_PARCEL_PROPERTIES)[number]]: AvailableLCMDProperties[key];
   };
 };
 
 export type PublicParcel = Omit<MapboxPolygonFeature, "properties"> & {
+  id: number;
   properties: {
     [key in (typeof PUBLIC_LAND_PROPERTIES)[number]]: AvailablePublicLandProperties[key];
   };

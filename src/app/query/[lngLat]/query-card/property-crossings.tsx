@@ -4,34 +4,56 @@ import { TaxInfo } from "@/app/query/[lngLat]/query-card/tax-info";
 import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { getFeatureName } from "@/lib/data";
 import { isTaxCalculableFeature } from "@/lib/tax";
-import { LakeCountyFeature } from "@/types/features";
+import { CrossingsResponse } from "@/types/crossings";
+import {
+  LakeCountyFeature,
+  isLCMDParcel,
+  isPublicLandParcel,
+} from "@/types/features";
 import { MapboxLineFeature } from "@/types/mapbox";
-import { FillLayer } from "mapbox-gl";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
+
+const getColors = (
+  parcel: LakeCountyFeature,
+  colors: CrossingsResponse["colors"]
+) => {
+  if (isLCMDParcel(parcel)) {
+    return colors[
+      parcel.properties.name as keyof typeof colors
+    ] as CrossingsResponse["colors"][keyof CrossingsResponse["colors"]];
+  }
+  if (isPublicLandParcel(parcel)) {
+    return colors[
+      parcel.properties.adm_manage as keyof typeof colors
+    ] as CrossingsResponse["colors"][keyof CrossingsResponse["colors"]];
+  }
+
+  return { fillColor: "#FFFFFF", fillOutlineColor: "#000000" };
+};
 
 export const PropertyCrossings = ({
   feature,
 }: {
   feature: MapboxLineFeature;
 }) => {
-  const [properties, setProperties] = useState<LakeCountyFeature[] | null>(
-    null
-  );
-  const {
-    highlightFeature,
-    clearHighlightedFeatures,
-    zoomAndQueryFeature,
-    map,
-  } = useMapboxMapContext();
+  const [parcels, setParcels] = useState<LakeCountyFeature[] | null>(null);
+  const [colors, setColors] = useState<Record<
+    string,
+    { fillColor: string; fillOutlineColor: string }
+  > | null>(null);
+  const { highlightFeature, clearHighlightedFeatures, zoomAndQueryFeature } =
+    useMapboxMapContext();
 
   useEffect(() => {
     const getCrossings = async () => {
       if (feature && feature.id) {
-        const crossings = await fetch(
+        const response = (await fetch(
           `/a/crossings/${feature.sourceLayer}/${feature.id}`
-        ).then((res) => res.json());
-        setProperties(crossings);
+        ).then((res) => res.json())) as CrossingsResponse;
+        const { parcels, colors } = response;
+        setParcels(parcels);
+        setColors(colors);
       }
     };
     getCrossings();
@@ -39,8 +61,8 @@ export const PropertyCrossings = ({
 
   return (
     <div className="overflow-x-auto">
-      {properties ? (
-        properties.length ? (
+      {parcels && colors ? (
+        parcels.length ? (
           <>
             <table className="table">
               <tbody
@@ -48,45 +70,43 @@ export const PropertyCrossings = ({
                   clearHighlightedFeatures();
                 }}
               >
-                {properties.map((property) => {
-                  const layer = map?.getLayer(
-                    property.sourceLayer
-                  ) as FillLayer;
-                  const bg = layer.paint?.["fill-color"]
-                    ?.toString()
-                    .replace(/1\)$/, "0.6)");
-                  const border = layer.paint?.["fill-outline-color"]
-                    ?.toString()
-                    .replace(/1\)$/, "0.6");
+                {parcels.map((parcel) => {
+                  const { fillColor, fillOutlineColor } = getColors(
+                    parcel,
+                    colors as CrossingsResponse["colors"]
+                  );
                   return (
                     <tr
-                      key={property.id}
+                      key={parcel.id}
                       onMouseEnter={() => {
-                        highlightFeature(property);
+                        highlightFeature(parcel);
                       }}
                       className="hover:bg-base-200 cursor-pointer"
                       onClick={() => {
-                        zoomAndQueryFeature(property);
+                        zoomAndQueryFeature(parcel);
                       }}
                     >
                       <td>
                         <div
-                          // @ts-expect-error CSS vars are OK
-                          style={{ "--bg-color": bg, "--border-color": border }}
+                          style={{
+                            // @ts-expect-error CSS vars are OK
+                            "--bg-color": fillColor,
+                            "--border-color": fillOutlineColor,
+                          }}
                           className="bg-[var(--bg-color)] border-[var(--border-color)] w-8 h-8 border"
                         />
                       </td>
-                      <td colSpan={!isTaxCalculableFeature(property) ? 2 : 1}>
-                        {getFeatureName(property)}
+                      <td colSpan={!isTaxCalculableFeature(parcel) ? 2 : 1}>
+                        {getFeatureName(parcel)}
                       </td>
-                      {isTaxCalculableFeature(property) ? (
-                        <TaxInfo feature={property} />
+                      {isTaxCalculableFeature(parcel) ? (
+                        <TaxInfo feature={parcel} />
                       ) : null}
                     </tr>
                   );
                 })}
                 <BottomRow
-                  features={properties}
+                  features={parcels}
                   exportName={`${slugify(
                     getFeatureName(feature).toLowerCase(),
                     { replacement: "_" }

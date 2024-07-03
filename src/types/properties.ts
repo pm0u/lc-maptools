@@ -122,8 +122,10 @@ export type AvailableLCMDProperties = {
   shape__length: number;
 };
 
+export type PublicLandAgency = "BLM" | "USFW" | "USFS";
+
 export type AvailablePublicLandProperties = {
-  adm_manage: string;
+  adm_manage: PublicLandAgency;
   adm_code: string;
   gis_acres: number;
 };

@@ -1,18 +1,31 @@
 import tinycolor from "tinycolor2";
 import { selectColor } from "@/lib/color";
 import mapboxgl from "mapbox-gl";
+import { BsFillCollectionFill } from "react-icons/bs";
+import { PublicLandAgency } from "@/types/properties";
+
+const percentToHex = (p: number) => {
+  return `0${Math.round((255 / 100) * p).toString(16)}`.slice(-2).toUpperCase();
+};
+
+export const getColorProperties = (id: number, opacity = 100) => ({
+  fillColor: `${selectColor(id)}${
+    percentToHex(opacity) === "FF" ? "" : percentToHex(opacity)
+  }`,
+  fillOutlineColor: tinycolor(selectColor(id)).darken(15).toHexString(),
+});
 
 export const layerifyByName = (names: Array<{ name: string; id: number }>) => {
   const colors = names.reduce(
     (properties, { name, id }) => {
-      const color = selectColor(id);
+      const { fillColor, fillOutlineColor } = getColorProperties(id);
       return {
         ...properties,
-        "fill-color": [...properties["fill-color"], name, color],
+        "fill-color": [...properties["fill-color"], name, fillColor],
         "fill-outline-color": [
           ...properties["fill-outline-color"],
           name,
-          tinycolor(color).darken(15).toHexString(),
+          fillOutlineColor,
         ],
       };
     },
@@ -29,15 +42,29 @@ export const layerifyByName = (names: Array<{ name: string; id: number }>) => {
   } as Partial<mapboxgl.FillPaint>;
 };
 
-export const layerifyPublicLand = () => {
-  const fillColors = {
-    USFS: "#63c73e",
-    BLM: "#c99739",
-    USFW: "#54cca8",
-  };
+const publicLandColors: Record<PublicLandAgency, string> = {
+  USFS: "#63c73e",
+  BLM: "#c99739",
+  USFW: "#54cca8",
+};
 
+export const getPublicLandColorProperties = (
+  agency: PublicLandAgency,
+  opacity = 100
+) => {
+  return {
+    fillColor: `${publicLandColors[agency]}${
+      opacity === 100 ? "" : percentToHex(opacity)
+    }`,
+    fillOutlineColor: tinycolor(publicLandColors[agency])
+      .darken(15)
+      .toHexString(),
+  };
+};
+
+export const layerifyPublicLand = () => {
   const fillOutlines = Object.fromEntries(
-    Object.entries(fillColors).map(([k, v]) => [
+    Object.entries(publicLandColors).map(([k, v]) => [
       k,
       tinycolor(v).darken(15).toHexString(),
     ])
@@ -47,7 +74,7 @@ export const layerifyPublicLand = () => {
     "fill-color": [
       "match",
       ["get", "adm_manage"],
-      ...Object.entries(fillColors).flat(),
+      ...Object.entries(publicLandColors).flat(),
       "#d2d2d2",
     ],
     "fill-outline-color": [

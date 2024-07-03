@@ -124,6 +124,7 @@ export const MapboxMapProvider = ({
           [point.x + QUERY_BBOX_SIZE, point.y + QUERY_BBOX_SIZE],
         ] as [PointLike, PointLike];
         const features = map.queryRenderedFeatures(bbox);
+        console.log({ features });
         if (!dedupe) return features;
         return uniqBy(features, (feature) => feature.id);
       }
