@@ -4,8 +4,12 @@ import { TaxInfo } from "@/app/query/[lngLat]/query-card/tax-info";
 import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { getFeatureName } from "@/lib/data";
 import { isTaxCalculableFeature } from "@/lib/tax";
-import { CrossedPropertiesResponse } from "@/types/crossings";
-import { isLCMDParcel } from "@/types/features";
+/** @todo: Merge all the types. One type. But need lowercases */
+import {
+  LakeCountyFeature,
+  isLCMDParcel,
+  isPublicLandParcel,
+} from "@/types/features";
 import { MapboxLineFeature } from "@/types/mapbox";
 import { FillLayer } from "mapbox-gl";
 import { useEffect, useState } from "react";
@@ -16,8 +20,9 @@ export const PropertyCrossings = ({
 }: {
   feature: MapboxLineFeature;
 }) => {
-  const [properties, setProperties] =
-    useState<CrossedPropertiesResponse | null>(null);
+  const [properties, setProperties] = useState<LakeCountyFeature[] | null>(
+    null
+  );
   const {
     highlightFeature,
     clearHighlightedFeatures,
@@ -76,10 +81,8 @@ export const PropertyCrossings = ({
                           className="bg-[var(--bg-color)] border-[var(--border-color)] w-8 h-8 border"
                         />
                       </td>
-                      <td colSpan={!isLCMDParcel(property) ? 2 : 1}>
-                        {property.properties?.NAME?.trim() ||
-                          property.properties?.adm_manage?.trim() ||
-                          "UNKNOWN"}
+                      <td colSpan={!isTaxCalculableFeature(property) ? 2 : 1}>
+                        {getFeatureName(feature)}
                       </td>
                       {isTaxCalculableFeature(property) ? (
                         <TaxInfo feature={property} />

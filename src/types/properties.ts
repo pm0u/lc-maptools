@@ -7,125 +7,125 @@ export const areaIds = [
 export type AreaId = (typeof areaIds)[number];
 
 export type AvailableLCMDProperties = {
-  FID: number;
-  OBJECTID: number;
-  AccountNum: number;
-  PASHOUSE: number;
-  LAACRES: number;
-  Tyler_Act: string;
-  ParcelNumb: string;
-  PIN: string;
-  ACCOUNTNO: string;
+  fid: number;
+  objectid: number;
+  accountnum: number;
+  pashouse: number;
+  laacres: number;
+  tyler_act: string;
+  parcelnumb: string;
+  pin: string;
+  accountno: string;
   /** ??? legal name without street address? */
-  LEGAL: string;
-  Shape__Are: number;
-  Shape__Len: number;
-  ACCOUNTN_1: string;
-  NAMEADDRID: string;
-  NAMETYPE: string;
+  legal: string;
+  shape__are: number;
+  shape__len: number;
+  accountn_1: string;
+  nameaddrid: string;
+  nametype: string;
   /** Owner name */
-  NAME: string;
-  CAREOF: string;
+  name: string;
+  careof: string;
   /** owner address line 1 */
-  ADDRESS1: string;
+  address1: string;
   /** owner address line 2 */
-  ADDRESS2: string;
+  address2: string;
   /** owner address city */
-  CITY: string;
+  city: string;
   /** owner address state */
-  STATE: "CO";
+  state: "co";
   /** owner address zip */
-  ZIPCODE: string;
-  PARCELNB: string;
-  MHSPACE: string;
-  PARCELSEQ: number;
-  AREAID: AreaId;
-  ACCTTYPE: string;
-  BUSINESSNA: string;
-  MAPNO: string;
-  BORDERINGC: string;
-  BACODE: string;
-  LAGENT: string;
+  zipcode: string;
+  parcelnb: string;
+  mhspace: string;
+  parcelseq: number;
+  areaid: AreaId;
+  accttype: string;
+  businessna: string;
+  mapno: string;
+  borderingc: string;
+  bacode: string;
+  lagent: string;
   /** number of plot address */
-  STREETNO: string;
-  EXTENT: string;
-  DIRECTION: string;
+  streetno: string;
+  extent: string;
+  direction: string;
   /** street name of plot address */
-  STREETNAME: string;
+  streetname: string;
   /** street designation eg ave, st, etc */
-  DESIGNATION: string;
-  DIRECTIONS: string;
-  SUFFIX: string;
-  UNITNUMBER: string;
+  designation: string;
+  directions: string;
+  suffix: string;
+  unitnumber: string;
   /** city of plot address */
-  LOCCITY: string;
+  loccity: string;
   /** ?? matches LEGAL ? */
-  LEGAL_1: string;
-  APRDIST: string;
-  BA_OWNER_I: string;
-  BA_LOCATIO: string;
-  LANDSQFT: number;
-  SUBCODE: number;
+  legal_1: string;
+  aprdist: string;
+  ba_owner_i: string;
+  ba_locatio: string;
+  landsqft: number;
+  subcode: number;
   /** subdivision name of plot */
-  SUBNAME: string;
-  CONDOCODE: string;
-  CONDONAME: string;
-  SALEP: number;
-  SALEDT: number;
-  DOCFEE: number;
-  DEEDTYPE: string;
+  subname: string;
+  condocode: string;
+  condoname: string;
+  salep: number;
+  saledt: number;
+  docfee: number;
+  deedtype: string;
   /** part of legal */
-  BLOCK: string;
+  block: string;
   /** lot no., part of legal */
-  LOT: string;
-  CONDOUNIT: string;
-  BOOK: string;
-  PAGE: string;
-  RECEPTION_: string;
+  lot: string;
+  condounit: string;
+  book: string;
+  page: string;
+  reception_: string;
   /** mill levy rate? */
-  MILL_LEVY: number;
-  CLASSCD1: number;
-  CLASSCD1_D: string;
-  CLASSCD2: number;
-  CLASSCD2_D: string;
-  CLASSCD3: string;
-  CLASSCD3_D: string;
-  CLASSCD4: string;
-  CLASSCD4_D: string;
-  CLASSCD5: string;
-  CLASSCD5_D: string;
+  mill_levy: number;
+  classcd1: number;
+  classcd1_d: string;
+  classcd2: number;
+  classcd2_d: string;
+  classcd3: string;
+  classcd3_d: string;
+  classcd4: string;
+  classcd4_d: string;
+  classcd5: string;
+  classcd5_d: string;
   /** tax year values are valid for? */
-  TAXYEAR: number;
-  LANDACT: number;
-  IMPACT: number;
-  LANDASD: number;
-  IMPASD: number;
+  taxyear: number;
+  landact: number;
+  impact: number;
+  landasd: number;
+  impasd: number;
   /** plot size? */
-  ACRES: number;
-  SQFT: number;
-  UNITS: number;
-  CUR_TAX: string;
-  CUR_FEE: string;
-  CUR_INT: string;
-  CUR_PAY: string;
-  CUR_BAL: string;
-  LST_TAX: string;
-  LST_FEE: string;
-  LST_INT: string;
-  LST_PAY: string;
-  LST_BAL: string;
+  acres: number;
+  sqft: number;
+  units: number;
+  cur_tax: string;
+  cur_fee: string;
+  cur_int: string;
+  cur_pay: string;
+  cur_bal: string;
+  lst_tax: string;
+  lst_fee: string;
+  lst_int: string;
+  lst_pay: string;
+  lst_bal: string;
   /** Value of plot? */
-  ACTUAL_VAL: number;
+  actual_val: number;
   /** assessed value of plot? */
-  ASSESSED_V: number;
-  Shape__Area: number;
-  Shape__Length: number;
+  assessed_v: number;
+  shape__area: number;
+  shape__length: number;
 };
 
 export type AvailablePublicLandProperties = {
   adm_manage: string;
   adm_code: string;
-  GIS_acres: number;
+  gis_acres: number;
 };
 
 export type ExtendedGeoJson<
@@ -148,15 +148,3 @@ export type ArcGISResponse = GeoJSON.FeatureCollection<
     exceededTransferLimit?: true;
   };
 };
-
-export type StyledExtendedGeoJson = ExtendedGeoJson<StyleProperties, Polygon>;
-
-type StyleProperties = Record<StylePropertiesKeys, string>;
-
-type StylePropertiesKeys = "fill-color" | "fill-opacity" | "fill-outline-color";
-
-export type StyledLayer = StyledExtendedGeoJson["features"][number] & {
-  id: string;
-};
-
-export type StyledLayers = StyledLayer[];

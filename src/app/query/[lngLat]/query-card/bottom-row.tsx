@@ -21,8 +21,10 @@ export const BottomRow = ({
 
   const exportableFeatures = useMemo(() => {
     const exportableFeatures = features.map((feature) => {
-      // @ts-expect-error
-      const jsonFeature = feature.toJSON();
+      const jsonFeature =
+        "toJSON" in feature && typeof feature.toJSON === "function"
+          ? feature.toJSON()
+          : feature;
       const { geometry, layer, type, sourceLayer, state, source, ...rest } =
         jsonFeature;
       return rest;

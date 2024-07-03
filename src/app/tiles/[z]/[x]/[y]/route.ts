@@ -22,8 +22,8 @@ const isNumberString = (val: any) => {
 /**
  * Planetary limits
  */
-const maxY = 2 ** 20;
-const maxX = 2 ** 20;
+const maxY = 2 ** 22;
+const maxX = 2 ** 22;
 /**
  * Mapbox zoom limit
  */

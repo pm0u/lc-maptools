@@ -1,20 +1,15 @@
 import {
-  AvailableLCMDProperties,
-  AvailablePublicLandProperties,
-} from "@/types/properties";
+  PUBLIC_LAND_PROPERTIES,
+  TAX_PARCEL_PROPERTIES,
+} from "@/types/features";
 
 /**
  * Properties included in tiles
  */
 export const layerDefs = {
-  tax_parcels: ["NAME", "ACRES", "ASSESSED_V", "AREAID"] satisfies Array<
-    keyof AvailableLCMDProperties
-  >,
-  public_land: ["adm_manage", "GIS_acres"] satisfies Array<
-    keyof AvailablePublicLandProperties
-  >,
+  tax_parcels: TAX_PARCEL_PROPERTIES,
+  public_land: PUBLIC_LAND_PROPERTIES,
   eastside_reroutes: ["description", "name"],
-  tax_parcels_old: ["NAME", "ACRES"],
 };
 
 export const allLayers = Object.keys(layerDefs) as Array<
@@ -22,12 +17,6 @@ export const allLayers = Object.keys(layerDefs) as Array<
 >;
 
 export const LAND_LAYERS = [
-  "tax_parcels",
-  "public_land",
-  "tax_parcels_old",
-] as const satisfies Array<keyof typeof layerDefs>;
-
-export const DEFAULT_LAND_LAYERS = [
   "tax_parcels",
   "public_land",
 ] as const satisfies Array<keyof typeof layerDefs>;

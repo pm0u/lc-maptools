@@ -1,13 +1,33 @@
 import { MapboxPolygonFeature } from "@/types/mapbox";
-import {
-  PUBLIC_LAND_PROPERTIES,
-  TAX_PARCEL_PROPERTIES,
-} from "~/data/constants";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import {
   AvailableLCMDProperties,
   AvailablePublicLandProperties,
 } from "./properties";
+
+export const TAX_PARCEL_PROPERTIES = [
+  "acres",
+  "accttype",
+  "actual_val",
+  "address1",
+  "address2",
+  "areaid",
+  "assessed_v",
+  "city",
+  "legal_1",
+  "legal",
+  "mill_levy",
+  "name",
+  "parcelnb",
+  "streetname",
+  "streetno",
+  "zipcode",
+] as const satisfies (keyof AvailableLCMDProperties)[];
+
+export const PUBLIC_LAND_PROPERTIES = [
+  "adm_manage",
+  "gis_acres",
+] as const satisfies (keyof AvailablePublicLandProperties)[];
 
 export type LCMDParcel = Omit<MapboxPolygonFeature, "properties"> & {
   properties: {
@@ -26,10 +46,7 @@ export type LakeCountyFeature = LCMDParcel | PublicParcel;
 export const isLCMDParcel = (
   feature: MapboxGeoJSONFeature
 ): feature is LCMDParcel => {
-  return (
-    feature.sourceLayer === "tax_parcels" ||
-    feature.sourceLayer === "tax_parcels_old"
-  );
+  return feature.sourceLayer === "tax_parcels";
 };
 
 export const isPublicLandParcel = (

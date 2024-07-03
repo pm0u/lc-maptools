@@ -1,7 +1,7 @@
 import {
   TaxCalculableFeature,
   getFormattedCountyTaxesForFeatures,
-  isCountyProperty,
+  isTaxExemptFeature,
   isTaxCalculableFeature,
 } from "@/lib/tax";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
@@ -12,7 +12,7 @@ export const TotalTaxValue = ({
   features: MapboxGeoJSONFeature[];
 }) => {
   const validFeatures = features.filter(
-    (feature) => isTaxCalculableFeature(feature) && !isCountyProperty(feature)
+    (feature) => isTaxCalculableFeature(feature) && !isTaxExemptFeature(feature)
   ) as TaxCalculableFeature[];
 
   return (

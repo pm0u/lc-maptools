@@ -1,13 +1,13 @@
 import {
   TaxCalculableFeature,
   getFormattedCountyTaxes,
-  isCountyProperty,
+  isTaxExemptFeature,
 } from "@/lib/tax";
 
 export const TaxInfo = ({ feature }: { feature: TaxCalculableFeature }) => {
   return (
     <td>
-      {isCountyProperty(feature) ? (
+      {isTaxExemptFeature(feature) ? (
         <span>-</span>
       ) : (
         <span>{getFormattedCountyTaxes(feature)}</span>

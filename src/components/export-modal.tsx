@@ -4,7 +4,7 @@ import { objectsToCsv } from "@/lib/csv";
 import { downloadBlob } from "@/lib/download";
 import {
   getFormattedCountyTaxes,
-  isCountyProperty,
+  isTaxExemptFeature,
   isTaxCalculableFeature,
 } from "@/lib/tax";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
@@ -40,7 +40,7 @@ export const ExportModal = ({
       e.preventDefault();
       let features = cloneDeep(data).filter((f) => isTaxCalculableFeature(f));
       if (excludeCountyProperty) {
-        features = features.filter((f) => !isCountyProperty(f));
+        features = features.filter((f) => !isTaxExemptFeature(f));
       }
       if (includeTaxValues) {
         features = features.map((item) => {
@@ -64,7 +64,7 @@ export const ExportModal = ({
       e.preventDefault();
       let features = cloneDeep(data).filter((f) => isTaxCalculableFeature(f));
       if (excludeCountyProperty) {
-        features = features.filter((f) => !isCountyProperty(f));
+        features = features.filter((f) => !isTaxExemptFeature(f));
       }
       if (includeTaxValues) {
         features = features.map((item) => {
