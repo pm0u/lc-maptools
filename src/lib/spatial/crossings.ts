@@ -1,6 +1,7 @@
 import { sql } from "@/lib/db";
 import { LAND_LAYERS, layerDefs } from "@/lib/spatial";
 import { jsonObjectForRow } from "@/lib/spatial/json";
+import { LakeCountyFeature } from "@/types/features";
 
 /**
  * Ordered property crossings
@@ -15,7 +16,7 @@ export const crossings = ({
   id: string;
   sourceLayer: keyof typeof layerDefs;
   crossingLayers: Array<(typeof LAND_LAYERS)[number]>;
-}) =>
+}): Promise<Array<{ json: LakeCountyFeature }>> =>
   sql.unsafe(/* sql */ `
     select json from (
       select distinct on (ogc_fid)

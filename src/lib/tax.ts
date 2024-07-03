@@ -4,11 +4,11 @@ import { MapboxPolygonFeature } from "@/types/mapbox";
 
 export type TaxCalculableFeature = MapboxPolygonFeature & {
   properties: {
-    ASSESSED_V: number;
-    AREAID: AreaId;
-    MILL_LEVY: number;
-    ACCTTYPE: string;
-    CUR_TAX?: number;
+    assessed_v: number;
+    areaid: AreaId;
+    mill_levy: number;
+    accttype: string;
+    cur_tax?: number;
   };
 };
 

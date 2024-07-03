@@ -5,7 +5,8 @@ import { sql } from "@/lib/db";
  * alphabetized
  */
 export const getPrivateLandNames = async () => {
-  const rows =
-    await sql`select distinct name from tax_parcels order by name asc`;
-  return rows.map(({ name }) => name as string);
+  const rows = await sql<
+    Array<{ name: string; id: number }>
+  >/* sql */ `select id, name from (select distinct on (name) name, ogc_fid as id from tax_parcels order by name, id) order by id`;
+  return rows;
 };

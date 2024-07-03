@@ -20,17 +20,12 @@ const isNumberString = (val: any) => {
 };
 
 /**
- * Planetary limits
- */
-const maxY = 2 ** 22;
-const maxX = 2 ** 22;
-/**
  * Mapbox zoom limit
  */
 const maxZ = 22;
 
-const isValidX = (x: number) => x >= 0 && x <= maxX;
-const isValidY = (y: number) => y >= 0 && y <= maxY;
+const isValidX = (x: number, z: number) => x >= 0 && x <= 2 ** z;
+const isValidY = (y: number, z: number) => y >= 0 && y <= 2 ** z;
 const isValidZ = (z: number) => z >= 0 && z <= maxZ;
 
 function assertTileParams(params: object): asserts params is TileParams {
@@ -49,8 +44,8 @@ function assertPositionValues(
 ): asserts params is TileParams {
   if (
     !isValidZ(parseInt(params.z)) ||
-    !isValidX(parseInt(params.x)) ||
-    !isValidY(parseInt(params.y))
+    !isValidX(parseInt(params.x), parseInt(params.z)) ||
+    !isValidY(parseInt(params.y), parseInt(params.z))
   ) {
     throw Error("Invalid param value range");
   }

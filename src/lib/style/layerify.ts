@@ -2,10 +2,10 @@ import tinycolor from "tinycolor2";
 import { selectColor } from "@/lib/color";
 import mapboxgl from "mapbox-gl";
 
-export const layerifyByName = (names: string[]) => {
+export const layerifyByName = (names: Array<{ name: string; id: number }>) => {
   const colors = names.reduce(
-    (properties, name, i) => {
-      const color = selectColor(i);
+    (properties, { name, id }) => {
+      const color = selectColor(id);
       return {
         ...properties,
         "fill-color": [...properties["fill-color"], name, color],

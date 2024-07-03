@@ -67,18 +67,6 @@ export const getLCMDLayers = async () => {
       type: "fill",
       paint: parcelStyles,
     },
-    //{
-    //  id: "tax_parcels_old",
-    //  slot: "bottom",
-    //  source: "LCMDParcels",
-    //  "source-layer": "tax_parcels_old",
-    //  type: "fill",
-    //  // @ts-expect-error
-    //  paint: oldLayerStyles,
-    //  layout: {
-    //    visibility: "none",
-    //  },
-    //},
     {
       id: "public_land",
       source: "LCMDParcels",

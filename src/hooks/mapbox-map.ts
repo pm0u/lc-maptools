@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import mapboxgl, { Map, MapEventType } from "mapbox-gl";
 import { useRouterWithHash } from "@/hooks/use-router-with-hash";
-import { mapboxToken } from "@/env";
+import { mapboxToken } from "@/env-client";
 import { LAND_LAYERS } from "@/lib/spatial";
 
 let isInitialized = false;

@@ -31,10 +31,28 @@ export async function GET(
       crossingLayers,
     });
 
-    return new Response(JSON.stringify(propertyCrossings.map((c) => c.json)), {
-      status: 200,
-      headers: { "content-type": "application/json" },
-    });
+    /**
+     * Colors here...
+     * create an object id: color to reference
+     * change API response format like:
+     * {
+     *   parcels: []
+     *   colors: {}
+     * }
+     */
+    const parcels = propertyCrossings.map((c) => c.json);
+    //const colors = getColors(parcels);
+
+    return new Response(
+      JSON.stringify({
+        parcels,
+        colors: {},
+      }),
+      {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }
+    );
   } catch (e) {
     console.error(e);
     return new Response(null, { status: 500 });
