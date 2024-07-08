@@ -13,7 +13,7 @@ export const TotalTaxValue = ({
 }) => {
   const validFeatures = features.filter(
     (feature) => isTaxCalculableFeature(feature) && !isTaxExemptFeature(feature)
-  ) as TaxCalculableFeature[];
+  ) as unknown as TaxCalculableFeature[];
 
   return (
     <>
