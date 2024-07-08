@@ -19,6 +19,47 @@ const COPY_TEXT = {
   rest: "Copy to Clipboard",
 };
 
+const prepareFeatures = (
+  features: MapboxGeoJSONFeature[],
+  {
+    includeAssessorLink,
+    includeTaxValues,
+    excludeCountyProperty,
+  }: {
+    includeTaxValues: boolean;
+    includeAssessorLink: boolean;
+    excludeCountyProperty: boolean;
+  }
+) => {
+  let _features = cloneDeep(features).filter((f) => isTaxCalculableFeature(f));
+  if (excludeCountyProperty) {
+    features = features.filter((f) => !isTaxExemptFeature(f));
+  }
+  if (includeTaxValues) {
+    features = features.map((item) => {
+      if (isTaxCalculableFeature(item)) {
+        return {
+          ...item,
+          taxValue: getFormattedCountyTaxes(item),
+        };
+      }
+      return item;
+    });
+  }
+  if (includeAssessorLink) {
+    features = features.map((item) => {
+      if (isTaxCalculableFeature(item)) {
+        return {
+          ...item,
+          assessorLink: getAssessorURL(item),
+        };
+      }
+      return item;
+    });
+  }
+  return _features;
+};
+
 export const ExportModal = ({
   data,
   open,
@@ -40,32 +81,11 @@ export const ExportModal = ({
   const onExport: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault();
-      let features = cloneDeep(data).filter((f) => isTaxCalculableFeature(f));
-      if (excludeCountyProperty) {
-        features = features.filter((f) => !isTaxExemptFeature(f));
-      }
-      if (includeTaxValues) {
-        features = features.map((item) => {
-          if (isTaxCalculableFeature(item)) {
-            return {
-              ...item,
-              taxValue: getFormattedCountyTaxes(item),
-            };
-          }
-          return item;
-        });
-      }
-      if (includeAssessorLink) {
-        features = features.map((item) => {
-          if (isTaxCalculableFeature(item)) {
-            return {
-              ...item,
-              assessorLink: getAssessorURL(item),
-            };
-          }
-          return item;
-        });
-      }
+      const features = prepareFeatures(data, {
+        includeAssessorLink,
+        includeTaxValues,
+        excludeCountyProperty,
+      });
       const csv = objectsToCsv(features, { withHeadings: includeHeadings });
       downloadBlob(csv, `${exportName}.csv`);
     },
@@ -82,32 +102,11 @@ export const ExportModal = ({
   const onCopy: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault();
-      let features = cloneDeep(data).filter((f) => isTaxCalculableFeature(f));
-      if (excludeCountyProperty) {
-        features = features.filter((f) => !isTaxExemptFeature(f));
-      }
-      if (includeTaxValues) {
-        features = features.map((item) => {
-          if (isTaxCalculableFeature(item)) {
-            return {
-              ...item,
-              taxValue: getFormattedCountyTaxes(item),
-            };
-          }
-          return item;
-        });
-      }
-      if (includeAssessorLink) {
-        features = features.map((item) => {
-          if (isTaxCalculableFeature(item)) {
-            return {
-              ...item,
-              assessorLink: getAssessorURL(item),
-            };
-          }
-          return item;
-        });
-      }
+      const features = prepareFeatures(data, {
+        includeAssessorLink,
+        includeTaxValues,
+        excludeCountyProperty,
+      });
       const csv = objectsToCsv(features, { withHeadings: includeHeadings });
       copy(csv);
       setCopyText(COPY_TEXT.completed);
