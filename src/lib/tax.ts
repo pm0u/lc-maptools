@@ -2,11 +2,12 @@ import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { AreaId, areaIds } from "../types/properties";
 import { MapboxPolygonFeature } from "@/types/mapbox";
 
-export type TaxCalculableFeature = MapboxPolygonFeature & {
+export type TaxCalculableFeature = Omit<MapboxPolygonFeature, "geometry"> & {
   properties: {
     assessed_v: number;
     areaid: AreaId;
     mill_levy: number;
+    accountno: string;
     accttype: string;
     cur_tax?: number;
   };
@@ -31,7 +32,9 @@ export const isTaxCalculableFeature = <T extends object>(
   );
 };
 
-export const isTaxExemptFeature = (feature: MapboxGeoJSONFeature) => {
+export const isTaxExemptFeature = (
+  feature: Omit<MapboxGeoJSONFeature, "geometry">
+) => {
   return feature.properties?.accttype === "N";
 };
 
@@ -61,4 +64,8 @@ export const getFormattedCountyTaxes = (feature: TaxCalculableFeature) => {
     style: "currency",
     currency: "USD",
   }).format(getCountyTaxes(feature));
+};
+
+export const getAssessorURL = (feature: TaxCalculableFeature) => {
+  return `https://lakecountyco-treasurer.tylerhost.net/treasurer/treasurerweb/account.jsp?account=${feature.properties.accountno}`;
 };
