@@ -6,6 +6,7 @@ import {
   getFormattedCountyTaxes,
   isTaxExemptFeature,
   isTaxCalculableFeature,
+  getAssessorURL,
 } from "@/lib/tax";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { cloneDeep } from "lodash";
@@ -16,6 +17,47 @@ import type { MouseEventHandler } from "react";
 const COPY_TEXT = {
   completed: "Copied!",
   rest: "Copy to Clipboard",
+};
+
+const prepareFeatures = (
+  features: MapboxGeoJSONFeature[],
+  {
+    includeAssessorLink,
+    includeTaxValues,
+    excludeCountyProperty,
+  }: {
+    includeTaxValues: boolean;
+    includeAssessorLink: boolean;
+    excludeCountyProperty: boolean;
+  }
+) => {
+  let _features = cloneDeep(features).filter((f) => isTaxCalculableFeature(f));
+  if (excludeCountyProperty) {
+    features = features.filter((f) => !isTaxExemptFeature(f));
+  }
+  if (includeTaxValues) {
+    features = features.map((item) => {
+      if (isTaxCalculableFeature(item)) {
+        return {
+          ...item,
+          taxValue: getFormattedCountyTaxes(item),
+        };
+      }
+      return item;
+    });
+  }
+  if (includeAssessorLink) {
+    features = features.map((item) => {
+      if (isTaxCalculableFeature(item)) {
+        return {
+          ...item,
+          assessorLink: getAssessorURL(item),
+        };
+      }
+      return item;
+    });
+  }
+  return _features;
 };
 
 export const ExportModal = ({
@@ -32,51 +74,39 @@ export const ExportModal = ({
   const [, copy] = useCopyToClipboard();
   const [includeHeadings, setIncludeHeadings] = useState(true);
   const [includeTaxValues, setIncludeTaxValues] = useState(true);
+  const [includeAssessorLink, setIncludeAssessorLink] = useState(true);
   const [excludeCountyProperty, setExcludeCountyProperty] = useState(true);
   const [copyText, setCopyText] = useState(COPY_TEXT.rest);
 
   const onExport: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault();
-      let features = cloneDeep(data).filter((f) => isTaxCalculableFeature(f));
-      if (excludeCountyProperty) {
-        features = features.filter((f) => !isTaxExemptFeature(f));
-      }
-      if (includeTaxValues) {
-        features = features.map((item) => {
-          if (isTaxCalculableFeature(item)) {
-            return {
-              ...item,
-              taxValue: getFormattedCountyTaxes(item),
-            };
-          }
-          return item;
-        });
-      }
+      const features = prepareFeatures(data, {
+        includeAssessorLink,
+        includeTaxValues,
+        excludeCountyProperty,
+      });
       const csv = objectsToCsv(features, { withHeadings: includeHeadings });
       downloadBlob(csv, `${exportName}.csv`);
     },
-    [data, includeHeadings, exportName, includeTaxValues, excludeCountyProperty]
+    [
+      data,
+      includeHeadings,
+      exportName,
+      includeTaxValues,
+      excludeCountyProperty,
+      includeAssessorLink,
+    ]
   );
 
   const onCopy: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault();
-      let features = cloneDeep(data).filter((f) => isTaxCalculableFeature(f));
-      if (excludeCountyProperty) {
-        features = features.filter((f) => !isTaxExemptFeature(f));
-      }
-      if (includeTaxValues) {
-        features = features.map((item) => {
-          if (isTaxCalculableFeature(item)) {
-            return {
-              ...item,
-              taxValue: getFormattedCountyTaxes(item),
-            };
-          }
-          return item;
-        });
-      }
+      const features = prepareFeatures(data, {
+        includeAssessorLink,
+        includeTaxValues,
+        excludeCountyProperty,
+      });
       const csv = objectsToCsv(features, { withHeadings: includeHeadings });
       copy(csv);
       setCopyText(COPY_TEXT.completed);
@@ -84,7 +114,14 @@ export const ExportModal = ({
         setCopyText(COPY_TEXT.rest);
       }, 800);
     },
-    [includeHeadings, data, copy, includeTaxValues, excludeCountyProperty]
+    [
+      includeHeadings,
+      data,
+      copy,
+      includeTaxValues,
+      excludeCountyProperty,
+      includeAssessorLink,
+    ]
   );
 
   return (
@@ -120,6 +157,19 @@ export const ExportModal = ({
                 />
                 <span className="label-text pl-4">
                   Include Computed Tax Values
+                </span>
+              </label>
+              <label className="label cursor-pointer justify-start">
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  id="withAssessorLink"
+                  name="withAssessorLink"
+                  checked={includeAssessorLink}
+                  onChange={() => setIncludeAssessorLink((s) => !s)}
+                />
+                <span className="label-text pl-4">
+                  Include County Assessor Account Link
                 </span>
               </label>
               <label className="label cursor-pointer justify-start">

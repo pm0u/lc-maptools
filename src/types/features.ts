@@ -8,6 +8,7 @@ import {
 export const TAX_PARCEL_PROPERTIES = [
   "acres",
   "accttype",
+  "accountno",
   "actual_val",
   "address1",
   "address2",

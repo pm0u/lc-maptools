@@ -1,5 +1,7 @@
 import { BottomRow } from "@/app/query/[lngLat]/query-card/bottom-row";
+import { TaxValue } from "@/app/query/[lngLat]/query-card/tax-value";
 import { getFeatureName } from "@/lib/data";
+import { isLCMDParcel } from "@/types/features";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import slugify from "slugify";
 
@@ -33,6 +35,7 @@ export const FeatureProperties = ({
           />
         </tbody>
       </table>
+      {isLCMDParcel(feature) ? <TaxValue feature={feature} /> : null}
     </div>
   ) : null;
 };
