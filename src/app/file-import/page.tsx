@@ -1,7 +1,7 @@
-import { FileImport } from "./file-import";
+import { FileImportCard } from "@/app/file-import/card";
 
 const Page = () => {
-  return <FileImport />;
+  return <FileImportCard />;
 };
 
 export default Page;

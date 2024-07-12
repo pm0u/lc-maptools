@@ -5,7 +5,7 @@ import { Features } from "@/app/query/[lngLat]/query-card/features";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Loader } from "@/app/query/[lngLat]/query-card/loader";
+import { Loader } from "@/components/loader";
 
 export const CardContents = () => {
   const { lngLat } = useParams<{ lngLat: string }>();

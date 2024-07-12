@@ -5,9 +5,8 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 // @ts-expect-error
 import toGeoJson from "@mapbox/togeojson";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/card";
 
-export const FileImport = () => {
+export const FileImportCardContents = () => {
   const { addLayer, layers } = useDataLayers();
   const fileInput = useRef<HTMLInputElement>(null);
   const textInput = useRef<HTMLTextAreaElement>(null);
@@ -70,7 +69,7 @@ export const FileImport = () => {
   }, [onFileChange]);
 
   return (
-    <Card title="Import Path">
+    <>
       <div className="divider">Upload file</div>
       <input
         type="file"
@@ -86,6 +85,6 @@ export const FileImport = () => {
         />
         <button className="btn btn-primary">Import</button>
       </form>
-    </Card>
+    </>
   );
 };

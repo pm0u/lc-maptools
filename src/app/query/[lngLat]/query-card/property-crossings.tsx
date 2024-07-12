@@ -1,5 +1,5 @@
 import { BottomRow } from "@/app/query/[lngLat]/query-card/bottom-row";
-import { Loader } from "@/app/query/[lngLat]/query-card/loader";
+import { Loader } from "@/components/loader";
 import { TaxInfo } from "@/app/query/[lngLat]/query-card/tax-info";
 import { useMapboxMapContext } from "@/components/mapbox/mapbox-map-context";
 import { getFeatureName } from "@/lib/data";

@@ -240,6 +240,7 @@ export const MapboxMapProvider = ({
   const isLayerVisible = useCallback(
     (layerId: (typeof layers)[number]) => {
       if (map) {
+        console.log(map.getLayoutProperty(layerId, "visibility"));
         return map.getLayoutProperty(layerId, "visibility") !== "none";
       }
       return false;
