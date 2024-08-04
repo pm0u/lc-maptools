@@ -1,6 +1,7 @@
 import { MapboxPolygonFeature } from "@/types/mapbox";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import {
+  AvailableCountyZoningProperties,
   AvailableLCMDProperties,
   AvailablePublicLandProperties,
 } from "./properties";
@@ -29,6 +30,12 @@ export const PUBLIC_LAND_PROPERTIES = [
   "adm_manage",
   "gis_acres",
 ] as const satisfies (keyof AvailablePublicLandProperties)[];
+
+export const COUNTY_ZONING_PROPERTIES = [
+  "id",
+  "fid",
+  "layer",
+] as const satisfies (keyof AvailableCountyZoningProperties)[];
 
 export type LCMDParcel = Omit<MapboxPolygonFeature, "properties"> & {
   id: number;

@@ -130,6 +130,12 @@ export type AvailablePublicLandProperties = {
   gis_acres: number;
 };
 
+export type AvailableCountyZoningProperties = {
+  fid: number;
+  id: number;
+  layer: string;
+};
+
 export type ExtendedGeoJson<
   AddtlProperties extends GeoJsonProperties = GeoJsonProperties,
   Geo extends Geometry = Polygon
