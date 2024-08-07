@@ -194,29 +194,22 @@ export const MapboxMapProvider = ({
     (feature: MapboxGeoJSONFeature) => {
       if (map) {
         const point = pointOnFeature(feature);
-        const features = queryLngLat(
-          point.geometry.coordinates.slice(0, 2) as [number, number]
-        );
-        const featureInd = features.findIndex(
-          (queriedFeature) => queriedFeature.id === feature.id
-        );
         clearSelectedFeatures();
         clearHighlightedFeatures();
-        router.push(
-          `/query/${point.geometry.coordinates
-            .slice(0, 2)
-            .join(",")}?feature=${featureInd}`
-        );
-        setTimeout(() => {
-          zoomToFeature(feature);
-        }, 1);
+        zoomToFeature(feature);
+        map.once("moveend", () => {
+          router.push(
+            `/query/${point.geometry.coordinates
+              .slice(0, 2)
+              .join(",")}?feature=${feature.id as string}`
+          );
+        });
       }
     },
     [
       router,
       zoomToFeature,
       map,
-      queryLngLat,
       clearSelectedFeatures,
       clearHighlightedFeatures,
     ]

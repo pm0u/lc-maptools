@@ -1,3 +1,4 @@
+import { assertIsLayer, assertSanitized } from "@/lib/sanitize";
 import { LAND_LAYERS, layerDefs } from "@/lib/spatial";
 import { crossings } from "@/lib/spatial/crossings";
 import { getPrivateLandNames } from "@/lib/style/data";
@@ -30,6 +31,15 @@ export async function GET(
   try {
     const { id, sourceLayer } = params;
     const { crossingLayers = DEFAULT_CROSSING_LAYERS } = query;
+
+    /** Some basic protection */
+    crossingLayers.forEach((l) => {
+      assertSanitized(l);
+      assertIsLayer(l);
+    });
+    assertSanitized(id);
+    assertSanitized(sourceLayer);
+    assertIsLayer(sourceLayer);
 
     const propertyCrossings = await crossings({
       id,

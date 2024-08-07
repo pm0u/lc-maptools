@@ -46,16 +46,16 @@ const crossingsForLayer = ({
   id: string;
 }) => /* sql */ `
   select
-    ${crossedLayer}.ogc_fid,
+    "${crossedLayer}".ogc_fid,
     its.path[1] as seq,
     round(start_frac::numeric, 5) as start_frac,
     round(end_frac::numeric, 5) as end_frac,
     ${jsonObjectForRow(crossedLayer)} as json,
     st_astext(its.geom)
   from
-    ${crossedLayer}
-    join ${sourceLayer} as ln on st_intersects (${crossedLayer}.geom, ln.geom)
-    cross join lateral st_dump(st_intersection (${crossedLayer}.geom, ln.geom)) as its
+    "${crossedLayer}"
+    join "${sourceLayer}" as ln on st_intersects ("${crossedLayer}".geom, ln.geom)
+    cross join lateral st_dump(st_intersection ("${crossedLayer}".geom, ln.geom)) as its
     cross join lateral st_linelocatepoint(ln.geom, st_startpoint(its.geom)) as start_frac
     cross join lateral st_linelocatepoint(ln.geom, st_endpoint(its.geom)) as end_frac
   where

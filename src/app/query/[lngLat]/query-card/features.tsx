@@ -12,11 +12,16 @@ export const Features = ({
 }: {
   features: MapboxGeoJSONFeature[];
 }) => {
-  const { selectFeature, clearSelectedFeatures } = useMapboxMapContext();
+  const { selectFeature, clearSelectedFeatures, zoomToFeature } =
+    useMapboxMapContext();
   const containerEl = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const [currentFeature, setCurrentFeature] = useState(
-    features[parseInt(searchParams.get("feature") ?? "0")]
+    features.find(
+      (f) =>
+        f.id?.toString() ===
+        (searchParams.get("feature") ?? (features[0].id as string))
+    ) ?? features[0]
   );
   const [scrollPosition, setScrollPosition] = useState(0);
   const pathname = usePathname();
@@ -24,9 +29,20 @@ export const Features = ({
   const { onClose } = useCardContext();
 
   useEffect(() => {
-    if (searchParams.get("feature") !== `${features.indexOf(currentFeature)}`) {
+    if (searchParams.get("fit") === "true") {
+      if (currentFeature) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("fit");
+        router.replace(pathname + "?" + params.toString());
+        zoomToFeature(currentFeature);
+      }
+    }
+  }, [currentFeature, zoomToFeature, searchParams, pathname]);
+
+  useEffect(() => {
+    if (searchParams.get("feature") !== currentFeature.id?.toString()) {
       const newParams = new URLSearchParams(searchParams);
-      newParams.set("feature", features.indexOf(currentFeature).toString());
+      newParams.set("feature", currentFeature.id as string);
       router.replace(pathname + `?` + newParams.toString());
     }
   }, [currentFeature, features, router, searchParams, pathname]);
