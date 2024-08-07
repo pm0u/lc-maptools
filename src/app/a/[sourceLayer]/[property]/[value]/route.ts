@@ -32,9 +32,6 @@ export async function GET<TSourceLayer extends keyof typeof layerDefs>(
 
   const pt = pointOnFeature(result[0].json);
 
-  /** Works, mostly - we need some meaningful bounds/geo to make this actually work */
-  /** bbox -> zoom/lng/lat */
-  /** Maybe we can instead add a param like &fit and the client handles it instead with zoomToFeature */
   return new Response(null, {
     status: 302,
     headers: {
