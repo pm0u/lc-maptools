@@ -12,7 +12,8 @@ export const Features = ({
 }: {
   features: MapboxGeoJSONFeature[];
 }) => {
-  const { selectFeature, clearSelectedFeatures } = useMapboxMapContext();
+  const { selectFeature, clearSelectedFeatures, zoomToFeature } =
+    useMapboxMapContext();
   const containerEl = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const [currentFeature, setCurrentFeature] = useState(
@@ -26,6 +27,17 @@ export const Features = ({
   const pathname = usePathname();
   const router = useRouterWithHash();
   const { onClose } = useCardContext();
+
+  useEffect(() => {
+    if (searchParams.get("fit") === "true") {
+      if (currentFeature) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("fit");
+        router.replace(pathname + "?" + params.toString());
+        zoomToFeature(currentFeature);
+      }
+    }
+  }, [currentFeature, zoomToFeature, searchParams, pathname]);
 
   useEffect(() => {
     if (searchParams.get("feature") !== currentFeature.id?.toString()) {

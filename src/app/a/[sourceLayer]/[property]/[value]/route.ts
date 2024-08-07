@@ -34,10 +34,11 @@ export async function GET<TSourceLayer extends keyof typeof layerDefs>(
 
   /** Works, mostly - we need some meaningful bounds/geo to make this actually work */
   /** bbox -> zoom/lng/lat */
+  /** Maybe we can instead add a param like &fit and the client handles it instead with zoomToFeature */
   return new Response(null, {
     status: 302,
     headers: {
-      Location: `/query/${pt.geometry.coordinates[0]},${pt.geometry.coordinates[1]}?feature=${result[0].json.id}`,
+      Location: `/query/${pt.geometry.coordinates[0]},${pt.geometry.coordinates[1]}?feature=${result[0].json.id}&fit=true`,
     },
   });
 }
