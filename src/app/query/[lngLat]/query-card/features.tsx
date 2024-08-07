@@ -16,7 +16,11 @@ export const Features = ({
   const containerEl = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const [currentFeature, setCurrentFeature] = useState(
-    features[parseInt(searchParams.get("feature") ?? "0")]
+    features.find(
+      (f) =>
+        f.id?.toString() ===
+        (searchParams.get("feature") ?? (features[0].id as string))
+    ) ?? features[0]
   );
   const [scrollPosition, setScrollPosition] = useState(0);
   const pathname = usePathname();
@@ -24,9 +28,9 @@ export const Features = ({
   const { onClose } = useCardContext();
 
   useEffect(() => {
-    if (searchParams.get("feature") !== `${features.indexOf(currentFeature)}`) {
+    if (searchParams.get("feature") !== currentFeature.id?.toString()) {
       const newParams = new URLSearchParams(searchParams);
-      newParams.set("feature", features.indexOf(currentFeature).toString());
+      newParams.set("feature", currentFeature.id as string);
       router.replace(pathname + `?` + newParams.toString());
     }
   }, [currentFeature, features, router, searchParams, pathname]);
