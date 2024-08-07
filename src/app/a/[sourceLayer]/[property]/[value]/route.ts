@@ -17,15 +17,16 @@ export async function GET<TSourceLayer extends keyof typeof layerDefs>(
     };
   }
 ) {
-  const { sourceLayer, property, value } = params;
+  try {
+    const { sourceLayer, property, value } = params;
 
-  /** Some basic safety */
-  assertSanitized(sourceLayer);
-  assertIsLayer(sourceLayer);
-  assertSanitized(property);
-  assertSanitized(value);
+    /** Some basic safety */
+    assertSanitized(sourceLayer);
+    assertIsLayer(sourceLayer);
+    assertSanitized(property);
+    assertSanitized(value);
 
-  const result = (await sql.unsafe(/* sql */ `
+    const [result] = (await sql.unsafe(/* sql */ `
       select json from (
         select
           "${property}",
@@ -34,15 +35,25 @@ export async function GET<TSourceLayer extends keyof typeof layerDefs>(
           "${sourceLayer}"
         where
           CAST("${property}" as varchar) = '${value}'
+        limit 1
       )
     `)) as [{ json: LakeCountyFeature }];
 
-  const pt = pointOnFeature(result[0].json);
+    if (!result) {
+      throw new Error("No property found");
+    }
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: `/query/${pt.geometry.coordinates[0]},${pt.geometry.coordinates[1]}?feature=${result[0].json.id}&fit=true`,
-    },
-  });
+    const pt = pointOnFeature(result.json);
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: `/query/${pt.geometry.coordinates[0]},${pt.geometry.coordinates[1]}?feature=${result.json.id}&fit=true`,
+      },
+    });
+  } catch (e) {
+    return new Response(null, {
+      status: 404,
+    });
+  }
 }
