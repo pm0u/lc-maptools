@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { assertIsLayer, assertSanitized } from "@/lib/sanitize";
 import { layerDefs } from "@/lib/spatial";
 import { jsonObjectForRow } from "@/lib/spatial/json";
 import { LakeCountyFeature } from "@/types/features";
@@ -18,15 +19,21 @@ export async function GET<TSourceLayer extends keyof typeof layerDefs>(
 ) {
   const { sourceLayer, property, value } = params;
 
+  /** Some basic safety */
+  assertSanitized(sourceLayer);
+  assertIsLayer(sourceLayer);
+  assertSanitized(property);
+  assertSanitized(value);
+
   const result = (await sql.unsafe(/* sql */ `
       select json from (
         select
-          ${property},
+          "${property}",
           ${jsonObjectForRow(sourceLayer)} as json
         from
-          ${sourceLayer}
+          "${sourceLayer}"
         where
-          CAST(${property} as varchar) = '${value}'
+          CAST("${property}" as varchar) = '${value}'
       )
     `)) as [{ json: LakeCountyFeature }];
 

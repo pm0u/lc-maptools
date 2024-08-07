@@ -196,14 +196,14 @@ export const MapboxMapProvider = ({
         const point = pointOnFeature(feature);
         clearSelectedFeatures();
         clearHighlightedFeatures();
-        router.push(
-          `/query/${point.geometry.coordinates.slice(0, 2).join(",")}?feature=${
-            feature.id as string
-          }`
-        );
-        setTimeout(() => {
-          zoomToFeature(feature);
-        }, 1);
+        zoomToFeature(feature);
+        map.once("moveend", () => {
+          router.push(
+            `/query/${point.geometry.coordinates
+              .slice(0, 2)
+              .join(",")}?feature=${feature.id as string}`
+          );
+        });
       }
     },
     [
