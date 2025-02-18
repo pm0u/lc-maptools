@@ -136,6 +136,23 @@ export type AvailableCountyZoningProperties = {
   layer: string;
 };
 
+export type AvailableSuperfundProperties = {
+  epa_program: string;
+  epa_id: string;
+  site_name: string;
+  site_feature_class: number;
+  site_feature_name: string;
+  site_feature_description: string;
+  npl_status_code: string;
+  federal_facility_deter_code: string;
+  last_change_date: string;
+  original_creation_date: string;
+  site_feature_source: string;
+  street_addr_txt: string;
+  addr_comment: string;
+  city_name: string;
+};
+
 export type ExtendedGeoJson<
   AddtlProperties extends GeoJsonProperties = GeoJsonProperties,
   Geo extends Geometry = Polygon

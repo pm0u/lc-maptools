@@ -1,6 +1,7 @@
 import {
   COUNTY_ZONING_PROPERTIES,
   PUBLIC_LAND_PROPERTIES,
+  SUPERFUND_PROPERTIES,
   TAX_PARCEL_PROPERTIES,
 } from "@/types/features";
 import { getFullGeoJson } from "~/data/get-data";
@@ -10,6 +11,7 @@ import {
   LCMD_QUERY_ENDPOINT,
   LCPL_QUERY_ENDPOINT,
   LCZ_QUERY_ENDPOINT,
+  SUPERFUND_QUERY_ENDPOINT,
 } from "./constants";
 
 export const getArcGISData = () => {
@@ -44,6 +46,15 @@ export const getArcGISData = () => {
           console.log(`Writing data for ${LCZ_QUERY_ENDPOINT}`);
           return Promise.all([
             writeFile("generated/county_zoning.json", JSON.stringify(data)),
+          ]);
+        }),
+        getFullGeoJson(
+          SUPERFUND_QUERY_ENDPOINT,
+          SUPERFUND_PROPERTIES.join(",")
+        ).then((data) => {
+          console.log(`Writing data for ${SUPERFUND_QUERY_ENDPOINT}`);
+          return Promise.all([
+            writeFile("generated/superfund.json", JSON.stringify(data)),
           ]);
         }),
       ])

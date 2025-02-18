@@ -4,6 +4,7 @@ import {
   AvailableCountyZoningProperties,
   AvailableLCMDProperties,
   AvailablePublicLandProperties,
+  AvailableSuperfundProperties,
 } from "./properties";
 
 export const TAX_PARCEL_PROPERTIES = [
@@ -36,6 +37,12 @@ export const COUNTY_ZONING_PROPERTIES = [
   "fid",
   "layer",
 ] as const satisfies (keyof AvailableCountyZoningProperties)[];
+
+export const SUPERFUND_PROPERTIES = [
+  "npl_status_code",
+  "site_feature_description",
+  "site_feature_name",
+] as const satisfies (keyof AvailableSuperfundProperties)[];
 
 export type LCMDParcel = Omit<MapboxPolygonFeature, "properties"> & {
   id: number;
