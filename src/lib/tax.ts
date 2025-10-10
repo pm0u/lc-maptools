@@ -4,7 +4,7 @@ import { MapboxPolygonFeature } from "@/types/mapbox";
 
 export type TaxCalculableFeature = Omit<MapboxPolygonFeature, "geometry"> & {
   properties: {
-    assessed_v: number;
+    total_assessed_value: number;
     areaid: AreaId;
     mill_levy: number;
     accountno: string;
@@ -23,8 +23,8 @@ export const isTaxCalculableFeature = <T extends object>(
     "areaid" in item.properties &&
     typeof item.properties.areaid === "number" &&
     areaIds.includes(item.properties.areaid as AreaId) &&
-    "assessed_v" in item.properties &&
-    typeof item.properties.assessed_v === "number" &&
+    "total_assessed_value" in item.properties &&
+    typeof item.properties.total_assessed_value === "number" &&
     "mill_levy" in item.properties &&
     typeof item.properties.mill_levy === "number" &&
     "accttype" in item.properties &&
@@ -56,7 +56,11 @@ export const getCountyTaxesForFeatures = (features: TaxCalculableFeature[]) => {
 
 export const getCountyTaxes = (feature: TaxCalculableFeature) => {
   if (feature.properties.accttype === "N") return 0;
-  return feature.properties.assessed_v * feature.properties.mill_levy * 0.001;
+  return (
+    feature.properties.total_assessed_value *
+    feature.properties.mill_levy *
+    0.001
+  );
 };
 
 export const getFormattedCountyTaxes = (feature: TaxCalculableFeature) => {
