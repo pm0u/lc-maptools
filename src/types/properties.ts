@@ -115,9 +115,9 @@ export type AvailableLCMDProperties = {
   lst_pay: string;
   lst_bal: string;
   /** Value of plot? */
-  actual_val: number;
+  total_actual_value: number;
   /** assessed value of plot? */
-  assessed_v: number;
+  total_assessed_value: number;
   shape__area: number;
   shape__length: number;
 };
@@ -165,7 +165,15 @@ export type ExtendedGeoJson<
 
 export type ExtendedLCMDGeoJson = ExtendedGeoJson<AvailableLCMDProperties>;
 
-export type ArcGISResponse = GeoJSON.FeatureCollection<
+export type ArcGISErrorResponse = {
+  error: {
+    code: number;
+    message: string;
+    details: string[];
+  };
+};
+
+export type ArcGISDataResponse = GeoJSON.FeatureCollection<
   Polygon,
   AvailableLCMDProperties
 > & {
@@ -173,3 +181,5 @@ export type ArcGISResponse = GeoJSON.FeatureCollection<
     exceededTransferLimit?: true;
   };
 };
+
+export type ArcGISResponse = ArcGISDataResponse | ArcGISErrorResponse;

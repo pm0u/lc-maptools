@@ -1,4 +1,4 @@
-import { ArcGISResponse } from "@/types/properties";
+import { ArcGISDataResponse, ArcGISResponse } from "@/types/properties";
 
 const PAGE_SIZE = 2000;
 
@@ -14,15 +14,13 @@ export const concurrentFetchGeoJson = async ({
 }: {
   endpoint: string;
   properties: string;
-  merge?: ArcGISResponse[];
+  merge?: ArcGISDataResponse[];
   concurrent?: number;
 }): Promise<ArcGISResponse> => {
   const results = await Promise.all(
     constructFetches({ endpoint, concurrent, properties })
   );
-  const cleanResults = results.filter(
-    (res) => res !== undefined
-  ) as unknown as ArcGISResponse[];
+  const cleanResults = removeErrors(results);
   if (
     cleanResults[cleanResults.length - 1]?.properties?.exceededTransferLimit
   ) {
@@ -35,14 +33,28 @@ export const concurrentFetchGeoJson = async ({
   return combineResults([...merge, ...cleanResults]);
 };
 
-const combineResults = (results: ArcGISResponse[]) =>
+const combineResults = (results: ArcGISDataResponse[]) =>
   results.slice(1).reduce((combined, result) => {
+    if ("error" in result) {
+      console.log(result.error);
+      return combined;
+    }
     delete combined.properties;
     return {
       ...combined,
       features: [...combined.features, ...result.features],
     };
   }, results[0]);
+
+const removeErrors = (results: (ArcGISResponse | undefined)[]) =>
+  results.filter((res) => {
+    if (res === undefined) return false;
+    if ("error" in res) {
+      console.log(res.error);
+      return false;
+    }
+    return true;
+  }) as ArcGISDataResponse[];
 
 const constructFetches = ({
   endpoint,
